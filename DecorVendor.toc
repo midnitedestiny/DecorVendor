@@ -1,0 +1,14 @@
+## Interface: 110205, 110207
+## Title: Decor Vendors
+## Notes: Tracks vendors that sell housing decor
+## Author: Midnitedestiny
+## Version: 1.04
+## IconTexture: Interface\AddOns\DecorVendor\Assets\DecorVendor.tga
+## SavedVariable: vendorsettings, dvdb
+## OptionalDeps: LibStub, CallbackHandler-1.0, LibDataBroker-1.1, TomTom
+
+Libs\LibDBIcon-1.0.lua
+Libs\Libs.xml
+VendorData.lua
+DecorVendor.lua
+
