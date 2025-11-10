@@ -2,7 +2,7 @@
 ## Title: Decor Vendors
 ## Notes: Tracks vendors that sell housing decor
 ## Author: Midnitedestiny
-## Version: 1.04
+## Version: 1.05
 ## IconTexture: Interface\AddOns\DecorVendor\Assets\DecorVendor.tga
 ## SavedVariable: vendorsettings, dvdb
 ## OptionalDeps: LibStub, CallbackHandler-1.0, LibDataBroker-1.1, TomTom
