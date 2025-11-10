@@ -99,6 +99,79 @@ frame:SetScript("OnMouseUp", function(self, button)
 end)
 
 
+local supportFrame = CreateFrame("Frame", "DV_SupportFrame", UIParent, "BackdropTemplate")
+supportFrame:SetSize(400, 210)
+supportFrame:SetPoint("CENTER")
+supportFrame:SetBackdrop({
+  bgFile = "Interface\\Buttons\\WHITE8x8",
+  edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+  tile = false,
+  edgeSize = 16,
+  insets = { left = 4, right = 4, top = 4, bottom = 4 }
+})
+supportFrame:SetBackdropColor(0.02, 0.02, 0.02, 0.95)
+supportFrame:SetBackdropBorderColor(0.3, 0.3, 0.3, 1)
+supportFrame:SetFrameStrata("DIALOG")
+supportFrame:SetMovable(true)
+supportFrame:EnableMouse(true)
+supportFrame:RegisterForDrag("LeftButton")
+supportFrame:SetScript("OnDragStart", supportFrame.StartMoving)
+supportFrame:SetScript("OnDragStop", supportFrame.StopMovingOrSizing)
+supportFrame:Hide()
+
+local supportTitleBg = supportFrame:CreateTexture(nil, "BACKGROUND")
+supportTitleBg:SetTexture("Interface\\Buttons\\WHITE8x8")
+supportTitleBg:SetPoint("TOPLEFT", 4, -4)
+supportTitleBg:SetPoint("TOPRIGHT", -4, -4)
+supportTitleBg:SetHeight(40)
+supportTitleBg:SetGradient("VERTICAL", CreateColor(0.15, 0.10, 0.25, 0.9), CreateColor(0.05, 0.05, 0.15, 0.9))
+
+local supportTitle = supportFrame:CreateFontString(nil, "OVERLAY")
+supportTitle:SetFont(STANDARD_TEXT_FONT, 14, "OUTLINE")
+supportTitle:SetPoint("TOP", 0, -16)
+supportTitle:SetText("Community & Support")
+supportTitle:SetTextColor(1, 0.85, 0, 1)
+
+local supportCloseBtn = CreateFrame("Button", nil, supportFrame, "UIPanelCloseButton")
+supportCloseBtn:SetPoint("TOPRIGHT", -2, -2)
+supportCloseBtn:SetSize(28, 28)
+
+local shareText = supportFrame:CreateFontString(nil, "OVERLAY")
+shareText:SetFont(STANDARD_TEXT_FONT, 12)
+shareText:SetPoint("TOPLEFT", 20, -60)
+shareText:SetText("Please share with your friends!")
+shareText:SetTextColor(0.9, 0.9, 0.9, 1)
+
+local shareEditBox = CreateFrame("EditBox", nil, supportFrame, "InputBoxTemplate")
+shareEditBox:SetSize(350, 20)
+shareEditBox:SetPoint("TOPLEFT", 22, -80)
+shareEditBox:SetAutoFocus(false)
+shareEditBox:SetText("https://www.curseforge.com/wow/addons/Decor-Vendor")
+shareEditBox:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+shareEditBox:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
+
+local tipText = supportFrame:CreateFontString(nil, "OVERLAY")
+tipText:SetFont(STANDARD_TEXT_FONT, 12)
+tipText:SetPoint("TOPLEFT", 20, -120)
+tipText:SetText("You can leave a tip if you like")
+tipText:SetTextColor(0.9, 0.9, 0.9, 1)
+
+local tipEditBox = CreateFrame("EditBox", nil, supportFrame, "InputBoxTemplate")
+tipEditBox:SetSize(350, 20)
+tipEditBox:SetPoint("TOPLEFT", 22, -140)
+tipEditBox:SetAutoFocus(false)
+tipEditBox:SetText("https://buymeacoffee.com/midnitedestiny")
+tipEditBox:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+tipEditBox:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
+
+local tipEditBox = CreateFrame("EditBox", nil, supportFrame, "InputBoxTemplate")
+tipEditBox:SetSize(350, 20)
+tipEditBox:SetPoint("TOPLEFT", 22, -170)
+tipEditBox:SetAutoFocus(false)
+tipEditBox:SetText("ko-fi.com/midnitedestiny")
+tipEditBox:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+tipEditBox:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
+
 -- Title background
 local titleBg = frame:CreateTexture(nil, "BACKGROUND")
 titleBg:SetTexture("Interface\\Buttons\\WHITE8x8")
@@ -122,6 +195,7 @@ subtitle:SetText("Track your Player Housing vendors")
 subtitle:SetTextColor(0.7, 0.7, 0.7, 1)
 
 --Info Icon
+
 local infoIcon = CreateFrame("Button", nil, frame)
 infoIcon:SetSize(24, 24)
 infoIcon:SetPoint("TOPLEFT", 8, -8)
@@ -137,8 +211,32 @@ infoIcon:SetScript("OnEnter", function(self)
   GameTooltip:Show()
 end)
 
-infoIcon:SetScript("OnLeave", function(self)
+ infoIcon:SetScript("OnLeave", function(self)
   GameTooltip:Hide()
+end)
+
+--Support Icon
+local supportIcon = CreateFrame("Button", nil, frame)
+supportIcon:SetSize(24, 24)
+supportIcon:SetPoint("LEFT", infoIcon, "RIGHT", 6, 0)
+local supportIconTexture = supportIcon:CreateTexture(nil, "ARTWORK")
+supportIconTexture:SetTexture("Interface\\FriendsFrame\\Battlenet-Portrait")
+supportIconTexture:SetAllPoints(supportIcon)
+supportIcon:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight", "ADD")
+
+supportIcon:SetScript("OnEnter", function(self)
+  GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+  GameTooltip:AddLine("Community & Support", 1, 0.82, 0)
+  GameTooltip:AddLine("\nClick to share the addon!", 1, 1, 1, true)
+  GameTooltip:Show()
+end)
+
+supportIcon:SetScript("OnLeave", function(self)
+  GameTooltip:Hide()
+end)
+
+supportIcon:SetScript("OnClick", function()
+  supportFrame:Show()
 end)
 
 -- Close button
