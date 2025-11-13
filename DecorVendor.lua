@@ -11,22 +11,22 @@ local function SortVendorData(sortBy)
     -- Optional: define expansion order for correct release order
     local expansionOrder = {
         ["Classic"] = 1,
-        ["Classic Dungeon"] = 2,
-        ["The Burning Crusade"] = 3,
-        ["Wrath of the Lich King"] = 4,
-        ["Cataclysm"] = 5,
-        ["Mists of Pandaria"] = 6,
-        ["Warlords of Draenor"] = 7,
-        ["Legion"] = 8,
-        ["Legion Argus"] = 9,
-        ["Legion Class Hall"] = 10, 
-        ["Battle for Azeroth"] = 11,
-        ["Shadowlands"] = 12,
-        ["Shadowlands Covenant"] = 13,
-        ["Dragonflight"] = 14,
-        ["Dragonflight Dreamsurge"] = 15,
-        ["The War Within"] = 16,
-        ["Midnight Coming Soon!"] = 17,
+        ["The Burning Crusade"]= 2,
+        ["Wrath of the Lich King"] = 3,
+        ["Mists of Pandaria"] = 4,
+        ["Warlords of Draenor"] = 5,
+        ["Legion"] = 6,
+        ["Battle for Azeroth"] = 7,
+        ["Shadowlands"] = 8,
+        ["Dragonflight"] = 9,
+        ["The War Within"] = 10,
+        ["Midnight"] = 11,
+        ["Argus"] = 12,
+        ["Cataclysm"] = 13,
+        ["Class Halls"] = 14,
+        ["Dungeons"] = 15,
+        ["Dragonflight Dreamsurge"] = 16,
+        ["Shadowlands Covenant"] = 17,
     }
 
     -- 1️⃣ Sort expansions by release order
@@ -34,10 +34,12 @@ local function SortVendorData(sortBy)
         return (expansionOrder[a.name] or 999) < (expansionOrder[b.name] or 999)
     end)
 
-    -- 2️⃣ Sort vendors inside each expansion
-    for _, expansion in ipairs(VendorData) do
-        if expansion.vendors then
-            table.sort(expansion.vendors, function(a, b)
+    --- 2️⃣ Sort vendors inside each expansion
+for _, expansion in ipairs(VendorData) do
+    if expansion.continents then
+        -- Loop through each continent and sort its vendors
+        for _, continent in ipairs(expansion.continents) do
+            table.sort(continent.vendors, function(a, b)
                 if sortBy == "zone" then
                     if a.zone == b.zone then
                         return a.name < b.name
@@ -49,7 +51,22 @@ local function SortVendorData(sortBy)
                 end
             end)
         end
+    elseif expansion.vendors then
+        -- Sort vendors directly (for expansions without continents)
+        table.sort(expansion.vendors, function(a, b)
+            if sortBy == "zone" then
+                if a.zone == b.zone then
+                    return a.name < b.name
+                else
+                    return a.zone < b.zone
+                end
+            else
+                return a.name < b.name
+            end
+        end)
     end
+end
+
 end
 
 
@@ -289,8 +306,128 @@ filterButton:SetupMenu(function(dropdown, rootDescription)
     end)
 end)
 
+-- =====================================
+-- 🧭 Zone Filter Dropdown using WoW template
+-- =====================================
+
+local expansionFilter = "All"
+local continentFilter = "All"
+local zoneFilter = "All"
+local showVisited = true  -- toggle for visited vendors
+
+-- Create the dropdown button using the same WoW template
+local zoneFilterButton = CreateFrame("DropdownButton", "DV_ZoneFilterDropdown", frame, "WowStyle1FilterDropdownTemplate")
+zoneFilterButton:SetSize(160, 24)
+zoneFilterButton:SetPoint("TOPLEFT", 110, -60)
+zoneFilterButton:SetText("Filters")
+zoneFilterButton.Text:ClearAllPoints()
+zoneFilterButton.Text:SetPoint("CENTER")
+
+-- Helper function to build the unique lists
+-- 🧩 Safe helper to generate unique values for dropdowns
+local function GetUniqueValues(field, filter1, value1, filter2, value2)
+    local list = { "All" }
+    local added = {}
+
+    for _, expansion in ipairs(VendorData) do
+        -- Expansion level
+        if field == "expansion" then
+            if not added[expansion.name] then
+                table.insert(list, expansion.name)
+                added[expansion.name] = true
+            end
+        end
+
+        -- Continent level
+        if field == "continent" then
+            if not expansion.continents or #expansion.continents == 0 then
+                -- Treat expansions without continents as a pseudo-continent
+                if not added[expansion.name] then
+                    table.insert(list, expansion.name)
+                    added[expansion.name] = true
+                end
+            else
+                for _, continent in ipairs(expansion.continents) do
+                    if (not filter1 or filter1 == "All" or expansion.name == value1) and not added[continent.name] then
+                        table.insert(list, continent.name)
+                        added[continent.name] = true
+                    end
+                end
+            end
+        end
+
+        -- Zone level
+        if field == "zone" then
+            if not expansion.continents or #expansion.continents == 0 then
+                for _, vendor in ipairs(expansion.vendors or {}) do
+                    if vendor.zone and not added[vendor.zone] then
+                        table.insert(list, vendor.zone)
+                        added[vendor.zone] = true
+                    end
+                end
+            else
+                for _, continent in ipairs(expansion.continents or {}) do
+                    if (not filter1 or filter1 == "All" or expansion.name == value1)
+                        and (not filter2 or filter2 == "All" or continent.name == value2) then
+                        for _, vendor in ipairs(continent.vendors or {}) do
+                            if vendor.zone and not added[vendor.zone] then
+                                table.insert(list, vendor.zone)
+                                added[vendor.zone] = true
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    return list
+end
+
+
+
+-- Dropdown menu setup
+zoneFilterButton:SetupMenu(function(dropdown, rootDescription)
+    -- Hide Completed toggle
+    rootDescription:CreateCheckbox("Hide Completed",
+        function() return not showVisited end,
+        function()
+            showVisited = not showVisited
+            BuildVendorUI()
+        end
+    )
+    rootDescription:CreateDivider()
+
+    -- Expansion filter
+    rootDescription:CreateTitle("Expansion")
+    for _, expansion in ipairs(GetUniqueValues("expansion")) do
+        rootDescription:CreateCheckbox(expansion,
+            function() return expansionFilter == expansion end,
+            function()
+                expansionFilter = expansion
+                continentFilter = "All"
+                zoneFilter = "All"
+                BuildVendorUI()
+            end
+        )
+    end
+
+
+
+    -- Reset filters
+    rootDescription:CreateDivider()
+    rootDescription:CreateButton("Reset Filters", function()
+        expansionFilter = "All"
+        continentFilter = "All"
+        zoneFilter = "All"
+        showVisited = true
+        BuildVendorUI()
+    end)
+end)
+
+
 local minimapCheckbox = CreateFrame("CheckButton", "DV_MinimapCheckbox", frame, "UICheckButtonTemplate")
-minimapCheckbox:SetPoint("TOPLEFT", filterButton, "TOPRIGHT", 10, 0)
+minimapCheckbox:SetPoint("TOPLEFT", filterButton, "TOPRIGHT", 110, 0)
 minimapCheckbox:SetSize(26, 26)
 local minimapCheckboxText = minimapCheckbox:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 minimapCheckboxText:SetPoint("LEFT", minimapCheckbox, "RIGHT", 2, 0)
@@ -406,10 +543,23 @@ local function CreateVendorHeader(parent, group, y, visibleCount, totalCount)
     visibleCount = visibleCount or 0
     totalCount   = totalCount or (group.vendors and #group.vendors or 0)
 
-    if collapsedHeaders[group.name] == nil then
-        collapsedHeaders[group.name] = true
-    end
-    local collapsed = collapsedHeaders[group.name]
+    -- If group is an expansion with continents, use "Expansion - Continent" as the key
+local headerKey
+if group.continents then
+    headerKey = group.name -- top-level expansion header
+elseif group.parentName then
+    -- for continents inside an expansion
+    headerKey = group.parentName .. " - " .. group.name
+else
+    headerKey = group.name
+end
+
+-- Initialize collapsed state if nil
+if collapsedHeaders[headerKey] == nil then
+    collapsedHeaders[headerKey] = true
+end
+local collapsed = collapsedHeaders[headerKey]
+
 
     local header = CreateFrame("Button", nil, parent)
     header:SetPoint("TOPLEFT", 0, y)
@@ -566,17 +716,29 @@ function BuildVendorUI()
         end
     end
 
-    -- 2️⃣ Loop through each expansion/group
-    for _, group in ipairs(VendorData) do
-        local totalVendors = group.vendors and #group.vendors or 0
+-- 2️⃣ Loop through each expansion and its continents
+for _, expansion in ipairs(VendorData) do
+    local subGroups = expansion.continents
+    if not subGroups or #subGroups == 0 then
+        subGroups = { expansion } -- treat expansion as a single group
+    end
+
+    for _, subGroup in ipairs(subGroups) do
+        local totalVendors = subGroup.vendors and #subGroup.vendors or 0
         local visibleVendors = {}
 
-        -- Filter vendors by settings
-        for _, vendor in ipairs(group.vendors or {}) do
-            local passesHide = not (not showVisited and vendor.completed)
-            local passesFaction = (factionFilter == "All" or vendor.faction == factionFilter)
+        for _, vendor in ipairs(subGroup.vendors or {}) do
+            -- Attach reference data for filtering
+            vendor.expansion = expansion.name
+            vendor.continent = subGroup.name or expansion.name
 
-            if passesHide and passesFaction then
+            local passesFaction = (factionFilter == "All" or vendor.faction == factionFilter)
+            local passesExpansion = (expansionFilter == "All" or vendor.expansion == expansionFilter)
+            local passesContinent = (continentFilter == "All" or vendor.continent == continentFilter)
+            local passesZone = (zoneFilter == "All" or vendor.zone == zoneFilter)
+            local passesVisited = not (not showVisited and vendor.completed)
+
+            if passesFaction and passesExpansion and passesContinent and passesZone and passesVisited then
                 table.insert(visibleVendors, vendor)
             end
         end
@@ -584,17 +746,15 @@ function BuildVendorUI()
         if #visibleVendors > 0 then
             hasContent = true
 
-            -- Create the group header (show visible / total)
-            local header, collapsed, newY = CreateVendorHeader(scrollChild, group, y, #visibleVendors, totalVendors)
+            -- Create header
+            local header, collapsed, newY = CreateVendorHeader(scrollChild, subGroup, y, #visibleVendors, totalVendors)
             y = newY
 
-            -- Create lines for visible vendors if not collapsed
+            -- Create visible vendor lines
             if not collapsed then
                 local originalY = y
                 for _, vendor in ipairs(visibleVendors) do
-                    if vendor then
-                        y = CreateVendorLine(scrollChild, vendor, y)
-                    end
+                    y = CreateVendorLine(scrollChild, vendor, y)
                 end
                 if y < originalY then
                     y = y - 10 -- spacing after group
@@ -602,6 +762,10 @@ function BuildVendorUI()
             end
         end
     end
+end
+
+
+
 
     -- If no vendors are visible
     if not hasContent then
