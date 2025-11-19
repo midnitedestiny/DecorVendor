@@ -5,41 +5,125 @@ local NEUTRAL_ICON_TEXTURE = "Interface\\AddOns\\DecorVendor\\Assets\\neutral"
 print("DecorVendor loaded")
 print("Loaded " .. tostring(#VendorData) .. " vendor categories!")
 
+-- Detect TomTom
+local hasTomTom = false
+if C_AddOns and C_AddOns.IsAddOnLoaded then
+    hasTomTom = C_AddOns.IsAddOnLoaded("TomTom")
+elseif IsAddOnLoaded then
+    hasTomTom = IsAddOnLoaded("TomTom")
+end
+
+if not hasTomTom then
+    print("|cffffcc00DecorVendor: No waypoint addon detected. Coordinates button disabled.|r")
+end
 
 
 local function SortVendorData(sortBy)
-    -- Optional: define expansion order for correct release order
+
+    ----------------------------------------------------
+    -- 1️⃣ Sort EXPANSIONS by release order
+    ----------------------------------------------------
     local expansionOrder = {
         ["Classic"] = 1,
-        ["The Burning Crusade"]= 2,
+        ["Burning Crusade"]= 2,
         ["Wrath of the Lich King"] = 3,
-        ["Mists of Pandaria"] = 4,
-        ["Warlords of Draenor"] = 5,
-        ["Legion"] = 6,
-        ["Battle for Azeroth"] = 7,
-        ["Shadowlands"] = 8,
-        ["Dragonflight"] = 9,
-        ["The War Within"] = 10,
-        ["Midnight"] = 11,
-        ["Argus"] = 12,
-        ["Cataclysm"] = 13,
-        ["Class Halls"] = 14,
-        ["Dungeons"] = 15,
-        ["Dragonflight Dreamsurge"] = 16,
-        ["Shadowlands Covenant"] = 17,
+        ["Cataclysm"]= 4,
+        ["Mists of Pandaria"] = 5,
+        ["Warlords of Draenor"] = 6,
+        ["Legion"] = 7,
+        ["Battle for Azeroth"] = 8,
+        ["Shadowlands"] = 9,
+        ["Dragonflight"] = 10,
+        ["The War Within"] = 11,
+        ["Midnight"] = 12,
+        ["Dungeons"] = 13,
+        ["Raids"] = 14,
     }
 
-    -- 1️⃣ Sort expansions by release order
     table.sort(VendorData, function(a, b)
         return (expansionOrder[a.name] or 999) < (expansionOrder[b.name] or 999)
     end)
 
-    --- 2️⃣ Sort vendors inside each expansion
-for _, expansion in ipairs(VendorData) do
-    if expansion.continents then
-        -- Loop through each continent and sort its vendors
-        for _, continent in ipairs(expansion.continents) do
-            table.sort(continent.vendors, function(a, b)
+
+
+    ----------------------------------------------------
+    -- 2️⃣ SPECIAL HANDLING: Sort continents for ALL expansions
+    --     (because each expansion has many 1-continent tables)
+    ----------------------------------------------------
+
+    local function SortExpansionContinents(expansionName)
+        local idxList = {}
+        local tblList = {}
+
+        -- Gather all matching expansion entries
+        for i, exp in ipairs(VendorData) do
+            if exp.name == expansionName then
+                table.insert(idxList, i)
+                table.insert(tblList, exp)
+            end
+        end
+
+        -- Skip expansions with no continent tables
+        if #tblList == 0 then return end
+
+        -- Sort by the continent name
+        table.sort(tblList, function(a, b)
+            local aName = a.continents and a.continents[1] and a.continents[1].name or ""
+            local bName = b.continents and b.continents[1] and b.continents[1].name or ""
+            return aName < bName
+        end)
+
+        -- Put sorted tables back in their same spots
+        for n, index in ipairs(idxList) do
+            VendorData[index] = tblList[n]
+        end
+    end
+
+    -- List ALL expansions that need special continent sorting
+    local expansionsToSort = {
+        "Classic",
+        "Burning Crusade",
+        "Wrath of the Lich King",
+        "Cataclysm",
+        "Mists of Pandaria",
+        "Warlords of Draenor",
+        "Legion",
+        "Battle for Azeroth",
+        "Shadowlands",
+        "Dragonflight",
+        "The War Within",
+        "Midnight",
+    }
+
+    for _, name in ipairs(expansionsToSort) do
+        SortExpansionContinents(name)
+    end
+
+
+
+    ----------------------------------------------------
+    -- 3️⃣ Sort vendors within each continent / expansion
+    ----------------------------------------------------
+    for _, expansion in ipairs(VendorData) do
+        if expansion.continents then
+            -- Multi-continent structure (or 1 per table)
+            for _, continent in ipairs(expansion.continents) do
+                table.sort(continent.vendors, function(a, b)
+                    if sortBy == "zone" then
+                        if a.zone == b.zone then
+                            return a.name < b.name
+                        else
+                            return a.zone < b.zone
+                        end
+                    else
+                        return a.name < b.name
+                    end
+                end)
+            end
+
+        elseif expansion.vendors then
+            -- No continents, vendors directly on expansion
+            table.sort(expansion.vendors, function(a, b)
                 if sortBy == "zone" then
                     if a.zone == b.zone then
                         return a.name < b.name
@@ -51,27 +135,15 @@ for _, expansion in ipairs(VendorData) do
                 end
             end)
         end
-    elseif expansion.vendors then
-        -- Sort vendors directly (for expansions without continents)
-        table.sort(expansion.vendors, function(a, b)
-            if sortBy == "zone" then
-                if a.zone == b.zone then
-                    return a.name < b.name
-                else
-                    return a.zone < b.zone
-                end
-            else
-                return a.name < b.name
-            end
-        end)
     end
-end
 
 end
 
 
 
-vendorSettings = vendorSettings or { scale = 1.0, hideFound = false, completedVendors = {}, minimap = { hide = false } } -- stores UI scale & hide/show visited
+
+
+vendorSettings = vendorSettings or { scale = 1.0, hideFound = false, completedVendors = {}, minimap = { hide = false }, filters = {  all = true, neutral = true, alliance = true, horde = true } } -- stores UI scale & hide/show visited
 local activeWidgets = {}        -- tracks all created lines and headers for clearing
 local collapsedHeaders = {}     -- tracks which expansion/vendor group headers are collapsed
 local LibDBIcon = LibStub("LibDBIcon-1.0", true)
@@ -114,6 +186,8 @@ frame:SetScript("OnMouseUp", function(self, button)
         self:StopMovingOrSizing()
     end
 end)
+ 
+
 
 
 local supportFrame = CreateFrame("Frame", "DV_SupportFrame", UIParent, "BackdropTemplate")
@@ -225,6 +299,7 @@ infoIcon:SetScript("OnEnter", function(self)
   GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
   GameTooltip:AddLine("Decor Vendor Tips", 1, 0.82, 0)
   GameTooltip:AddLine("More vendors coming soon to the database!", 1, 1, 1, true)
+  GameTooltip:AddLine("Waypoints only show with TomTom Installed", 1, 1, 1, true)
   GameTooltip:Show()
 end)
 
@@ -268,43 +343,44 @@ closeBtn:SetSize(28, 28)
 -- =====================================
 
 local factionFilter = "All"
-local showVisited = true  -- toggle for visited vendors
 
 -- Create the filter dropdown button using WoW template
 local filterButton = CreateFrame("DropdownButton", "DV_FactionFilterDropdown", frame, "WowStyle1FilterDropdownTemplate")
-filterButton:SetSize(140, 24)
+filterButton:SetSize(100, 24)
 filterButton:SetPoint("TOPLEFT", 10, -60)
 filterButton:SetText("Filters")
 filterButton.Text:ClearAllPoints()
 filterButton.Text:SetPoint("CENTER")
 
+
 -- Setup the dropdown menu
 filterButton:SetupMenu(function(dropdown, rootDescription)
-    -- Hide Visited / Completed toggle
-    rootDescription:CreateCheckbox("Hide Completed", 
-        function() return not showVisited end,  -- checked if we are hiding visited
-        function() showVisited = not showVisited; BuildVendorUI() end
+    
+    rootDescription:CreateDivider()
+
+    
+-- Faction options
+for _, faction in ipairs({"All", "Alliance", "Horde", "Neutral"}) do
+    rootDescription:CreateCheckbox(
+        faction,  -- checkbox label
+        function() 
+            return factionFilter == faction  -- checked if this faction is active
+        end,
+        function() 
+            factionFilter = faction
+            BuildVendorUI()  -- rebuild UI when clicked
+        end
     )
-
+end
+	
     rootDescription:CreateDivider()
-
-    -- Faction options
-    for _, faction in ipairs({"All", "Alliance", "Horde", "Neutral"}) do
-        rootDescription:CreateCheckbox(faction,
-            function() return factionFilter == faction end,  -- checked if this faction is active
-            function() factionFilter = faction; BuildVendorUI() end
-        )
-    end
-
-    rootDescription:CreateDivider()
-
     -- Reset Filters button
     rootDescription:CreateButton("Reset Filters", function()
         factionFilter = "All"
-        showVisited = true
         BuildVendorUI()
     end)
 end)
+
 
 -- =====================================
 -- 🧭 Zone Filter Dropdown using WoW template
@@ -313,15 +389,17 @@ end)
 local expansionFilter = "All"
 local continentFilter = "All"
 local zoneFilter = "All"
-local showVisited = true  -- toggle for visited vendors
 
 -- Create the dropdown button using the same WoW template
 local zoneFilterButton = CreateFrame("DropdownButton", "DV_ZoneFilterDropdown", frame, "WowStyle1FilterDropdownTemplate")
-zoneFilterButton:SetSize(160, 24)
 zoneFilterButton:SetPoint("TOPLEFT", 110, -60)
-zoneFilterButton:SetText("Filters")
+zoneFilterButton:SetText("Filter")
 zoneFilterButton.Text:ClearAllPoints()
-zoneFilterButton.Text:SetPoint("CENTER")
+zoneFilterButton.Text:SetPoint("Center")
+zoneFilterButton:SetSize(50, 24)
+
+
+
 
 -- Helper function to build the unique lists
 -- 🧩 Safe helper to generate unique values for dropdowns
@@ -388,14 +466,6 @@ end
 
 -- Dropdown menu setup
 zoneFilterButton:SetupMenu(function(dropdown, rootDescription)
-    -- Hide Completed toggle
-    rootDescription:CreateCheckbox("Hide Completed",
-        function() return not showVisited end,
-        function()
-            showVisited = not showVisited
-            BuildVendorUI()
-        end
-    )
     rootDescription:CreateDivider()
 
     -- Expansion filter
@@ -420,10 +490,10 @@ zoneFilterButton:SetupMenu(function(dropdown, rootDescription)
         expansionFilter = "All"
         continentFilter = "All"
         zoneFilter = "All"
-        showVisited = true
         BuildVendorUI()
     end)
 end)
+
 
 
 local minimapCheckbox = CreateFrame("CheckButton", "DV_MinimapCheckbox", frame, "UICheckButtonTemplate")
@@ -624,6 +694,8 @@ local collapsed = collapsedHeaders[headerKey]
 end
 
 
+
+
 -- Create vendor line
 local function CreateVendorLine(parent, vendor, y)
     if vendorSettings.hideFound and vendor.completed then return y end
@@ -656,24 +728,46 @@ local function CreateVendorLine(parent, vendor, y)
         zoneText:SetText(vendor.zone)
         zoneText:SetTextColor(0.7, 0.7, 0.7, 1)
     end
+		 
+
+ 
 
      --  Add TomTom waypoint button
-    if TomTom and vendor.mapID and vendor.x and vendor.y then
-        local waypointBtn = CreateFrame("Button", nil, line, "UIPanelButtonTemplate")
-        waypointBtn:SetSize(80, 18)
-        waypointBtn:SetPoint("RIGHT", -240, 0)
-        waypointBtn:SetText("Waypoint")
+   if hasTomTom and vendor.mapID and vendor.x and vendor.y then
+    local waypointBtn = CreateFrame("Button", nil, line, "UIPanelButtonTemplate")
+    waypointBtn:SetSize(80, 18)
+    waypointBtn:SetPoint("RIGHT", -240, 0)
+    waypointBtn:SetText("Waypoint")
 
-        waypointBtn:SetScript("OnClick", function()
-            TomTom:AddWaypoint(vendor.mapID, vendor.x, vendor.y, {
-                title = vendor.name .. " - " .. (vendor.zone or ""),
-                persistent = false,
-                minimap = true,
-                world = true,
-            })
-            print("|cff33ff99DecorVendor:|r Waypoint added for " .. vendor.name)
-        end)
-    end
+    -- Waypoint tooltip
+    local mapInfo = C_Map.GetMapInfo(vendor.mapID)
+    local mapName = mapInfo and mapInfo.name or "Unknown"
+    local xPct = math.floor(vendor.x * 10000) / 100
+    local yPct = math.floor(vendor.y * 10000) / 100
+    local coordString = string.format("%s %.2f %.2f", mapName, xPct, yPct)
+
+    waypointBtn:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:AddLine(vendor.name, 1, 1, 0)
+        GameTooltip:AddLine(coordString, 0, 1, 0)
+        GameTooltip:Show()
+    end)
+
+    waypointBtn:SetScript("OnLeave", function()
+        GameTooltip:Hide()
+    end)
+
+    waypointBtn:SetScript("OnClick", function()
+        TomTom:AddWaypoint(vendor.mapID, vendor.x, vendor.y, {
+            title = vendor.name .. " - " .. (vendor.zone or ""),
+            persistent = false,
+            minimap = true,
+            world = true,
+        })
+        print("|cff33ff99DecorVendor:|r Waypoint added for " .. vendor.name)
+    end)
+end
+
 
     line:SetScript("OnEnter", function()
         text:SetTextColor(1, 0.82, 0, 1)
@@ -736,9 +830,8 @@ for _, expansion in ipairs(VendorData) do
             local passesExpansion = (expansionFilter == "All" or vendor.expansion == expansionFilter)
             local passesContinent = (continentFilter == "All" or vendor.continent == continentFilter)
             local passesZone = (zoneFilter == "All" or vendor.zone == zoneFilter)
-            local passesVisited = not (not showVisited and vendor.completed)
 
-            if passesFaction and passesExpansion and passesContinent and passesZone and passesVisited then
+            if passesFaction and passesExpansion and passesContinent and passesZone then
                 table.insert(visibleVendors, vendor)
             end
         end
@@ -772,7 +865,7 @@ end
         local msg = scrollChild:CreateFontString(nil, "OVERLAY")
         msg:SetFont(STANDARD_TEXT_FONT, 14)
         msg:SetPoint("TOP", 0, -50)
-        msg:SetText("All vendors visited or filtered out!\nGreat job!")
+        msg:SetText("No Vendors needed for this faction and or expansion!\nGreat job!")
         msg:SetTextColor(0.2, 1, 0.2, 1)
         table.insert(activeWidgets, msg)
     end

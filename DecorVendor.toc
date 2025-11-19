@@ -2,13 +2,35 @@
 ## Title: Decor Vendors
 ## Notes: Tracks vendors that sell housing decor
 ## Author: Midnitedestiny
-## Version: 1.06
-## IconTexture: Interface\AddOns\DecorVendor\Assets\DecorVendor.tga
+## Version: 1.09 
+## IconTexture: Interface\AddOns\DecorVendor\Assets\DecorVendor
 ## SavedVariable: vendorsettings, dvdb
-## OptionalDeps: LibStub, CallbackHandler-1.0, LibDataBroker-1.1, TomTom
+## OptionalDeps:TomTom
 
+
+
+Libs\LibStub\Libstub.lua
+Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
+Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
 Libs\LibDBIcon-1.0.lua
 Libs\Libs.xml
+
+
+BattleVendors.lua
+BurningCrusadeVendors.lua
+CataclysmVendors.lua
+ClassicVendors.lua
+DragonVendors.lua
+DungeonVendors.lua
+LegionVendors.lua
+MidnightVendors.lua
+MOPVendors.lua
+RaidVendors.lua
+ShadowlandsVendors.lua
+WarlordsVendors.lua
+WarVendors.lua
+WrathoftheLichKingVendors.lua
+
 VendorData.lua
 DecorVendor.lua
 
