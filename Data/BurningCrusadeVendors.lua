@@ -5,7 +5,7 @@ local BurningCrusadeVendors = {
     {
       name = "Ghostlands",
       vendors = {
-      { zone = "Tranquillien", name = "Provesioner Vredigar", faction = "Horde" , mapID = 101, x = 0.4760, y = 0.3220 },
+      { zone = "Tranquillien - Pre Midnight", name = "Provisioner Vredigar", faction = "Horde" , mapID = 101, x = 0.4760, y = 0.3220 },
       }
     }
   }

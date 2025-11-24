@@ -5,7 +5,7 @@ local MOPVendors = {
     {
       name = "Jade Forest",
       vendors = {
-        { zone = "Arboretum", name = "San Redscale", faction = "Neutral", mapID = 371, x = 0.5673, y = 0.4439 },
+        { zone = "Arboretum", name = "San Redscale", faction = "Neutral", mapID = 371, x = 0.5670, y = 0.4438 },
       }
     },
   }
@@ -16,7 +16,7 @@ local MOPVendors = {
     {
       name = "Kun-Lai Summit",
       vendors = {
-        { zone = "One Keg", name = "Brother Furtrim", faction = "Neutral", mapID = 379, x = 0.5722, y = 0.6101 },
+        { zone = "One Keg", name = "Brother Furtrim", faction = "Neutral", mapID = 379, x = 0.5724, y = 0.6097 },
       }
     },
   }
@@ -28,7 +28,7 @@ local MOPVendors = {
       name = "Vale of Eternal Blossoms - Shrine of 2 Moons",
       vendors = {
         { zone = "Shrine of 2 Moons", name = "Sage Lotusbloom", faction = "Horde", mapID = 390, x = 0.6281, y = 0.2336 },
-		{ zone = "Shrine of 2 Moons", name = "Jaluu the Generous", faction = "Horde", mapID = 390, x = TBA , y = TBA },
+		{ zone = "Shrine of 2 Moons", name = "Jaluu the Generous", faction = "Horde", mapID = 390, x = 0.6323 , y = 0.2211 },
       }
     },
   }
@@ -40,7 +40,7 @@ local MOPVendors = {
       name = "Vale of Eternal Blossoms - Shrine of 7 Stars",
       vendors = {
         { zone = "Shrine of 7 Stars", name = "Sage Whiteheart", faction = "Alliance", mapID = 390, x = 0.8464, y = 0.6364 },
-		{ zone = "Shrine of 7 Stars", name = "Jaluu the Generous", faction = "Alliance", mapID = 390, x = TBA, y = TBA },
+		{ zone = "Shrine of 7 Stars", name = "Jaluu the Generous", faction = "Alliance", mapID = 390, x = 0.8425, y = 0.6278 },
       }
     },
   }

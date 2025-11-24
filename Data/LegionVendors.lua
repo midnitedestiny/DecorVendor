@@ -16,7 +16,7 @@ local LegionVendors = {
 	{
 	  name = "Azsuna",
       vendors = {
-        { zone = "TBA", name = "Berazus", faction = "Neutral" , mapID = TBA, x = TBA, y = TBA },
+        { zone = "Leyhollow Cave", name = "Berazus", faction = "Neutral" , mapID = 630, x = 0.4780, y = 0.2333 },
 	  }
 	}
   }
@@ -27,8 +27,8 @@ local LegionVendors = {
 	{
 	  name = "Dalaran",
       vendors = {
-        { zone = "Dalaran", name = "Rasil Fireborne", faction = "Neutral" , mapID = TBA, x = TBA, y = TBA },
-		{ zone = "Dalaran", name = "Val'zuun", faction = "Neutral" , mapID = TBA, x = TBA, y = TBA },
+        { zone = "Dalaran", name = "Rasil Fireborne", faction = "Neutral" , mapID = 626, x = 0.4340, y = 0.4940 },
+		{ zone = "Dalaran", name = "Val'zuun", faction = "Neutral" , mapID = 628, x = 0.6740, y = 0.6320 },
 		{ zone = "Sunreaver Sanctuary - Filthy Animal", name = "Halenthos Brightstride", faction = "Horde", mapID = 627, x = 0.670, y = 0.330 },
 	  }
 	}
@@ -40,9 +40,9 @@ local LegionVendors = {
 	{
 	  name = "Highmountain",
       vendors = {
-		{ zone = "Thunder Totem", name = "Ransa Greyfeather", faction = "Neutral", mapID = 750, x = 0.550, y = 0.760 },
-        { zone = "Thunder Totem", name = "Torv Dubstomp", faction = "Neutral", mapID = 750, x = 0.380, y = 0.460 },
-		{ zone = "Thunder Totem", name = "Crafty Palu", faction = "Neutral", mapID = 750, x = TBA, y = TBA },
+		{ zone = "Thunder Totem", name = "Ransa Greyfeather", faction = "Neutral", mapID = 750, x = 0.3809, y = 0.4595 },
+        { zone = "Thunder Totem", name = "Torv Dubstomp", faction = "Neutral", mapID = 750, x = 0.5480, y = 0.7808 },
+		{ zone = "Shipwreck Cove", name = "Crafty Palu", faction = "Neutral", mapID = 650, x = 0.4164, y = 0.1046 },
 	  }
 	}
   }
@@ -55,11 +55,11 @@ local LegionVendors = {
       vendors = {
         { zone = "Shal'Aran", name = "First Arcanist Thalyssra", faction = "Neutral", mapID = 680, x = 0.360, y = 0.450 },
         { zone = "The Grand Promenade", name = "Leyweaver Inondra", faction = "Neutral", mapID = 680, x = 0.402, y = 0.696 },
-		{ zone = "TBA", name = "Jocenna", faction = "Neutral", mapID = 680, x = TBA, y = TBA },
-		{ zone = "TBA", name = "Mrgrgrl", faction = "Neutral", mapID = 680, x = TBA, y = TBA },
-		{ zone = "TBA", name = "Mynde", faction = "Neutral", mapID = 680, x = TBA, y = TBA },
-		{ zone = "TBA", name = "Sileas Duskvine", faction = "Neutral", mapID = 680, x = TBA, y = TBA },
-		{ zone = "TBA", name = "Sundries Merchant", faction = "Neutral", mapID = 680, x = TBA, y = TBA },
+		{ zone = "Concourse of Destiny", name = "Jocenna", faction = "Neutral", mapID = 680, x = 0.4964, y = 0.6284 },
+		{ zone = "Sundered Shoals", name = "Mrgrgrl", faction = "Neutral", mapID = 680, x = 0.1512, y = 0.5335 },
+		{ zone = "Shimmershade Garden", name = "Mynde", faction = "Neutral", mapID = 680, x = 0.4557, y = 0.6916 },
+		{ zone = "Irongrove Retreat", name = "Sileas Duskvine", faction = "Neutral", mapID = 680, x = 0.2623, y = 0.3230 },
+		{ zone = "Evermoon Commons", name = "Sundries Merchant", faction = "Neutral", mapID = 680, x = 0.5091, y = 0.7779 },
       }
 	}
   }
@@ -72,7 +72,7 @@ local LegionVendors = {
       vendors = {
         { zone = "Lorlathil", name = "Selfira Ambergrove", faction = "Neutral", mapID = 641, x = 0.540, y = 0.720 },
         { zone = "Lorlathil", name = "Sylvia Hartshorn", faction = "Neutral", mapID = 641, x = 0.5469, y = 0.7317 },
-        { zone = "TBA", name = "Corbin Branbell", faction = "Neutral", mapID = 641, x = TBA, y = TBA },
+        { zone = "Bradenbrook", name = "Corbin Branbell", faction = "Neutral", mapID = 641, x = 0.4209, y = 0.5938 },
         { zone = "Field of Dreamers (patrols)", name = "Hilseth Travelstride", faction = "Neutral", mapID = 641, x = 0.570, y = 0.750 },
         { zone = "Lightsong", name = "Myria Glenbrook", faction = "Neutral", mapID = 641, x = 0.600, y = 0.840 },
       }

@@ -16,7 +16,7 @@ local ShadowlandsVendors = {
     {
       name = "The Maw",
       vendors = {
-        { zone = "Ve'nari's Refuge", name = "Ve'nari", faction = "Neutral" , mapID = 1543, x = 0.4680, y = 0.4160 },
+        { zone = "Ve'nari's Refuge", name = "Ve'nari", faction = "Neutral" , mapID = 1543, x = 0.4692, y = 0.4171 },
       }
     },
   }

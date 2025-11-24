@@ -5,7 +5,9 @@ local WarlordsVendors = {
     {
       name = "Frostwall",
       vendors = {
-        { zone = "Horde Garrison", name = "Sergeant Grimjaw", faction = "Horde", mapID = 590, x = 0.446, y = 0.490 },
+        { zone = "Barracks", name = "Moz'def", faction = "Horde", mapID = 590, x = 0.6046, y = 0.5106 },
+		{ zone = "Horde Garrison", name = "Supplymaster Eri", faction = "Horde", mapID = 590, x = 0.3641, y = 0.4009 },
+		{ zone = "Horde Garrison Tier 3", name = "Sergeant Grimjaw", faction = "Horde", mapID = 590, x = 0.446, y = 0.490 },
       }
     },
   }
@@ -16,7 +18,9 @@ local WarlordsVendors = {
     {
       name = "Lunarfall",
       vendors = {
-        { zone = "Alliance Garrison", name = "Sergeant Crowler", faction = "Alliance", mapID = 582, x = 0.3758, y = 0.3610 },
+        { zone = "Alliance Garrison Tier 3", name = "Sergeant Crowler", faction = "Alliance", mapID = 582, x = 0.3848, y = 0.3147 },
+        { zone = "Alliance Garrison Random Patrol", name = "Maybell Maclure-Stonefield", faction = "Alliance", mapID = 582},
+        { zone = "Trading Post Tier 3", name = "Maaria", faction = "Alliance", mapID = 582, x = 0.3310, y = 0.5068 },
       }
     },
   }
@@ -27,7 +31,7 @@ local WarlordsVendors = {
     {
       name = "Shadowmoon Valley",
       vendors = {
-        { zone = "Embaari Village", name = "Artificer Kallaes", faction = "Alliance", mapID = 539, x = 0.4623, y = 0.3927 },
+        { zone = "Embaari Village", name = "Artificer Kallaes", faction = "Alliance", mapID = 539, x = 0.4625, y = 0.3928 },
       }
     },
   }

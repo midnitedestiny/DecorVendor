@@ -5,7 +5,7 @@ local WrathoftheLichKingVendors = {
     {
       name = "Borean Tundra",
       vendors = {
-      { zone = "Borean Tundra", name = "Ahlurglgr", faction = "Neutral" , mapID = 114, x = 0.4303, y = 0.1378 },
+      { zone = "Winterfin Retreat", name = "Ahlurglgr", faction = "Neutral" , mapID = 114, x = 0.4303, y = 0.1378 },
       }
 	}
   }

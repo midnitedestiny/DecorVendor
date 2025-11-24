@@ -5,7 +5,7 @@ local ClassicVendors = {
     {
       name = "Bizmo's Brawlpub'",
       vendors = {
-      { zone = "Bizmo's Brawlpub", name = "Paul North", faction = "Horde" , mapID = 503, x = 0.5099, y = 0.2847 },
+      { zone = "Bizmo's Brawlpub", name = "Paul North", faction = "Horde" , mapID = 503, x = 0.5091, y = 0.2898 },
       }
 	}
   }
@@ -128,7 +128,7 @@ local ClassicVendors = {
     {
       name = "Orgrimmar",
       vendors = {
-      { zone = "Hall of Legends", name = "Joruh", faction = "Horde" , mapID = 85, x = 0.3887, y = 0.7201 },
+      { zone = "Hall of Legends", name = "Joruh", faction = "Horde" , mapID = 85, x = 0.3881, y = 0.7195 },
       { zone = "Orgrimmar", name = "Stone Guard Nargol", faction = "Horde" , mapID = 85, x = 0.5026, y = 0.5844 },
       { zone = "The Drag", name = "Lonalo", faction = "Horde" , mapID = 85, x = 0.5855, y = 0.5034 },
       }
