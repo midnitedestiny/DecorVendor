@@ -903,8 +903,11 @@ eventFrame:SetScript("OnEvent", function()
     end
 end)
 
-SLASH_VENDOR1 = "/vendor"
-SlashCmdList["VENDOR"] = function()
+
+SLASH_DECORVENDOR1 = "/decor"
+SLASH_DECORVENDOR2 = "/dv"
+SLASH_DECORVENDOR3 = "/decorvendor"
+SlashCmdList["DECORVENDOR"] = function()
         BuildVendorUI()
     frame:Show()
 end
