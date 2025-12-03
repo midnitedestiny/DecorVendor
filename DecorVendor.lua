@@ -136,8 +136,7 @@ local function SortVendorData(sortBy)
             end)
         end
     end
-
-
+end
 
 
 
@@ -341,10 +340,7 @@ closeBtn:SetSize(28, 28)
 -- =====================================
 
 local factionFilter = "All"
-<<<<<<< Updated upstream
-=======
 local showVisited = true -- toggle for visited vendors
->>>>>>> Stashed changes
 
 -- Create the filter dropdown button using WoW template
 local filterButton = CreateFrame("DropdownButton", "DV_FactionFilterDropdown", frame, "WowStyle1FilterDropdownTemplate")

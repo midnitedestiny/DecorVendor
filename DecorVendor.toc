@@ -4,7 +4,7 @@
 ## Author: Midnitedestiny
 ## Version: 1.12 
 ## IconTexture: Interface\AddOns\DecorVendor\Assets\DecorVendor
-## SavedVariable: vendorsettings, dvdb
+## SavedVariables: vendorSettings, DVDB
 ## OptionalDeps:TomTom
 
 
