@@ -137,8 +137,6 @@ local function SortVendorData(sortBy)
         end
     end
 
-end
-
 
 
 
@@ -194,11 +192,11 @@ local supportFrame = CreateFrame("Frame", "DV_SupportFrame", UIParent, "Backdrop
 supportFrame:SetSize(400, 210)
 supportFrame:SetPoint("CENTER")
 supportFrame:SetBackdrop({
-  bgFile = "Interface\\Buttons\\WHITE8x8",
-  edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-  tile = false,
-  edgeSize = 16,
-  insets = { left = 4, right = 4, top = 4, bottom = 4 }
+    bgFile = "Interface\\Buttons\\WHITE8x8",
+    edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+    tile = false,
+    edgeSize = 16,
+    insets = { left = 4, right = 4, top = 4, bottom = 4 }
 })
 supportFrame:SetBackdropColor(0.02, 0.02, 0.02, 0.95)
 supportFrame:SetBackdropBorderColor(0.3, 0.3, 0.3, 1)
@@ -303,8 +301,8 @@ infoIcon:SetScript("OnEnter", function(self)
   GameTooltip:Show()
 end)
 
- infoIcon:SetScript("OnLeave", function(self)
-  GameTooltip:Hide()
+infoIcon:SetScript("OnLeave", function(self)
+    GameTooltip:Hide()
 end)
 
 --Support Icon
@@ -317,18 +315,18 @@ supportIconTexture:SetAllPoints(supportIcon)
 supportIcon:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight", "ADD")
 
 supportIcon:SetScript("OnEnter", function(self)
-  GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
-  GameTooltip:AddLine("Community & Support", 1, 0.82, 0)
-  GameTooltip:AddLine("\nClick to share the addon!", 1, 1, 1, true)
-  GameTooltip:Show()
+    GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+    GameTooltip:AddLine("Community & Support", 1, 0.82, 0)
+    GameTooltip:AddLine("\nClick to share the addon!", 1, 1, 1, true)
+    GameTooltip:Show()
 end)
 
 supportIcon:SetScript("OnLeave", function(self)
-  GameTooltip:Hide()
+    GameTooltip:Hide()
 end)
 
 supportIcon:SetScript("OnClick", function()
-  supportFrame:Show()
+    supportFrame:Show()
 end)
 
 -- Close button
@@ -343,6 +341,10 @@ closeBtn:SetSize(28, 28)
 -- =====================================
 
 local factionFilter = "All"
+<<<<<<< Updated upstream
+=======
+local showVisited = true -- toggle for visited vendors
+>>>>>>> Stashed changes
 
 -- Create the filter dropdown button using WoW template
 local filterButton = CreateFrame("DropdownButton", "DV_FactionFilterDropdown", frame, "WowStyle1FilterDropdownTemplate")
@@ -355,24 +357,29 @@ filterButton.Text:SetPoint("CENTER")
 
 -- Setup the dropdown menu
 filterButton:SetupMenu(function(dropdown, rootDescription)
-    
-    rootDescription:CreateDivider()
-
-    
--- Faction options
-for _, faction in ipairs({"All", "Alliance", "Horde", "Neutral"}) do
-    rootDescription:CreateCheckbox(
-        faction,  -- checkbox label
-        function() 
-            return factionFilter == faction  -- checked if this faction is active
-        end,
-        function() 
-            factionFilter = faction
-            BuildVendorUI()  -- rebuild UI when clicked
+    -- Hide Visited / Completed toggle
+    rootDescription:CreateCheckbox("Hide Completed",
+        function() return vendorSettings.hideFound end,
+        function()
+            vendorSettings.hideFound = not vendorSettings.hideFound
+            BuildVendorUI()
         end
     )
-end
-	
+
+    rootDescription:CreateDivider()
+
+    -- Faction options
+    for _, faction in ipairs({"All", "Alliance", "Horde", "Neutral"}) do
+        rootDescription:CreateCheckbox(
+            faction,
+            function() return factionFilter == faction end,
+            function()
+                factionFilter = faction
+                BuildVendorUI()
+            end
+        )
+    end
+
     rootDescription:CreateDivider()
     -- Reset Filters button
     rootDescription:CreateButton("Reset Filters", function()
@@ -504,17 +511,17 @@ minimapCheckboxText:SetPoint("LEFT", minimapCheckbox, "RIGHT", 2, 0)
 minimapCheckboxText:SetText("Minimap Button")
 
 minimapCheckbox:SetScript("OnClick", function(self)
-  if LibDBIcon then
-    if vendorSettings.showMinimapButton then
-      LibDBIcon:Hide("DecorVendor")
-      vendorSettings.showMinimapButton = false
-      print("DecorVendor minimap button hidden.")
-    else
-      LibDBIcon:Show("DecorVendor")
-      vendorSettings.showMinimapButton = true
-      print("DecorVendor minimap button shown.")
+    if LibDBIcon then
+        if vendorSettings.showMinimapButton then
+            LibDBIcon:Hide("DecorVendor")
+            vendorSettings.showMinimapButton = false
+            print("DecorVendor minimap button hidden.")
+        else
+            LibDBIcon:Show("DecorVendor")
+            vendorSettings.showMinimapButton = true
+            print("DecorVendor minimap button shown.")
+        end
     end
-  end
 end)
 
 
@@ -614,21 +621,21 @@ local function CreateVendorHeader(parent, group, y, visibleCount, totalCount)
     totalCount   = totalCount or (group.vendors and #group.vendors or 0)
 
     -- If group is an expansion with continents, use "Expansion - Continent" as the key
-local headerKey
-if group.continents then
-    headerKey = group.name -- top-level expansion header
-elseif group.parentName then
-    -- for continents inside an expansion
-    headerKey = group.parentName .. " - " .. group.name
-else
-    headerKey = group.name
-end
+    local headerKey
+    if group.continents then
+        headerKey = group.name -- top-level expansion header
+    elseif group.parentName then
+        -- for continents inside an expansion
+        headerKey = group.parentName .. " - " .. group.name
+    else
+        headerKey = group.name
+    end
 
--- Initialize collapsed state if nil
-if collapsedHeaders[headerKey] == nil then
-    collapsedHeaders[headerKey] = true
-end
-local collapsed = collapsedHeaders[headerKey]
+    -- Initialize collapsed state if nil
+    if collapsedHeaders[headerKey] == nil then
+        collapsedHeaders[headerKey] = true
+    end
+    local collapsed = collapsedHeaders[headerKey]
 
 
     local header = CreateFrame("Button", nil, parent)
@@ -712,14 +719,14 @@ local function CreateVendorLine(parent, vendor, y)
 
     -- Set the text color based on faction (no more icons)
     if vendor.faction == "Alliance" then
-        text:SetTextColor(0.3, 0.6, 1)      -- blue
+        text:SetTextColor(0.3, 0.6, 1)   -- blue
     elseif vendor.faction == "Horde" then
-        text:SetTextColor(1, 0.2, 0.2)      -- red
+        text:SetTextColor(1, 0.2, 0.2)   -- red
     else
-        text:SetTextColor(0.2, 0.8, 0.3)    -- emerald green
+        text:SetTextColor(0.2, 0.8, 0.3) -- emerald green
     end
 
-   
+
     -- Expansion/zone info
     if vendor.zone then
         local zoneText = line:CreateFontString(nil, "OVERLAY")
@@ -732,42 +739,41 @@ local function CreateVendorLine(parent, vendor, y)
 
  
 
-     --  Add TomTom waypoint button
-   if hasTomTom and vendor.mapID and vendor.x and vendor.y then
-    local waypointBtn = CreateFrame("Button", nil, line, "UIPanelButtonTemplate")
-    waypointBtn:SetSize(80, 18)
-    waypointBtn:SetPoint("RIGHT", -240, 0)
-    waypointBtn:SetText("Waypoint")
+    --  Add waypoint button (TomTom or WaypointUI)
+    if vendor.mapID and vendor.x and vendor.y then
+        local hasWaypointAddon = (TomTom ~= nil) or (WaypointUIAPI and WaypointUIAPI.Navigation)
 
-    -- Waypoint tooltip
-    local mapInfo = C_Map.GetMapInfo(vendor.mapID)
-    local mapName = mapInfo and mapInfo.name or "Unknown"
-    local xPct = math.floor(vendor.x * 10000) / 100
-    local yPct = math.floor(vendor.y * 10000) / 100
-    local coordString = string.format("%s %.2f %.2f", mapName, xPct, yPct)
+        if hasWaypointAddon then
+            local waypointBtn = CreateFrame("Button", nil, line, "UIPanelButtonTemplate")
+            waypointBtn:SetSize(80, 18)
+            waypointBtn:SetPoint("RIGHT", -240, 0)
+            waypointBtn:SetText("Waypoint")
 
-    waypointBtn:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:AddLine(vendor.name, 1, 1, 0)
-        GameTooltip:AddLine(coordString, 0, 1, 0)
-        GameTooltip:Show()
-    end)
-
-    waypointBtn:SetScript("OnLeave", function()
-        GameTooltip:Hide()
-    end)
-
-    waypointBtn:SetScript("OnClick", function()
-        TomTom:AddWaypoint(vendor.mapID, vendor.x, vendor.y, {
-            title = vendor.name .. " - " .. (vendor.zone or ""),
-            persistent = false,
-            minimap = true,
-            world = true,
-        })
-        print("|cff33ff99DecorVendor:|r Waypoint added for " .. vendor.name)
-    end)
-end
-
+            waypointBtn:SetScript("OnClick", function()
+                if TomTom then
+                    -- TomTom uses coordinates as-is (0-1 range)
+                    TomTom:AddWaypoint(vendor.mapID, vendor.x, vendor.y, {
+                        title = vendor.name .. " - " .. (vendor.zone or ""),
+                        persistent = false,
+                        minimap = true,
+                        world = true,
+                    })
+                    print("|cff33ff99DecorVendor:|r Waypoint added for " .. vendor.name)
+                elseif WaypointUIAPI and WaypointUIAPI.Navigation then
+                    -- WaypointUI uses coordinates in percentage (0-100 range)
+                    local x_percent = vendor.x * 100
+                    local y_percent = vendor.y * 100
+                    WaypointUIAPI.Navigation.NewUserNavigation(
+                        vendor.name .. " - " .. (vendor.zone or ""),
+                        vendor.mapID,
+                        x_percent,
+                        y_percent
+                    )
+                    print("|cff33ff99DecorVendor:|r Waypoint added for " .. vendor.name)
+                end
+            end)
+        end
+    end
 
     line:SetScript("OnEnter", function()
         text:SetTextColor(1, 0.82, 0, 1)
@@ -780,13 +786,13 @@ end
     end)
 
     line:SetScript("OnLeave", function()
-       if vendor.faction == "Alliance" then
-        text:SetTextColor(0.3, 0.6, 1)      -- blue
-    elseif vendor.faction == "Horde" then
-        text:SetTextColor(1, 0.2, 0.2)      -- red
-    else
-        text:SetTextColor(0.2, 0.8, 0.3)    -- emerald green
-    end
+        if vendor.faction == "Alliance" then
+            text:SetTextColor(0.3, 0.6, 1) -- blue
+        elseif vendor.faction == "Horde" then
+            text:SetTextColor(1, 0.2, 0.2) -- red
+        else
+            text:SetTextColor(0.2, 0.8, 0.3) -- emerald green
+        end
         GameTooltip:Hide()
     end)
 
@@ -810,52 +816,54 @@ function BuildVendorUI()
         end
     end
 
--- 2️⃣ Loop through each expansion and its continents
-for _, expansion in ipairs(VendorData) do
-    local subGroups = expansion.continents
-    if not subGroups or #subGroups == 0 then
-        subGroups = { expansion } -- treat expansion as a single group
-    end
-
-    for _, subGroup in ipairs(subGroups) do
-        local totalVendors = subGroup.vendors and #subGroup.vendors or 0
-        local visibleVendors = {}
-
-        for _, vendor in ipairs(subGroup.vendors or {}) do
-            -- Attach reference data for filtering
-            vendor.expansion = expansion.name
-            vendor.continent = subGroup.name or expansion.name
-
-            local passesFaction = (factionFilter == "All" or vendor.faction == factionFilter)
-            local passesExpansion = (expansionFilter == "All" or vendor.expansion == expansionFilter)
-            local passesContinent = (continentFilter == "All" or vendor.continent == continentFilter)
-            local passesZone = (zoneFilter == "All" or vendor.zone == zoneFilter)
-
-            if passesFaction and passesExpansion and passesContinent and passesZone then
-                table.insert(visibleVendors, vendor)
-            end
+    -- 2️⃣ Loop through each expansion and its continents
+    for _, expansion in ipairs(VendorData) do
+        local subGroups = expansion.continents
+        if not subGroups or #subGroups == 0 then
+            subGroups = { expansion } -- treat expansion as a single group
         end
 
-        if #visibleVendors > 0 then
-            hasContent = true
+        for _, subGroup in ipairs(subGroups) do
+            local totalVendors = subGroup.vendors and #subGroup.vendors or 0
+            local visibleVendors = {}
 
-            -- Create header
-            local header, collapsed, newY = CreateVendorHeader(scrollChild, subGroup, y, #visibleVendors, totalVendors)
-            y = newY
+            for _, vendor in ipairs(subGroup.vendors or {}) do
+                -- Attach reference data for filtering
+                vendor.expansion = expansion.name
+                vendor.continent = subGroup.name or expansion.name
 
-            -- Create visible vendor lines
-            if not collapsed then
-                local originalY = y
-                for _, vendor in ipairs(visibleVendors) do
-                    y = CreateVendorLine(scrollChild, vendor, y)
+                local passesFaction = (factionFilter == "All" or vendor.faction == factionFilter)
+                local passesExpansion = (expansionFilter == "All" or vendor.expansion == expansionFilter)
+                local passesContinent = (continentFilter == "All" or vendor.continent == continentFilter)
+                local passesZone = (zoneFilter == "All" or vendor.zone == zoneFilter)
+                local passesVisited = not (vendorSettings.hideFound and vendor.completed)
+
+                if passesFaction and passesExpansion and passesContinent and passesZone and passesVisited then
+                    table.insert(visibleVendors, vendor)
                 end
-                if y < originalY then
-                    y = y - 10 -- spacing after group
+            end
+
+            if #visibleVendors > 0 then
+                hasContent = true
+
+                -- Create header
+                local header, collapsed, newY = CreateVendorHeader(scrollChild, subGroup, y, #visibleVendors,
+                    totalVendors)
+                y = newY
+
+                -- Create visible vendor lines
+                if not collapsed then
+                    local originalY = y
+                    for _, vendor in ipairs(visibleVendors) do
+                        y = CreateVendorLine(scrollChild, vendor, y)
+                    end
+                    if y < originalY then
+                        y = y - 10 -- spacing after group
+                    end
                 end
             end
         end
     end
-end
 
 
 
@@ -911,5 +919,3 @@ SlashCmdList["DECORVENDOR"] = function()
         BuildVendorUI()
     frame:Show()
 end
-
-
