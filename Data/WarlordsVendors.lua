@@ -54,8 +54,7 @@ local WarlordsVendors = {
       name = "Stormshield",
       vendors = {
         { zone = "Stormshield", name = "Trader Caerel", faction = "Alliance", mapID = 622, x = 0.4111, y = 0.5944 },
-        { zone = "The Town Hall", name = "Vindicator Nuurem", faction = "Alliance", mapID = 622, x = 0.4649, y = 0.7664 },
-        { zone = "The Town Hall", name = "Shadow-Sage Brakoss", faction = "Alliance", mapID = 622, x = 0.4649, y = 0.7503 },
+        { zone = "The Town Hall", name = "Vindicator Nuurem", faction = "Alliance", mapID = 622, x = 0.4649, y = 0.7664 },       
       }
     },
   }
@@ -66,7 +65,6 @@ local WarlordsVendors = {
     {
       name = "Warspear",
       vendors = {
-        { zone = "Warspear Hold", name = "Ravenspeaker Skeega", faction = "Horde", mapID = 624, x = 0.5330, y = 0.5996 },
         { zone = "Warspear Hold", name = "Beska Redtusk", faction = "Horde", mapID = 624, x = 0.5383, y = 0.6219 },
       }
     },

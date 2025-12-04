@@ -91,7 +91,19 @@ if _G.WrathoftheLichKingVendors then
     end
 end
 
+if _G.ProfessionVendors then
+    for _, t in ipairs(_G.ProfessionVendors) do
+        t.isProfessionVendor = true   -- mark it
+        table.insert(VendorData, t)
+    end
+end
+
+if _G.PossiblyRemovedVendors then
+    for _, t in ipairs(_G.PossiblyRemovedVendors) do
+        table.insert(VendorData, t)
+    end
+end
+
 -- Make merged table global for your addon
 _G.VendorData = VendorData
-
 

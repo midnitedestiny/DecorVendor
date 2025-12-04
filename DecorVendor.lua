@@ -38,6 +38,7 @@ local function SortVendorData(sortBy)
         ["Midnight"] = 12,
         ["Dungeons"] = 13,
         ["Raids"] = 14,
+		["Vendors not showing Items"] = 15,
     }
 
     table.sort(VendorData, function(a, b)
@@ -108,7 +109,7 @@ local function SortVendorData(sortBy)
         if expansion.continents then
             -- Multi-continent structure (or 1 per table)
             for _, continent in ipairs(expansion.continents) do
-                table.sort(continent.vendors, function(a, b)
+                table.sort(continent.vendors, function(a, b)			
                     if sortBy == "zone" then
                         if a.zone == b.zone then
                             return a.name < b.name
@@ -298,8 +299,9 @@ infoIcon:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highligh
 infoIcon:SetScript("OnEnter", function(self)
   GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
   GameTooltip:AddLine("Decor Vendor Tips", 1, 0.82, 0)
-  GameTooltip:AddLine("More vendors coming soon to the database!", 1, 1, 1, true)
+  GameTooltip:AddLine("If you see a vendor not listed please inform me on curse!", 1, 1, 1, true)
   GameTooltip:AddLine("Waypoints only show with TomTom Installed", 1, 1, 1, true)
+  GameTooltip:AddLine("Currently some vendors aren't showing their items; as they originally had them in Beta", 1, 1, 1, true)
   GameTooltip:Show()
 end)
 
@@ -338,6 +340,7 @@ closeBtn:SetSize(28, 28)
 
 
 
+
 -- =====================================
 -- 🧭 Faction Filter Dropdown using WoW template
 -- =====================================
@@ -346,9 +349,9 @@ local factionFilter = "All"
 
 -- Create the filter dropdown button using WoW template
 local filterButton = CreateFrame("DropdownButton", "DV_FactionFilterDropdown", frame, "WowStyle1FilterDropdownTemplate")
-filterButton:SetSize(100, 24)
+filterButton:SetSize(80, 24)
 filterButton:SetPoint("TOPLEFT", 10, -60)
-filterButton:SetText("Filters")
+filterButton:SetText("Factions")
 filterButton.Text:ClearAllPoints()
 filterButton.Text:SetPoint("CENTER")
 
@@ -360,7 +363,7 @@ filterButton:SetupMenu(function(dropdown, rootDescription)
 
     
 -- Faction options
-for _, faction in ipairs({"All", "Alliance", "Horde", "Neutral"}) do
+for _, faction in ipairs({"Alliance", "Horde", "Neutral"}) do
     rootDescription:CreateCheckbox(
         faction,  -- checkbox label
         function() 
@@ -371,6 +374,11 @@ for _, faction in ipairs({"All", "Alliance", "Horde", "Neutral"}) do
             BuildVendorUI()  -- rebuild UI when clicked
         end
     )
+	
+	-- Add a divider **after "All" only**
+    if faction == "All" then
+        rootDescription:CreateDivider()
+    end
 end
 	
     rootDescription:CreateDivider()
@@ -392,11 +400,13 @@ local zoneFilter = "All"
 
 -- Create the dropdown button using the same WoW template
 local zoneFilterButton = CreateFrame("DropdownButton", "DV_ZoneFilterDropdown", frame, "WowStyle1FilterDropdownTemplate")
-zoneFilterButton:SetPoint("TOPLEFT", 110, -60)
-zoneFilterButton:SetText("Filter")
+zoneFilterButton:SetPoint("TOPLEFT", 120, -60)
+zoneFilterButton:SetText("Zones")
 zoneFilterButton.Text:ClearAllPoints()
 zoneFilterButton.Text:SetPoint("Center")
-zoneFilterButton:SetSize(50, 24)
+zoneFilterButton:SetSize(60, 24)
+
+
 
 
 
@@ -404,17 +414,21 @@ zoneFilterButton:SetSize(50, 24)
 -- Helper function to build the unique lists
 -- 🧩 Safe helper to generate unique values for dropdowns
 local function GetUniqueValues(field, filter1, value1, filter2, value2)
-    local list = { "All" }
+    local list = {}
     local added = {}
 
-    for _, expansion in ipairs(VendorData) do
-        -- Expansion level
-        if field == "expansion" then
-            if not added[expansion.name] then
-                table.insert(list, expansion.name)
-                added[expansion.name] = true
-            end
+   for _, expansion in ipairs(VendorData) do
+    -- Expansion level
+    if field == "expansion" then
+        if expansion.isProfessionVendor then
+            -- skip profession vendors
+        elseif not added[expansion.name] then
+            table.insert(list, expansion.name)
+            added[expansion.name] = true
         end
+    end
+
+
 
         -- Continent level
         if field == "continent" then
@@ -480,6 +494,10 @@ zoneFilterButton:SetupMenu(function(dropdown, rootDescription)
                 BuildVendorUI()
             end
         )
+		-- Add a divider **after "All" only**
+    if expansion == "All" then
+        rootDescription:CreateDivider()
+    end
     end
 
 
@@ -494,29 +512,63 @@ zoneFilterButton:SetupMenu(function(dropdown, rootDescription)
     end)
 end)
 
+local professionFilter = "All"
 
+-- Create the profession filter dropdown button
+local professionButton = CreateFrame("DropdownButton", "DV_ProfessionFilterDropdown", frame, "WowStyle1FilterDropdownTemplate")
+professionButton:SetSize(80, 24)
+professionButton:SetPoint("TOPLEFT", 220, -60) -- position next to faction
+professionButton:SetText("Professions")
+professionButton.Text:ClearAllPoints()
+professionButton.Text:SetPoint("CENTER")
 
-local minimapCheckbox = CreateFrame("CheckButton", "DV_MinimapCheckbox", frame, "UICheckButtonTemplate")
-minimapCheckbox:SetPoint("TOPLEFT", filterButton, "TOPRIGHT", 110, 0)
-minimapCheckbox:SetSize(26, 26)
-local minimapCheckboxText = minimapCheckbox:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-minimapCheckboxText:SetPoint("LEFT", minimapCheckbox, "RIGHT", 2, 0)
-minimapCheckboxText:SetText("Minimap Button")
+professionButton:SetupMenu(function(dropdown, root)
+    root:CreateDivider()
 
-minimapCheckbox:SetScript("OnClick", function(self)
-  if LibDBIcon then
-    if vendorSettings.showMinimapButton then
-      LibDBIcon:Hide("DecorVendor")
-      vendorSettings.showMinimapButton = false
-      print("DecorVendor minimap button hidden.")
-    else
-      LibDBIcon:Show("DecorVendor")
-      vendorSettings.showMinimapButton = true
-      print("DecorVendor minimap button shown.")
+    local professions = {}
+    local added = {}
+
+    if _G.ProfessionVendors then
+        for _, entry in ipairs(_G.ProfessionVendors) do
+            local profName = entry.continents and entry.continents[1] and entry.continents[1].name
+            if profName and not added[profName] then
+                added[profName] = true
+                table.insert(professions, profName)
+            end
+        end
     end
-  end
-end)
 
+    table.sort(professions, function(a,b)
+        if a == "All" then return true
+        elseif b == "All" then return false
+        else return a < b
+        end
+    end)
+
+    -- create checkboxes
+    for _, profession in ipairs(professions) do
+        root:CreateCheckbox(
+            profession,
+            function() return professionFilter == profession end,
+            function()
+                professionFilter = profession
+                professionButton:SetText(profession)
+                BuildVendorUI()
+            end
+        )
+
+if profession == "All" then
+            root:CreateDivider()
+        end
+    end
+
+    root:CreateDivider()
+    root:CreateButton("Reset Professions", function()
+        professionFilter = "All"
+        professionButton:SetText("Professions")
+        BuildVendorUI()
+    end)
+end)
 
 -- Only run if LibDBIcon is loaded
 if LibStub and LibStub("LibDBIcon-1.0", true) then
@@ -830,10 +882,13 @@ for _, expansion in ipairs(VendorData) do
             local passesExpansion = (expansionFilter == "All" or vendor.expansion == expansionFilter)
             local passesContinent = (continentFilter == "All" or vendor.continent == continentFilter)
             local passesZone = (zoneFilter == "All" or vendor.zone == zoneFilter)
+			local passesProfession = (professionFilter == "All" or vendor.profession == professionFilter)
 
-            if passesFaction and passesExpansion and passesContinent and passesZone then
-                table.insert(visibleVendors, vendor)
-            end
+
+            if passesFaction and passesExpansion and passesContinent and passesZone and passesProfession then
+    table.insert(visibleVendors, vendor)
+end
+
         end
 
         if #visibleVendors > 0 then

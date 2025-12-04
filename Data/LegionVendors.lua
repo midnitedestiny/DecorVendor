@@ -42,7 +42,6 @@ local LegionVendors = {
       vendors = {
 		{ zone = "Thunder Totem", name = "Ransa Greyfeather", faction = "Neutral", mapID = 750, x = 0.3809, y = 0.4595 },
         { zone = "Thunder Totem", name = "Torv Dubstomp", faction = "Neutral", mapID = 750, x = 0.5480, y = 0.7808 },
-		{ zone = "Shipwreck Cove", name = "Crafty Palu", faction = "Neutral", mapID = 650, x = 0.4164, y = 0.1046 },
 	  }
 	}
   }

@@ -19,6 +19,18 @@ local MidnightVendors = {
   name = "Midnight",
   continents = {
     {
+      name = "Harandar",
+      vendors = {
+        { zone = "The Den", name = "Maku", faction = "Neutral", mapID = 2413, x = 0.5312, y = 0.5093 },
+        { zone = "The Den", name = "Naynar", faction = "Neutral", mapID = 2413, x = 0.5095, y = 0.5074 },
+      }
+	}
+  }
+},
+{
+  name = "Midnight",
+  continents = {
+    {
       name = "Eversong Woods",
       vendors = {
 		{ zone = "Eversong Woods", name = "Neriv", faction = "Neutral", mapID = 2395, x = 0.4349, y = 0.4764 },
@@ -85,7 +97,7 @@ local MidnightVendors = {
       {
       name = "Zul'Aman",
       vendors = {
-        { zone = "Zul'Aman", name = "Tajaka Sawtusk", faction = "Neutral", mapID = 2437, x = 0.4454, y = 0.6739 },
+		{ zone = "Amani'Zar Village", name = "Magovu", faction = "Neutral", mapID = 2437, x = 0.4595, y = 0.6593 },
       }
 	}
   }
