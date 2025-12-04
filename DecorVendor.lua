@@ -5,17 +5,23 @@ local NEUTRAL_ICON_TEXTURE = "Interface\\AddOns\\DecorVendor\\Assets\\neutral"
 print("DecorVendor loaded")
 print("Loaded " .. tostring(#VendorData) .. " vendor categories!")
 
--- Detect TomTom
+-- Detect TomTom and WaypointUI
 local hasTomTom = false
-if C_AddOns and C_AddOns.IsAddOnLoaded then
-    hasTomTom = C_AddOns.IsAddOnLoaded("TomTom")
-elseif IsAddOnLoaded then
-    hasTomTom = IsAddOnLoaded("TomTom")
+local hasWaypointUI = false
+
+-- Universal addon loaded check (handles Classic + Retail)
+local function IsLoaded(addon)
+    if C_AddOns and C_AddOns.IsAddOnLoaded then
+        return C_AddOns.IsAddOnLoaded(addon)
+    elseif IsAddOnLoaded then
+        return IsAddOnLoaded(addon)
+    end
+    return false
 end
 
-if not hasTomTom then
-    print("|cffffcc00DecorVendor: No waypoint addon detected. Coordinates button disabled.|r")
-end
+hasTomTom = IsLoaded("TomTom")
+hasWaypointUI = IsLoaded("WaypointUI")
+
 
 
 local function SortVendorData(sortBy)
@@ -35,10 +41,8 @@ local function SortVendorData(sortBy)
         ["Shadowlands"] = 9,
         ["Dragonflight"] = 10,
         ["The War Within"] = 11,
-        ["Midnight"] = 12,
-        ["Dungeons"] = 13,
-        ["Raids"] = 14,
-		["Vendors not showing Items"] = 15,
+        ["Midnight"] = 12,       
+        ["Raids"] = 13,
     }
 
     table.sort(VendorData, function(a, b)
@@ -785,7 +789,7 @@ local function CreateVendorLine(parent, vendor, y)
  
 
      --  Add TomTom waypoint button
-   if hasTomTom and vendor.mapID and vendor.x and vendor.y then
+   if vendor.mapID and vendor.x and vendor.y then
     local waypointBtn = CreateFrame("Button", nil, line, "UIPanelButtonTemplate")
     waypointBtn:SetSize(80, 18)
     waypointBtn:SetPoint("RIGHT", -240, 0)
@@ -810,14 +814,31 @@ local function CreateVendorLine(parent, vendor, y)
     end)
 
     waypointBtn:SetScript("OnClick", function()
+    -- TomTom waypoint
+    if hasTomTom then
         TomTom:AddWaypoint(vendor.mapID, vendor.x, vendor.y, {
             title = vendor.name .. " - " .. (vendor.zone or ""),
             persistent = false,
             minimap = true,
             world = true,
         })
-        print("|cff33ff99DecorVendor:|r Waypoint added for " .. vendor.name)
-    end)
+    end
+	
+	-- WaypointUI (if installed)
+    if hasWaypointUI then
+        if WaypointUI.AddWaypoint then
+            WaypointUI:AddWaypoint(vendor.mapID, vendor.x, vendor.y, vendor.name)
+        elseif WaypointUI.CreateWaypoint then
+            WaypointUI:CreateWaypoint(vendor.mapID, vendor.x, vendor.y, vendor.name)
+        end   
+    end
+
+    -- Blizzard default waypoint
+    if vendor.mapID and vendor.x and vendor.y then
+        local mapPoint = UiMapPoint.CreateFromVector2D(vendor.mapID, CreateVector2D(vendor.x, vendor.y))
+        C_Map.SetUserWaypoint(mapPoint)
+    end
+end)
 end
 
 

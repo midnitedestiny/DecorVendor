@@ -27,7 +27,7 @@ local ClassicVendors = {
     {
       name = "Burning Steppes",
       vendors = {
-      { zone = "Chiselgrip", name = "Hoddruc Bladebender", faction = "Neutral" , mapID = 36, x = 0.4677, y = 0.4417 },
+      { zone = "Chiselgrip", name = "Hoddruc Bladebender", faction = "Neutral" , mapID = 36, x = 0.4678, y = 0.4485 },
       }
 	}
   }

@@ -37,12 +37,6 @@ if _G.DragonVendors then
     end
 end
 
-if _G.DungeonVendors then
-    for _, t in ipairs(_G.DungeonVendors) do
-        table.insert(VendorData, t)
-    end
-end
-
 if _G.LegionVendors then
     for _, t in ipairs(_G.LegionVendors) do
         table.insert(VendorData, t)
@@ -98,11 +92,6 @@ if _G.ProfessionVendors then
     end
 end
 
-if _G.PossiblyRemovedVendors then
-    for _, t in ipairs(_G.PossiblyRemovedVendors) do
-        table.insert(VendorData, t)
-    end
-end
 
 -- Make merged table global for your addon
 _G.VendorData = VendorData

@@ -40,17 +40,6 @@ local WarlordsVendors = {
   name = "Warlords of Draenor",
   continents = {
     {
-      name = "Spires of Arak",
-      vendors = {
-        { zone = "Veil Terokk", name = "Ruuan the Seer", faction = "Neutral", mapID = 542, x = 0.4671, y = 0.4498 },
-      }
-    },
-  }
-},
-{
-  name = "Warlords of Draenor",
-  continents = {
-    {
       name = "Stormshield",
       vendors = {
         { zone = "Stormshield", name = "Trader Caerel", faction = "Alliance", mapID = 622, x = 0.4111, y = 0.5944 },

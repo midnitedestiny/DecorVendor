@@ -28,7 +28,6 @@ local MOPVendors = {
       name = "Vale of Eternal Blossoms - Shrine of 2 Moons",
       vendors = {
         { zone = "Shrine of 2 Moons", name = "Sage Lotusbloom", faction = "Horde", mapID = 390, x = 0.6281, y = 0.2336 },
-		{ zone = "Shrine of 2 Moons", name = "Jaluu the Generous", faction = "Horde", mapID = 390, x = 0.6323 , y = 0.2211 },
       }
     },
   }
@@ -39,8 +38,7 @@ local MOPVendors = {
     {
       name = "Vale of Eternal Blossoms - Shrine of 7 Stars",
       vendors = {
-        { zone = "Shrine of 7 Stars", name = "Sage Whiteheart", faction = "Alliance", mapID = 390, x = 0.8464, y = 0.6364 },
-		{ zone = "Shrine of 7 Stars", name = "Jaluu the Generous", faction = "Alliance", mapID = 390, x = 0.8425, y = 0.6278 },
+        { zone = "Shrine of 7 Stars", name = "Sage Whiteheart", faction = "Alliance", mapID = 1530, x = 0.8517, y = 0.6174 },
       }
     },
   }
@@ -51,8 +49,8 @@ local MOPVendors = {
     {
       name = "Vale of Eternal Blossoms",
       vendors = {
-        { zone = "Seat of Knowledge", name = "Tan Shin Tao", faction = "Neutral", mapID = 390, x = 0.8229, y = 0.2938 },
-        { zone = "Seat of Knowledge", name = "Lali the Assistant", faction = "Neutral", mapID = 390, x = 0.8278, y = 0.3069 },
+        { zone = "Seat of Knowledge", name = "Tan Shin Tao", faction = "Neutral", mapID = 1530, x = 0.8273, y = 0.2678 },
+        { zone = "Seat of Knowledge", name = "Lali the Assistant", faction = "Neutral", mapID = 1530, x = 0.8331, y = 0.2827 },
       }
     },
   }

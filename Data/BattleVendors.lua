@@ -30,9 +30,9 @@ local BattleVendors = {
     {
       name = "Tiragarde Sound",
       vendors = {
-      { zone = "Boralus", name = "Provisioner Fray", faction = "Alliance" , mapID = 1161, x = 0.6750, y = 0.2160 },
-      { zone = "Boralus", name = "Pearl Barlow", faction = "Alliance" , mapID = 1161, x = 0.712, y = 0.154 },
-      { zone = "Boralus Harbor", name = "Fiona", faction = "Alliance" , mapID = 1161, x = 0.678, y = 0.412 },
+      { zone = "Harbormaster's Office", name = "Provisioner Fray", faction = "Alliance" , mapID = 1161, x = 0.6750, y = 0.2160 },
+      { zone = "Tradewinds Market", name = "Pearl Barlow", faction = "Alliance" , mapID = 1161, x = 0.7074, y = 0.1564 },
+      { zone = "Boralus Harbor", name = "Fiona", faction = "Alliance" , mapID = 1161, x = 0.6795, y = 0.4123 },
       }
 	}
   }
@@ -43,7 +43,7 @@ local BattleVendors = {
     {
       name = "Mechagon",
       vendors = {
-      { zone = "Mechagon", name = "Stolen Royal Vendorbot", faction = "Neutral" , mapID = 1462, x = 0.736, y = 0.366 },
+      { zone = "Mechagon", name = "Pascal-K1N6", faction = "Neutral" , mapID = 1462, x = 0.7136, y = 0.3234 },
       }
 	}
   }
@@ -54,7 +54,7 @@ local BattleVendors = {
     {
       name = "Stormsong Valley",
       vendors = {
-      { zone = "Brennadom", name = "Caspian", faction = "Alliance" , mapID = 942, x = 0.594, y = 0.696 },
+      { zone = "Brennadom", name = "Caspian", faction = "Alliance" , mapID = 942, x = 0.5953, y = 0.6963 },
       }
 	}
   }

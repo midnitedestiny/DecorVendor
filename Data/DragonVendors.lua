@@ -5,9 +5,9 @@ local DragonVendors = {
     {
       name = "Amirdrassil",
       vendors = {
-		{ zone = "Bel'ameth", name = "Moon Priestess Lasara", faction = "Neutral", mapID = 2239, x = 0.466, y = 0.706 },
-        { zone = "Bel'ameth", name = "Mythrin'dir", faction = "Neutral", mapID = 2239, x = 0.540, y = 0.606 },
-        { zone = "Bel'ameth", name = "Ellandrieth", faction = "Neutral", mapID = 2239, x = 0.482, y = 0.536 },
+		{ zone = "Bel'ameth", name = "Moon Priestess Lasara", faction = "Neutral", mapID = 2239, x = 0.4650, y = 0.7063 },
+        { zone = "Bel'ameth", name = "Mythrin'dir", faction = "Neutral", mapID = 2239, x = 0.5410, y = 0.6083 },
+        { zone = "Bel'ameth", name = "Ellandrieth", faction = "Neutral", mapID = 2239, x = 0.4838, y = 0.5358 },
       }
 	}
   },
@@ -46,7 +46,7 @@ local DragonVendors = {
         { zone = "The Parting Glass", name = "Slvrath", faction = "Neutral", mapID = 2112, x = 0.7153, y = 0.4966 },
 		{ zone = "Valdrakken Treasury Hoard", name = "Evantkis", faction = "Neutral", mapID = 2112, x = 0.5823, y = 0.5781 },
 		{ zone = "The Obsidian Enclave", name = "Provisioner Thorn", faction = "Neutral", mapID = 2112, x = 0.3658, y = 0.5065 },
-		{ zone = "Valdrakken", name = "Tethalash", faction = "Neutral", mapID = 2112, x = 0.2556, y = 0.3359 },
+		{ zone = "Valdrakken - evoker only maybe", name = "Tethalash", faction = "Neutral", mapID = 2112, x = 0.2556, y = 0.3359 },
 		{ zone = "Azerothian Archives", name = "Provisioner Aristta", faction = "Neutral", mapID = 2025, x = 0.6138, y = 0.3141 },
 		{ zone = "Eon's Fringe", name = "Ironus Coldsteel", faction = "Neutral", mapID = 2025, x = 0.5220, y = 0.8080 },
       }
