@@ -145,30 +145,6 @@ local function SortVendorData(sortBy)
 
 end
 
-local function SortExpansionHeaders()
-    for expansionName, expansionTable in pairs(VendorData) do
-        -- Collect all continent names into a sortable array
-        local headers = {}
-
-        for continentName, _ in pairs(expansionTable) do
-            table.insert(headers, continentName)
-        end
-
-        -- Sort alphabetically
-        table.sort(headers, function(a, b)
-            return a:lower() < b:lower()
-        end)
-
-        -- Rebuild expansion table in sorted order
-        local sorted = {}
-        for _, continentName in ipairs(headers) do
-            sorted[continentName] = expansionTable[continentName]
-        end
-
-        VendorData[expansionName] = sorted
-    end
-end
-
 
 local function GetFullTexturePath(texturePath)
     if texturePath and not string.match(texturePath, "[\\/]") then
@@ -298,7 +274,7 @@ title:SetTextColor(1, 0.85, 0, 1)
 local subtitle = frame:CreateFontString(nil, "OVERLAY")
 subtitle:SetFont(STANDARD_TEXT_FONT, 11)
 subtitle:SetPoint("TOP", title, "BOTTOM", 0, -2)
-subtitle:SetText("Track your Player Housing vendors")
+subtitle:SetText("I spy a Housing Vendor")
 subtitle:SetTextColor(0.7, 0.7, 0.7, 1)
 
 --Info Icon
@@ -315,8 +291,8 @@ infoIcon:SetScript("OnEnter", function(self)
   GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
   GameTooltip:AddLine("Decor Vendor Tips", 1, 0.82, 0)
   GameTooltip:AddLine("If you see a vendor not listed please inform me on curse!", 1, 1, 1, true)
-  GameTooltip:AddLine("Waypoints only show with TomTom Installed", 1, 1, 1, true)
-  GameTooltip:AddLine("Currently some vendors aren't showing their items; as they originally had them in Beta", 1, 1, 1, true)
+  GameTooltip:AddLine("Waypoints work mainly with TomTom, or will show WaypointUI skin if you have the addon enabled with TomTom disabled", 1, 1, 1, true)
+  GameTooltip:AddLine("Bare with me I am still learning how to code", 1, 1, 1, true)
   GameTooltip:Show()
 end)
 
@@ -356,238 +332,128 @@ closeBtn:SetSize(28, 28)
 
 
 
--- =====================================
--- 🧭 Faction Filter Dropdown using WoW template
--- =====================================
-
-local factionFilter = "All"
-
--- Create the filter dropdown button using WoW template
-local filterButton = CreateFrame("DropdownButton", "DV_FactionFilterDropdown", frame, "WowStyle1FilterDropdownTemplate")
-filterButton:SetSize(80, 24)
+-- Unified Filter Dropdown (deduplicates + sorts)
+local filterButton = CreateFrame("DropdownButton", "DV_FilterButton", frame, "WowStyle1FilterDropdownTemplate")
+filterButton:SetSize(140, 24)
 filterButton:SetPoint("TOPLEFT", 10, -60)
-filterButton:SetText("Factions")
+filterButton:SetText("The Choices")
 filterButton.Text:ClearAllPoints()
 filterButton.Text:SetPoint("CENTER")
 
+local function buildUniqueSorted(tbl)
+    local out = {}
+    for k in pairs(tbl) do table.insert(out, k) end
+    table.sort(out, function(a,b) return (a or ""):lower() < (b or ""):lower() end)
+    return out
+end
 
--- Setup the dropdown menu
-filterButton:SetupMenu(function(dropdown, rootDescription)
-    
-    rootDescription:CreateDivider()
 
-    
--- Faction options
-for _, faction in ipairs({"All", "Alliance", "Horde", "Neutral"}) do
-    rootDescription:CreateCheckbox(
-        faction,  -- checkbox label
-        function() 
-            return factionFilter == faction  -- checked if this faction is active
-        end,
-        function() 
-            factionFilter = faction
-            BuildVendorUI()  -- rebuild UI when clicked
-        end
+filterButton:SetupMenu(function(dropdown, root)
+    root:CreateDivider()
+
+    -----------------------------------------------------
+    -- EXPANSIONS
+    -----------------------------------------------------
+   local expansionMenu = root:CreateButton("Expansions")
+
+-- "All" checkbox first
+expansionMenu:CreateCheckbox("All",
+    function() return expansionFilter == "All" end,
+    function() expansionFilter = "All"; BuildVendorUI() end
+)
+
+-- Collect unique expansions
+local expansionsSeen = {}
+for _, expansion in ipairs(VendorData or {}) do
+    if expansion.name then
+        expansionsSeen[expansion.name] = true
+    end
+end
+
+-- Sort alphabetically
+local expansionList = buildUniqueSorted(expansionsSeen)
+
+-- Create checkboxes
+for _, name in ipairs(expansionList) do
+    expansionMenu:CreateCheckbox(name,
+        function() return expansionFilter == name end,
+        function() expansionFilter = name; continentFilter = "All"; zoneFilter = "All"; BuildVendorUI() end
     )
-	
-	-- Add a divider **after "All" only**
-    if faction == "All" then
-        rootDescription:CreateDivider()
-    end
-end
-	
-    rootDescription:CreateDivider()
-    -- Reset Filters button
-    rootDescription:CreateButton("Reset Filters", function()
-        factionFilter = "All"
-        BuildVendorUI()
-    end)
-end)
-
-
--- =====================================
--- 🧭 Zone Filter Dropdown using WoW template
--- =====================================
-
-local expansionFilter = "All"
-local continentFilter = "All"
-local zoneFilter = "All"
-
--- Create the dropdown button using the same WoW template
-local zoneFilterButton = CreateFrame("DropdownButton", "DV_ZoneFilterDropdown", frame, "WowStyle1FilterDropdownTemplate")
-zoneFilterButton:SetPoint("TOPLEFT", 120, -60)
-zoneFilterButton:SetText("Zones")
-zoneFilterButton.Text:ClearAllPoints()
-zoneFilterButton.Text:SetPoint("Center")
-zoneFilterButton:SetSize(60, 24)
-
-
-
-
-
-
--- Helper function to build the unique lists
--- 🧩 Safe helper to generate unique values for dropdowns
-local function GetUniqueValues(field, filter1, value1, filter2, value2)
-    local list = {}
-    local added = {}
-
-   for _, expansion in ipairs(VendorData) do
-    -- Expansion level
-    if field == "expansion" then
-        if expansion.isProfessionVendor then
-            -- skip profession vendors
-        elseif not added[expansion.name] then
-            table.insert(list, expansion.name)
-            added[expansion.name] = true
-        end
-    end
-
-
-
-        -- Continent level
-        if field == "continent" then
-            if not expansion.continents or #expansion.continents == 0 then
-                -- Treat expansions without continents as a pseudo-continent
-                if not added[expansion.name] then
-                    table.insert(list, expansion.name)
-                    added[expansion.name] = true
-                end
-            else
-                for _, continent in ipairs(expansion.continents) do
-                    if (not filter1 or filter1 == "All" or expansion.name == value1) and not added[continent.name] then
-                        table.insert(list, continent.name)
-                        added[continent.name] = true
-                    end
-                end
-            end
-        end
-
-        -- Zone level
-        if field == "zone" then
-            if not expansion.continents or #expansion.continents == 0 then
-                for _, vendor in ipairs(expansion.vendors or {}) do
-                    if vendor.zone and not added[vendor.zone] then
-                        table.insert(list, vendor.zone)
-                        added[vendor.zone] = true
-                    end
-                end
-            else
-                for _, continent in ipairs(expansion.continents or {}) do
-                    if (not filter1 or filter1 == "All" or expansion.name == value1)
-                        and (not filter2 or filter2 == "All" or continent.name == value2) then
-                        for _, vendor in ipairs(continent.vendors or {}) do
-                            if vendor.zone and not added[vendor.zone] then
-                                table.insert(list, vendor.zone)
-                                added[vendor.zone] = true
-                            end
-                        end
-                    end
-                end
-            end
-        end
-    end
-
-    return list
 end
 
 
-
--- Dropdown menu setup
-zoneFilterButton:SetupMenu(function(dropdown, rootDescription)
-    rootDescription:CreateDivider()
-
-    -- Expansion filter
-    rootDescription:CreateTitle("Expansion")
-    for _, expansion in ipairs(GetUniqueValues("expansion")) do
-        rootDescription:CreateCheckbox(expansion,
-            function() return expansionFilter == expansion end,
-            function()
-                expansionFilter = expansion
-                continentFilter = "All"
-                zoneFilter = "All"
-                BuildVendorUI()
-            end
-        )
-		-- Add a divider **after "All" only**
-    if expansion == "All" then
-        rootDescription:CreateDivider()
-    end
-    end
-
-
-
-    -- Reset filters
-    rootDescription:CreateDivider()
-    rootDescription:CreateButton("Reset Filters", function()
-        expansionFilter = "All"
-        continentFilter = "All"
-        zoneFilter = "All"
-        BuildVendorUI()
-    end)
-end)
-
-local professionFilter = "All"
-
--- Create the profession filter dropdown button
-local professionButton = CreateFrame("DropdownButton", "DV_ProfessionFilterDropdown", frame, "WowStyle1FilterDropdownTemplate")
-professionButton:SetSize(80, 24)
-professionButton:SetPoint("TOPLEFT", 220, -60) -- position next to faction
-professionButton:SetText("Professions")
-professionButton.Text:ClearAllPoints()
-professionButton.Text:SetPoint("CENTER")
-
-professionButton:SetupMenu(function(dropdown, root)
     root:CreateDivider()
 
-    -----------------------------
-    -- 2️⃣ Collect profession names dynamically
-    -----------------------------
-    local professions = {}
-    local added = {}
+    -----------------------------------------------------
+    -- PROFESSIONS
+    -----------------------------------------------------
+   local professionMenu = root:CreateButton("Professions")
 
-    if _G.ProfessionVendors then
-        for _, entry in ipairs(_G.ProfessionVendors) do
-            if entry.continents then
-                for _, continent in ipairs(entry.continents) do
-                    local profName = continent.name
-                    if profName and not added[profName] then
-                        added[profName] = true
-                        table.insert(professions, profName)
-                    end
-                end
+-- "All" checkbox first
+professionMenu:CreateCheckbox("All",
+    function() return professionFilter == "All" end,
+    function() professionFilter = "All"; BuildVendorUI() end
+)
+
+-- Collect unique professions from all vendors (direct or under continents)
+local professionsSeen = {}
+for _, expansion in ipairs(VendorData or {}) do
+    -- Vendors directly under expansion
+    for _, vendor in ipairs(expansion.vendors or {}) do
+        if vendor.profession and vendor.profession ~= "" then
+            professionsSeen[vendor.profession] = true
+        end
+    end
+    -- Vendors under continents
+    for _, continent in ipairs(expansion.continents or {}) do
+        for _, vendor in ipairs(continent.vendors or {}) do
+            if vendor.profession and vendor.profession ~= "" then
+                professionsSeen[vendor.profession] = true
             end
         end
     end
+end
 
-    table.sort(professions)
+-- Sort alphabetically
+local professionList = buildUniqueSorted(professionsSeen)
 
-    -----------------------------
-    -- 3️⃣ Create checkboxes for each profession
-    -----------------------------
-    for _, profession in ipairs(professions) do
-        root:CreateCheckbox(
-            profession,
-            function() return professionFilter == profession end,
-            function()
-                professionFilter = profession
-                professionButton:SetText(profession)
-                BuildVendorUI()
-            end
-        )
-    end
+-- Create checkboxes
+for _, p in ipairs(professionList) do
+    professionMenu:CreateCheckbox(p,
+        function() return professionFilter == p end,
+        function() professionFilter = p; BuildVendorUI() end
+    )
+end
+
 
     root:CreateDivider()
 
-    -----------------------------
-    -- 4️⃣ Reset button
-    -----------------------------
-    root:CreateButton("Reset Professions", function()
-        professionFilter = "All"
-        professionButton:SetText("Professions")
+    -----------------------------------------------------
+    -- FACTION
+    -----------------------------------------------------
+  local factionMenu = root:CreateButton("Faction")
+
+local factionsSeen = { All = true, Alliance = true, Horde = true, Neutral = true }
+local factionList = buildUniqueSorted(factionsSeen)
+
+for _, f in ipairs(factionList) do
+    factionMenu:CreateCheckbox(f,
+        function() return factionFilter == f end,
+        function() factionFilter = f; BuildVendorUI() end
+    )
+end
+
+
+    root:CreateDivider()
+	
+    root:CreateButton("Reset Filters", function()
+        expansionFilter, professionFilter, factionFilter, continentFilter, zoneFilter =
+            "All", "All", "All", "All", "All"
+        filterButton:SetText("Filters")
         BuildVendorUI()
     end)
 end)
+
 
 
 
@@ -865,13 +731,42 @@ function BuildVendorUI()
             vendor.completed = vendorSettings.completedVendors[vendor.name] or false
         end
     end
+	
+	-- Define the expansion order
+    local expansionOrder = {
+        ["Classic"] = 1,
+        ["Burning Crusade"] = 2,
+        ["Wrath of the Lich King"] = 3,
+        ["Cataclysm"] = 4,
+        ["Mists of Pandaria"] = 5,
+        ["Warlords of Draenor"] = 6,
+        ["Legion"] = 7,
+        ["Battle for Azeroth"] = 8,
+        ["Shadowlands"] = 9,
+        ["Dragonflight"] = 10,
+        ["The War Within"] = 11,
+        ["Midnight"] = 12,
+        ["Raids"] = 13,
+    }
 
--- 2️⃣ Loop through each expansion and its continents
-for _, expansion in ipairs(VendorData) do
-    local subGroups = expansion.continents
-    if not subGroups or #subGroups == 0 then
-        subGroups = { expansion } -- treat expansion as a single group
+-- Build a filtered and ordered list of expansions
+    local expansionsToShow = {}
+    for _, exp in ipairs(VendorData) do
+        if expansionFilter == "All" or exp.name == expansionFilter then
+            table.insert(expansionsToShow, exp)
+        end
     end
+
+    table.sort(expansionsToShow, function(a, b)
+        return (expansionOrder[a.name] or 999) < (expansionOrder[b.name] or 999)
+    end)
+
+    -- Loop through each expansion (already filtered and sorted)
+    for _, expansion in ipairs(expansionsToShow) do
+        local subGroups = expansion.continents
+        if not subGroups or #subGroups == 0 then
+            subGroups = { expansion }
+        end
 	
 	-- ⭐ Sort your vendor headers alphabetically
 table.sort(subGroups, function(a, b)
@@ -944,7 +839,43 @@ if not vendorSettings.completedVendors then
 end
 
 -- UI setup
-SortExpansionHeaders()
+SortVendorData("zone")
+BuildVendorUI()
+
+-- Event handler to mark visited vendors
+local eventFrame = CreateFrame("Frame")
+eventFrame:RegisterEvent("MERCHANT_SHOW")
+eventFrame:SetScript("OnEvent", function()
+    local name = UnitName("target")
+    if not name then return end
+    for _, group in ipairs(VendorData) do
+        for _, vendor in ipairs(group.vendors or {}) do
+            if vendor.name == name then
+                vendor.completed = true
+                vendorSettings.completedVendors[name] = true
+                if vendorSettings.hideFound then
+                    BuildVendorUI()
+                end
+                return
+            end
+        end
+    end
+end)
+
+
+
+
+
+
+
+
+-- Saved settings
+if not vendorSettings then vendorSettings = {} end
+if not vendorSettings.completedVendors then
+    vendorSettings.completedVendors = {}
+end
+
+-- UI setup
 SortVendorData("zone")
 BuildVendorUI()
 
@@ -974,7 +905,6 @@ end)
 -- ============================
 
 local addonName = ...
-local DV = {}
 local LibDBIcon = LibStub("LibDBIcon-1.0")
 local LDB = LibStub("LibDataBroker-1.1"):NewDataObject("DecorVendor", {
     type = "launcher",
@@ -1001,19 +931,19 @@ local init = CreateFrame("Frame")
 init:RegisterEvent("ADDON_LOADED")
 init:SetScript("OnEvent", function(self, event, loadedAddon)
     
-    -- Only run when DecorVendor loads
     if loadedAddon ~= "DecorVendor" then return end
 
     -- Ensure SavedVariable exists
-    if not DVDB then DVDB = {} end
-    if not DVDB.minimap then DVDB.minimap = {} end
+if not DVDB then DVDB = {} end
+DVDB.minimap = DVDB.minimap or { minimapPos = 225 }  -- only create table if it doesn't exist
 
-    -- Register minimap button
-    LibDBIcon:Register("DecorVendor", LDB, DVDB.minimap)
+-- Register minimap button
+LibDBIcon:Register("DecorVendor", LDB, DVDB.minimap)
 
-    -- Stop listening to the event
+
     self:UnregisterEvent("ADDON_LOADED")
 end)
+
 
 
 SLASH_DECORVENDOR1 = "/decor"

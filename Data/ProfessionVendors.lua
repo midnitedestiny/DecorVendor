@@ -51,7 +51,7 @@ local ProfessionVendors = {
   }
 },
 {
-  name = "Professions ",
+  name = "Professions",
        isProfessionVendor = true,
   continents = {
 	{

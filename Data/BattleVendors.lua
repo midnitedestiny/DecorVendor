@@ -33,6 +33,7 @@ local BattleVendors = {
       { zone = "Harbormaster's Office", name = "Provisioner Fray", faction = "Alliance" , mapID = 1161, x = 0.6750, y = 0.2160 },
       { zone = "Tradewinds Market", name = "Pearl Barlow", faction = "Alliance" , mapID = 1161, x = 0.7074, y = 0.1564 },
       { zone = "Boralus Harbor", name = "Fiona", faction = "Alliance" , mapID = 1161, x = 0.6795, y = 0.4123 },
+	  { zone = "Hook Point", name = "Janey Forrest", faction = "Alliance", mapID = 1161, x = 0.5630, y = 0.4590 },
       }
 	}
   }

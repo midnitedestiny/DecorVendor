@@ -2,18 +2,17 @@
 ## Title: Decor Vendors
 ## Notes: Tracks vendors that sell housing decor Using TomTom for Waypoint Arrow!
 ## Author: Midnitedestiny
-## Version: 1.19
+## Version: 1.21
 ## IconTexture: Interface\AddOns\DecorVendor\Assets\DecorVendor
-## SavedVariable: vendorsettings, DVDB
+## SavedVariables: DVDB, vendorsettings
 ## OptionalDeps:TomTom, WaypointUI
 
 
 # Library files
-Libs\LibStub\Libstub.lua
-Libs\CallbackHandler-1.0\CallbackHandler-1.0.lua
-Libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
+Libs\Libstub.lua
+Libs\CallbackHandler-1.0.lua
+Libs\LibDataBroker-1.1.lua
 Libs\LibDBIcon-1.0.lua
-Libs\Libs.xml
 
 # Data files
 Data\BattleVendors.lua
