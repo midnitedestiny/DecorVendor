@@ -39,7 +39,7 @@ local LegionVendors = {
 	{
 	  name = "Highmountain",
       vendors = {
-		{ zone = "Thunder Totem", name = "Ransa Greyfeather", faction = "Neutral", mapID = 750, x = 0.3809, y = 0.4595 },
+		{ zone = "Thunder Totem", name = "Ransa Greyfeather", faction = "Neutral", mapID = 652, x = 0.3809, y = 0.4595 },
         { zone = "Thunder Totem - Bottom Half", name = "Torv Dubstomp", faction = "Neutral", mapID = 652, x = 0.5480, y = 0.7808 },
 	  }
 	}

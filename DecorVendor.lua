@@ -1,7 +1,3 @@
-local HORDE_ICON_TEXTURE = "Interface\\AddOns\\DecorVendor\\Assets\\horde"
-local ALLIANCE_ICON_TEXTURE = "Interface\\AddOns\\DecorVendor\\Assets\\alliance"
-local NEUTRAL_ICON_TEXTURE = "Interface\\AddOns\\DecorVendor\\Assets\\neutral"
-
 print("DecorVendor loaded")
 print("Loaded " .. tostring(#VendorData) .. " vendor categories!")
 
@@ -22,7 +18,12 @@ end
 hasTomTom = IsLoaded("TomTom")
 hasWaypointUI = IsLoaded("WaypointUI")
 
-
+vendorSettings = vendorSettings or { scale = 1.0, hideFound = false, showMinimapButton = true, completedVendors = {}, filters = { neutral = true, alliance = true, horde = true, Tailoring = true, Leatherworking = true, Jewelcrafting = true, Inscription = true, Engineering = true, Enchanting = true, Blacksmithing = true, Alchemy = true, Cooking = true, }} -- stores UI scale & hide/show visited
+DVDB = {minimap = { hide = false }}
+local activeWidgets = {}        -- tracks all created lines and headers for clearing
+local collapsedHeaders = {}     -- tracks which expansion/vendor group headers are collapsed
+local LibDBIcon = LibStub("LibDBIcon-1.0", true)
+local minimapButton
 
 local function SortVendorData(sortBy)
 
@@ -144,17 +145,29 @@ local function SortVendorData(sortBy)
 
 end
 
+local function SortExpansionHeaders()
+    for expansionName, expansionTable in pairs(VendorData) do
+        -- Collect all continent names into a sortable array
+        local headers = {}
 
+        for continentName, _ in pairs(expansionTable) do
+            table.insert(headers, continentName)
+        end
 
+        -- Sort alphabetically
+        table.sort(headers, function(a, b)
+            return a:lower() < b:lower()
+        end)
 
+        -- Rebuild expansion table in sorted order
+        local sorted = {}
+        for _, continentName in ipairs(headers) do
+            sorted[continentName] = expansionTable[continentName]
+        end
 
-vendorSettings = vendorSettings or { scale = 1.0, hideFound = false, completedVendors = {}, minimap = { hide = false }, filters = {  all = true, neutral = true, alliance = true, horde = true } } -- stores UI scale & hide/show visited
-local activeWidgets = {}        -- tracks all created lines and headers for clearing
-local collapsedHeaders = {}     -- tracks which expansion/vendor group headers are collapsed
-local LibDBIcon = LibStub("LibDBIcon-1.0", true)
-local minimapButton
-
-
+        VendorData[expansionName] = sorted
+    end
+end
 
 
 local function GetFullTexturePath(texturePath)
@@ -192,8 +205,6 @@ frame:SetScript("OnMouseUp", function(self, button)
     end
 end)
  
-
-
 
 local supportFrame = CreateFrame("Frame", "DV_SupportFrame", UIParent, "BackdropTemplate")
 supportFrame:SetSize(400, 210)
@@ -367,7 +378,7 @@ filterButton:SetupMenu(function(dropdown, rootDescription)
 
     
 -- Faction options
-for _, faction in ipairs({"Alliance", "Horde", "Neutral"}) do
+for _, faction in ipairs({"All", "Alliance", "Horde", "Neutral"}) do
     rootDescription:CreateCheckbox(
         faction,  -- checkbox label
         function() 
@@ -529,27 +540,31 @@ professionButton.Text:SetPoint("CENTER")
 professionButton:SetupMenu(function(dropdown, root)
     root:CreateDivider()
 
+    -----------------------------
+    -- 2️⃣ Collect profession names dynamically
+    -----------------------------
     local professions = {}
     local added = {}
 
     if _G.ProfessionVendors then
         for _, entry in ipairs(_G.ProfessionVendors) do
-            local profName = entry.continents and entry.continents[1] and entry.continents[1].name
-            if profName and not added[profName] then
-                added[profName] = true
-                table.insert(professions, profName)
+            if entry.continents then
+                for _, continent in ipairs(entry.continents) do
+                    local profName = continent.name
+                    if profName and not added[profName] then
+                        added[profName] = true
+                        table.insert(professions, profName)
+                    end
+                end
             end
         end
     end
 
-    table.sort(professions, function(a,b)
-        if a == "All" then return true
-        elseif b == "All" then return false
-        else return a < b
-        end
-    end)
+    table.sort(professions)
 
-    -- create checkboxes
+    -----------------------------
+    -- 3️⃣ Create checkboxes for each profession
+    -----------------------------
     for _, profession in ipairs(professions) do
         root:CreateCheckbox(
             profession,
@@ -560,13 +575,13 @@ professionButton:SetupMenu(function(dropdown, root)
                 BuildVendorUI()
             end
         )
-
-if profession == "All" then
-            root:CreateDivider()
-        end
     end
 
     root:CreateDivider()
+
+    -----------------------------
+    -- 4️⃣ Reset button
+    -----------------------------
     root:CreateButton("Reset Professions", function()
         professionFilter = "All"
         professionButton:SetText("Professions")
@@ -574,33 +589,9 @@ if profession == "All" then
     end)
 end)
 
--- Only run if LibDBIcon is loaded
-if LibStub and LibStub("LibDBIcon-1.0", true) then
-    if not DVDB then DVDB = {} end -- Saved variable table
-    local icon = LibStub("LibDBIcon-1.0")
 
-    local LDB = LibStub("LibDataBroker-1.1"):NewDataObject("DecorVendor", {
-        type = "launcher",
-        text = "DecorVendor",
-        icon = "Interface\\AddOns\\DecorVendor\\Assets\\DecorVendor.tga",
-        OnClick = function(_, button)
-            if button == "LeftButton" then
-                if frame:IsShown() then
-                    frame:Hide()
-                else
-                    BuildVendorUI()
-                    frame:Show()
-                end
-            end
-        end,
-        OnTooltipShow = function(tt)
-            tt:AddLine("DecorVendor")
-            tt:AddLine("Left-click to toggle window.", 1, 1, 1)
-        end,
-    })
 
-    icon:Register("DecorVendor", LDB, DVDB)
-end
+
 
 
 -- Scale slider
@@ -823,15 +814,6 @@ local function CreateVendorLine(parent, vendor, y)
             world = true,
         })
     end
-	
-	-- WaypointUI (if installed)
-    if hasWaypointUI then
-        if WaypointUI.AddWaypoint then
-            WaypointUI:AddWaypoint(vendor.mapID, vendor.x, vendor.y, vendor.name)
-        elseif WaypointUI.CreateWaypoint then
-            WaypointUI:CreateWaypoint(vendor.mapID, vendor.x, vendor.y, vendor.name)
-        end   
-    end
 
     -- Blizzard default waypoint
     if vendor.mapID and vendor.x and vendor.y then
@@ -869,6 +851,7 @@ end
 end
 
 
+
 -- Build the Vendor UI
 function BuildVendorUI()
     ClearWidgets()
@@ -889,6 +872,11 @@ for _, expansion in ipairs(VendorData) do
     if not subGroups or #subGroups == 0 then
         subGroups = { expansion } -- treat expansion as a single group
     end
+	
+	-- ⭐ Sort your vendor headers alphabetically
+table.sort(subGroups, function(a, b)
+    return (a.name or "") < (b.name or "")
+end)
 
     for _, subGroup in ipairs(subGroups) do
         local totalVendors = subGroup.vendors and #subGroup.vendors or 0
@@ -956,6 +944,7 @@ if not vendorSettings.completedVendors then
 end
 
 -- UI setup
+SortExpansionHeaders()
 SortVendorData("zone")
 BuildVendorUI()
 
@@ -977,6 +966,53 @@ eventFrame:SetScript("OnEvent", function()
             end
         end
     end
+end)
+
+
+-- ============================
+--  Minimap Button (LibDBIcon)
+-- ============================
+
+local addonName = ...
+local DV = {}
+local LibDBIcon = LibStub("LibDBIcon-1.0")
+local LDB = LibStub("LibDataBroker-1.1"):NewDataObject("DecorVendor", {
+    type = "launcher",
+    icon = "Interface\\AddOns\\DecorVendor\\Assets\\DecorVendor.tga",
+    label = "DecorVendor",
+    OnClick = function(_, button)
+        if button == "LeftButton" then
+            if frame:IsShown() then
+                frame:Hide()
+            else
+                BuildVendorUI()
+                frame:Show()
+            end
+        end
+    end,
+    OnTooltipShow = function(tt)
+        tt:AddLine("DecorVendor")
+        tt:AddLine("Left-click to open/close", 1, 1, 1)
+    end
+})
+
+-- Create initialization frame
+local init = CreateFrame("Frame")
+init:RegisterEvent("ADDON_LOADED")
+init:SetScript("OnEvent", function(self, event, loadedAddon)
+    
+    -- Only run when DecorVendor loads
+    if loadedAddon ~= "DecorVendor" then return end
+
+    -- Ensure SavedVariable exists
+    if not DVDB then DVDB = {} end
+    if not DVDB.minimap then DVDB.minimap = {} end
+
+    -- Register minimap button
+    LibDBIcon:Register("DecorVendor", LDB, DVDB.minimap)
+
+    -- Stop listening to the event
+    self:UnregisterEvent("ADDON_LOADED")
 end)
 
 
