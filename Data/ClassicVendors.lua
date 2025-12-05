@@ -106,7 +106,7 @@ local ClassicVendors = {
       vendors = {
       { zone = "The Commons", name = "Dedric Sleetshaper", faction = "Alliance" ,  mapID = 87, x = 0.2444, y = 0.4415 },
       { zone = "Ironforge", name = "Captain Stonehelm", faction = "Alliance" ,  mapID = 87, x = 0.5592, y = 0.4757 },
-      { zone = "The Library", name = "Inge Brightview", faction = "Alliance" ,  mapID = 87, x = 0.5592, y = 0.4757 },
+      { zone = "The Library", name = "Inge Brightview", faction = "Alliance" ,  mapID = 87, x = 0.7620, y = 0.0800 },
       }
 	}
   }
