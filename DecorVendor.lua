@@ -1,9 +1,16 @@
 print("DecorVendor loaded")
 print("Loaded " .. tostring(#VendorData) .. " vendor categories!")
 
+selectedExpansions = { All = true }
+selectedProfessions = { All = true }
+selectedFactions = { All = true }
+
+
 -- Detect TomTom and WaypointUI
 local hasTomTom = false
 local hasWaypointUI = false
+
+
 
 -- Universal addon loaded check (handles Classic + Retail)
 local function IsLoaded(addon)
@@ -18,12 +25,71 @@ end
 hasTomTom = IsLoaded("TomTom")
 hasWaypointUI = IsLoaded("WaypointUI")
 
-vendorSettings = vendorSettings or { scale = 1.0, hideFound = false, showMinimapButton = true, completedVendors = {}, filters = { neutral = true, alliance = true, horde = true, Tailoring = true, Leatherworking = true, Jewelcrafting = true, Inscription = true, Engineering = true, Enchanting = true, Blacksmithing = true, Alchemy = true, Cooking = true, }} -- stores UI scale & hide/show visited
-DVDB = {minimap = { hide = false }}
-local activeWidgets = {}        -- tracks all created lines and headers for clearing
-local collapsedHeaders = {}     -- tracks which expansion/vendor group headers are collapsed
+-- ===============================
+-- Saved Vendor Settings
+-- ===============================
+vendorSettings = vendorSettings or {
+    scale = 1.0,                       -- UI scale
+    hideFound = false,                  -- hide vendors already visited
+	useTomTom = true, 
+    showMinimapButton = true,           -- show/hide minimap button
+    completedVendors = {},              -- tracks visited vendors
+    filters = {
+    -- Factions
+    neutral = true,
+    alliance = true,
+    horde = true,
+
+    -- Professions
+    Tailoring = true,
+    Leatherworking = true,
+    Jewelcrafting = true,
+    Inscription = true,
+    Engineering = true,
+    Enchanting = true,
+    Blacksmithing = true,
+    Alchemy = true,
+    Cooking = true,
+
+    -- Expansions
+    Classic = true,
+    ["Burning Crusade"] = true,
+    ["Wrath of the Lich King"] = true,
+    Cataclysm = true,
+    ["Mists of Pandaria"] = true,
+    ["Warlords of Draenor"] = true,
+    Legion = true,
+    ["Battle for Azeroth"] = true,
+    Shadowlands = true,
+    Dragonflight = true,
+    ["The War Within"] = true,
+    Midnight = true,
+}
+
+}
+
+-- ===============================
+-- Minimap Button DB
+-- ===============================
+DVDB = {
+    minimap = {
+        hide = false
+    }
+}
+
+-- ===============================
+-- UI Tracking
+-- ===============================
+local activeWidgets = {}       -- tracks all created lines and headers for clearing
+local collapsedHeaders = {}    -- tracks which expansion/vendor group headers are collapsed
+
+-- ===============================
+-- Minimap Button Library
+-- ===============================
 local LibDBIcon = LibStub("LibDBIcon-1.0", true)
 local minimapButton
+
+
 
 local function SortVendorData(sortBy)
 
@@ -180,7 +246,14 @@ frame:SetScript("OnMouseUp", function(self, button)
         self:StopMovingOrSizing()
     end
 end)
- 
+
+ -- Close button
+local closeBtn = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
+closeBtn:SetPoint("TOPRIGHT", -2, -2)
+closeBtn:SetSize(28, 28)
+
+ -- ESC key support
+tinsert(UISpecialFrames, frame:GetName())
 
 local supportFrame = CreateFrame("Frame", "DV_SupportFrame", UIParent, "BackdropTemplate")
 supportFrame:SetSize(400, 210)
@@ -278,7 +351,6 @@ subtitle:SetText("I spy a Housing Vendor")
 subtitle:SetTextColor(0.7, 0.7, 0.7, 1)
 
 --Info Icon
-
 local infoIcon = CreateFrame("Button", nil, frame)
 infoIcon:SetSize(24, 24)
 infoIcon:SetPoint("TOPLEFT", 8, -8)
@@ -324,10 +396,7 @@ supportIcon:SetScript("OnClick", function()
   supportFrame:Show()
 end)
 
--- Close button
-local closeBtn = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
-closeBtn:SetPoint("TOPRIGHT", -2, -2)
-closeBtn:SetSize(28, 28)
+
 
 
 
@@ -351,15 +420,21 @@ end
 filterButton:SetupMenu(function(dropdown, root)
     root:CreateDivider()
 
-    -----------------------------------------------------
-    -- EXPANSIONS
-    -----------------------------------------------------
-   local expansionMenu = root:CreateButton("Expansions")
+-----------------------------------------------------
+-- EXPANSIONS (multi-select)
+-----------------------------------------------------
+local expansionMenu = root:CreateButton("Expansions")
+
+-- Multi-select tracking table
+if not selectedExpansions then selectedExpansions = { All = true } end
 
 -- "All" checkbox first
 expansionMenu:CreateCheckbox("All",
-    function() return expansionFilter == "All" end,
-    function() expansionFilter = "All"; BuildVendorUI() end
+    function() return selectedExpansions.All end,
+    function()
+        selectedExpansions = { All = true }
+        BuildVendorUI()
+    end
 )
 
 -- Collect unique expansions
@@ -370,41 +445,54 @@ for _, expansion in ipairs(VendorData or {}) do
     end
 end
 
--- Sort alphabetically
 local expansionList = buildUniqueSorted(expansionsSeen)
 
--- Create checkboxes
 for _, name in ipairs(expansionList) do
-    expansionMenu:CreateCheckbox(name,
-        function() return expansionFilter == name end,
-        function() expansionFilter = name; continentFilter = "All"; zoneFilter = "All"; BuildVendorUI() end
-    )
+    if name ~= "Professions" then
+        expansionMenu:CreateCheckbox(name,
+            function() return selectedExpansions[name] end,
+            function()
+                selectedExpansions[name] = not selectedExpansions[name]
+                if selectedExpansions[name] then selectedExpansions.All = false end
+
+                local anySelected = false
+                for k,v in pairs(selectedExpansions) do
+                    if k ~= "All" and v then anySelected = true end
+                end
+                if not anySelected then selectedExpansions.All = true end
+
+                BuildVendorUI()
+            end
+        )
+    end
 end
 
 
-    root:CreateDivider()
+root:CreateDivider()
 
-    -----------------------------------------------------
-    -- PROFESSIONS
-    -----------------------------------------------------
-   local professionMenu = root:CreateButton("Professions")
+-----------------------------------------------------
+-- PROFESSIONS (multi-select)
+-----------------------------------------------------
+local professionMenu = root:CreateButton("Professions")
 
--- "All" checkbox first
+if not selectedProfessions then selectedProfessions = { All = true } end
+
 professionMenu:CreateCheckbox("All",
-    function() return professionFilter == "All" end,
-    function() professionFilter = "All"; BuildVendorUI() end
+    function() return selectedProfessions.All end,
+    function()
+        selectedProfessions = { All = true }
+        BuildVendorUI()
+    end
 )
 
--- Collect unique professions from all vendors (direct or under continents)
+-- Collect unique professions
 local professionsSeen = {}
 for _, expansion in ipairs(VendorData or {}) do
-    -- Vendors directly under expansion
     for _, vendor in ipairs(expansion.vendors or {}) do
         if vendor.profession and vendor.profession ~= "" then
             professionsSeen[vendor.profession] = true
         end
     end
-    -- Vendors under continents
     for _, continent in ipairs(expansion.continents or {}) do
         for _, vendor in ipairs(continent.vendors or {}) do
             if vendor.profession and vendor.profession ~= "" then
@@ -414,50 +502,96 @@ for _, expansion in ipairs(VendorData or {}) do
     end
 end
 
--- Sort alphabetically
 local professionList = buildUniqueSorted(professionsSeen)
 
--- Create checkboxes
 for _, p in ipairs(professionList) do
     professionMenu:CreateCheckbox(p,
-        function() return professionFilter == p end,
-        function() professionFilter = p; BuildVendorUI() end
+        function() return selectedProfessions[p] end,
+        function()
+            selectedProfessions[p] = not selectedProfessions[p]
+            if selectedProfessions[p] then selectedProfessions.All = false end
+
+            local anySelected = false
+            for k,v in pairs(selectedProfessions) do
+                if k ~= "All" and v then anySelected = true end
+            end
+            if not anySelected then selectedProfessions.All = true end
+
+            BuildVendorUI()
+        end
     )
 end
 
+root:CreateDivider()
 
-    root:CreateDivider()
+-----------------------------------------------------
+-- FACTION (multi-select)
+-----------------------------------------------------
+local factionMenu = root:CreateButton("Faction")
 
-    -----------------------------------------------------
-    -- FACTION
-    -----------------------------------------------------
-  local factionMenu = root:CreateButton("Faction")
+if not selectedFactions then selectedFactions = { All = true } end
 
-local factionsSeen = { All = true, Alliance = true, Horde = true, Neutral = true }
+-- "All" checkbox first
+factionMenu:CreateCheckbox("All",
+    function() return selectedFactions.All end,
+    function()
+        selectedFactions = { All = true }
+        BuildVendorUI()
+    end
+)
+
+local factionsSeen = { Alliance = true, Horde = true, Neutral = true }
 local factionList = buildUniqueSorted(factionsSeen)
 
 for _, f in ipairs(factionList) do
     factionMenu:CreateCheckbox(f,
-        function() return factionFilter == f end,
-        function() factionFilter = f; BuildVendorUI() end
+        function() return selectedFactions[f] end,
+        function()
+            selectedFactions[f] = not selectedFactions[f]
+            if selectedFactions[f] then selectedFactions.All = false end
+
+            local anySelected = false
+            for k,v in pairs(selectedFactions) do
+                if k ~= "All" and v then anySelected = true end
+            end
+            if not anySelected then selectedFactions.All = true end
+
+            BuildVendorUI()
+        end
     )
 end
 
+root:CreateDivider()
 
-    root:CreateDivider()
-	
-    root:CreateButton("Reset Filters", function()
-        expansionFilter, professionFilter, factionFilter, continentFilter, zoneFilter =
-            "All", "All", "All", "All", "All"
-        filterButton:SetText("Filters")
-        BuildVendorUI()
-    end)
+root:CreateButton("Reset Filters", function()
+    selectedExpansions = { All = true }
+    selectedProfessions = { All = true }
+    selectedFactions = { All = true }
+    continentFilter, zoneFilter = "All", "All"
+    filterButton:SetText("The Choices")
+    BuildVendorUI()
+end)
 end)
 
 
+local minimapCheckbox = CreateFrame("CheckButton", "DV_MinimapCheckbox", frame, "UICheckButtonTemplate")
+minimapCheckbox:SetPoint("TOPLEFT", filterButton, "TOPRIGHT", 10, 0)
+minimapCheckbox:SetSize(26, 26)
+local minimapCheckboxText = minimapCheckbox:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+minimapCheckboxText:SetPoint("LEFT", minimapCheckbox, "RIGHT", 2, 0)
+minimapCheckboxText:SetText("Minimap Button")
 
-
-
+minimapCheckbox:SetScript("OnClick", function(self)
+  if LibDBIcon then
+    if vendorSettings.showMinimapButton then
+      LibDBIcon:Hide("DecorVendor")
+      vendorSettings.showMinimapButton = false
+    else
+      LibDBIcon:Show("DecorVendor")
+      vendorSettings.showMinimapButton = true
+    end
+  end
+end)
 
 
 -- Scale slider
@@ -570,20 +704,24 @@ local collapsed = collapsedHeaders[headerKey]
     header.text:SetTextColor(1, 1, 1, 1)
 
     -- Progress text
-    header.progress = header:CreateFontString(nil, "OVERLAY")
-    header.progress:SetFont(STANDARD_TEXT_FONT, 11)
-    header.progress:SetPoint("RIGHT", -8, 0)
-    local percent = totalCount > 0 and math.floor((visibleCount / totalCount) * 100) or 0
-    local color
-    if percent == 100 then
-        color = CreateColor(0.2, 1, 0.2, 1)
-    elseif percent >= 50 then
-        color = CreateColor(1, 0.82, 0, 1)
-    else
-        color = CreateColor(0.9, 0.9, 0.9, 1)
-    end
-    header.progress:SetText(string.format("%d/%d (%d%%)", visibleCount, totalCount, percent))
-    header.progress:SetTextColor(color:GetRGBA())
+header.progress = header:CreateFontString(nil, "OVERLAY")
+header.progress:SetFont(STANDARD_TEXT_FONT, 11)
+header.progress:SetPoint("RIGHT", -8, 0)
+
+-- Just show numbers, not percentage
+header.progress:SetText(string.format("%d/%d", visibleCount, totalCount))
+
+-- Optional: keep the color based on progress
+local color
+if totalCount > 0 and visibleCount == totalCount then
+    color = CreateColor(0.2, 1, 0.2, 1)
+elseif totalCount > 0 and visibleCount >= totalCount / 2 then
+    color = CreateColor(1, 0.82, 0, 1)
+else
+    color = CreateColor(0.9, 0.9, 0.9, 1)
+end
+header.progress:SetTextColor(color:GetRGBA())
+
 
     -- Highlight texture (moved inside the function)
     local highlight = header:CreateTexture(nil, "HIGHLIGHT")
@@ -746,16 +884,26 @@ function BuildVendorUI()
         ["Dragonflight"] = 10,
         ["The War Within"] = 11,
         ["Midnight"] = 12,
-        ["Raids"] = 13,
     }
 
--- Build a filtered and ordered list of expansions
-    local expansionsToShow = {}
-    for _, exp in ipairs(VendorData) do
-        if expansionFilter == "All" or exp.name == expansionFilter then
+local expansionsToShow = {}
+for _, exp in ipairs(VendorData) do
+    -- Skip the "Professions" expansion unless a profession is selected
+    if exp.name == "Professions" then
+        if not selectedProfessions or selectedProfessions.All then
+            -- no profession selected or "All" selected → skip
+        else
+            table.insert(expansionsToShow, exp)
+        end
+    else
+        -- normal expansions
+        if not selectedExpansions or selectedExpansions.All or selectedExpansions[exp.name] then
             table.insert(expansionsToShow, exp)
         end
     end
+end
+
+
 
     table.sort(expansionsToShow, function(a, b)
         return (expansionOrder[a.name] or 999) < (expansionOrder[b.name] or 999)
@@ -782,11 +930,12 @@ end)
             vendor.expansion = expansion.name
             vendor.continent = subGroup.name or expansion.name
 
-            local passesFaction = (factionFilter == "All" or vendor.faction == factionFilter)
-            local passesExpansion = (expansionFilter == "All" or vendor.expansion == expansionFilter)
-            local passesContinent = (continentFilter == "All" or vendor.continent == continentFilter)
-            local passesZone = (zoneFilter == "All" or vendor.zone == zoneFilter)
-			local passesProfession = (professionFilter == "All" or vendor.profession == professionFilter)
+            local passesFaction = (selectedFactions.All or selectedFactions[vendor.faction])
+			local passesExpansion = (selectedExpansions.All or selectedExpansions[vendor.expansion])
+			local passesContinent = (continentFilter == "All" or vendor.continent == continentFilter)
+			local passesZone = (zoneFilter == "All" or vendor.zone == zoneFilter)
+			local passesProfession = (selectedProfessions.All or selectedProfessions[vendor.profession])
+
 
 
             if passesFaction and passesExpansion and passesContinent and passesZone and passesProfession then

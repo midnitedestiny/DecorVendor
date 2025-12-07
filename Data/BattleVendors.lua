@@ -45,6 +45,7 @@ local BattleVendors = {
       name = "Mechagon",
       vendors = {
       { zone = "Mechagon", name = "Pascal-K1N6", faction = "Neutral" , mapID = 1462, x = 0.7136, y = 0.3234 },
+	  { zone = "Mechagon", name = "Stolen Royal Vendorbot", faction = "Neutral" , mapID = 1462, x = 0.7373, y = 0.3679 },
       }
 	}
   }

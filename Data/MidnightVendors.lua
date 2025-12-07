@@ -56,6 +56,7 @@ local MidnightVendors = {
         { zone = "Founders Point", name = "Yen Malone", faction = "Alliance", mapID = 2352, x = 0.6241, y = 0.8020 },
         { zone = "Founders Point", name = "High Tides Ren", faction = "Alliance", mapID = 2352, x = 0.6241, y = 0.8020 },
         { zone = "Founders Point", name = "Len Splinthoof", faction = "Alliance", mapID = 2352, x = 0.6241, y = 0.8020 },
+		{ zone = "Founders Point", name = "Klasa", faction = "Alliance", mapID = 2352, x = 0.5820, y = 0.6180 },
       }
 	}
   }

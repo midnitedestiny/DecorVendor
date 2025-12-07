@@ -7,6 +7,8 @@ local ProfessionVendors = {
 	  name = "Cooking",
       vendors = {	
 	    { zone = "Lunarfall", name = "Arsenio Zerep", faction = "Alliance", mapID = 582, x = 0.6082, y = 0.7783, profession = "Cooking"  },
+		{ zone = "Halfhill Market", name = "Yan Ironpaw", faction = "Neutral", mapID = 807, x = 0.5260, y = 0.5160, profession = "Cooking" },
+		{ zone = "Halfhill Market", name = "Gina Mudclaw", faction = "Neutral", mapID = 807, x = 0.5320, y = 0.5160, profession = "Cooking" },
 	  }
 	}
   }
