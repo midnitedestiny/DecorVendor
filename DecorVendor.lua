@@ -244,6 +244,13 @@ frame:SetScript("OnMouseUp", function(self, button)
     end
 end)
 
+local bindingFrame = CreateFrame("Button", "DV_KeyBindListener", UIParent)
+bindingFrame:RegisterForClicks("AnyDown")
+bindingFrame:SetScript("OnClick", function()
+    if not frame:IsShown() then BuildUI() end
+    frame:SetShown(not frame:IsShown())
+end)
+
  -- Close button
 local closeBtn = CreateFrame("Button", nil, frame, "UIPanelCloseButton")
 closeBtn:SetPoint("TOPRIGHT", -2, -2)
@@ -1476,7 +1483,118 @@ eventFrame:SetScript("OnEvent", function()
     end
 end)
 
+--Esc logic
+local function UpdateEscBehavior()
+    local frameName = "DV_MainFrame"
+    local foundIndex = nil
+    for i, v in pairs(UISpecialFrames) do if v == frameName then foundIndex = i break end end
+    
+    if vendorSettings.closeOnEsc then
+        if not foundIndex then table.insert(UISpecialFrames, frameName) end
+    else
+        if foundIndex then table.remove(UISpecialFrames, foundIndex) end
+    end
+end
 
+--Keybind logic
+local function UpdateKeyBinding()
+    if InCombatLockdown() then return end
+    ClearOverrideBindings(bindingFrame)
+    if vendorSettings.toggleKey and vendorSettings.toggleKey ~= "" then
+        SetOverrideBindingClick(bindingFrame, true, vendorSettings.toggleKey, "DV_KeyBindListener")
+    end
+end
+
+--Options panel
+local function CreateOptionsPanel()
+    local configFrame = CreateFrame("Frame", "DV_ConfigFrame", UIParent)
+    configFrame.name = "Decor Vendor"
+    
+    local configTitle = configFrame:CreateFontString(nil, "ARTWORK")
+    configTitle:SetFont(STANDARD_TEXT_FONT, 16);
+    configTitle:SetPoint("TOPLEFT", 16, -16)
+    configTitle:SetText("Decor Vendor Settings")
+    
+    local escCheck = CreateFrame("CheckButton", nil, configFrame, "UICheckButtonTemplate")
+    escCheck:SetPoint("TOPLEFT", configTitle, "BOTTOMLEFT", 0, -20)
+    escCheck.Text:SetFont(STANDARD_TEXT_FONT, 14); escCheck.Text:SetTextColor(1, 0.82, 0)
+    escCheck.Text:SetText(" Esc to Close Decor Vendor")
+    escCheck:SetChecked(vendorSettings.closeOnEsc)
+    escCheck:SetScript("OnClick", function(self)
+        vendorSettings.closeOnEsc = self:GetChecked()
+        UpdateEscBehavior()
+    end)
+    
+    local keybindLabel = configFrame:CreateFontString(nil, "ARTWORK")
+    keybindLabel:SetFont(STANDARD_TEXT_FONT, 14); keybindLabel:SetTextColor(1, 0.82, 0)
+    keybindLabel:SetPoint("TOPLEFT", escCheck, "BOTTOMLEFT", 0, -20)
+    keybindLabel:SetText("Toggle Frame Keybind")
+    
+    local keybindBtn = CreateFrame("Button", nil, configFrame, "UIPanelButtonTemplate")
+    keybindBtn:SetPoint("LEFT", keybindLabel, "RIGHT", 10, 0)
+    keybindBtn:SetSize(140, 28)
+    keybindBtn.Text:SetFont(STANDARD_TEXT_FONT, 14)
+    keybindBtn:RegisterForClicks("AnyUp") -- Updated to support Right Click
+    keybindBtn:SetText(vendorSettings.toggleKey or "Not Bound")
+    
+    -- Tooltip logic
+    keybindBtn:SetScript("OnEnter", function(self)
+        if vendorSettings.toggleKey and vendorSettings.toggleKey ~= "" then
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+            GameTooltip:AddLine("Decor Vendor (" .. vendorSettings.toggleKey .. ")", 1, 1, 1)
+            GameTooltip:AddLine("|cff00ff00<Right Click to unbind>", 1, 1, 1)
+            GameTooltip:Show()
+        end
+    end)
+    
+    keybindBtn:SetScript("OnLeave", function(self)
+        GameTooltip:Hide()
+    end)
+
+    keybindBtn:SetScript("OnClick", function(self, button)
+        if button == "RightButton" then
+             vendorSettings.toggleKey = nil
+             self:SetText("Not Bound")
+             UpdateKeyBinding()
+             GameTooltip:Hide()
+        else
+            self:SetText("Press a key...")
+            self:EnableKeyboard(true)
+            self:SetScript("OnKeyDown", function(btn, key)
+                --Ignore the modifier key
+                if key == "LSHIFT" or key == "RSHIFT" or key == "LCTRL" or key == "RCTRL" or key == "LALT" or key == "RALT" then
+                    return
+                end
+                
+                if key == "ESCAPE" then
+                    btn:EnableKeyboard(false)
+                    btn:SetText(vendorSettings.toggleKey or "Not Bound")
+                    btn:SetScript("OnKeyDown", nil)
+                else
+                    local modifier = ""
+                    if IsAltKeyDown() then modifier = modifier .. "ALT-" end
+                    if IsControlKeyDown() then modifier = modifier .. "CTRL-" end
+                    if IsShiftKeyDown() then modifier = modifier .. "SHIFT-" end
+                    
+                    local fullKey = modifier .. key
+                    vendorSettings.toggleKey = fullKey
+                    
+                    btn:SetText(fullKey)
+                    btn:EnableKeyboard(false)
+                    btn:SetScript("OnKeyDown", nil)
+                    UpdateKeyBinding()
+                end
+            end)
+        end
+    end)
+
+    if Settings and Settings.RegisterCanvasLayoutCategory then
+         local category, layout = Settings.RegisterCanvasLayoutCategory(configFrame, "Decor Vendor")
+         Settings.RegisterAddOnCategory(category)
+    else
+         InterfaceOptions_AddCategory(configFrame)
+    end
+end
 
 --Initialize
 local init = CreateFrame("Frame")
@@ -1521,8 +1639,12 @@ init:SetScript("OnEvent", function(self, event, addon)
     local scale = vendorSettings.scale or 1.0
     frame:SetScale(scale); supportFrame:SetScale(scale); scaleSlider:SetValue(scale)
     scaleValueText:SetText(string.format("UI Scale: %.2f", scale))
+     vendorPopup:SetScale(scale)
     BuildUI()
-    if not vendorSettings.showMinimapButton then LibDBIcon:Hide("DecorVendorTwo") end
+    CreateOptionsPanel()
+    UpdateEscBehavior()
+    UpdateKeyBinding()
+    if not vendorSettings.showMinimapButton then LibDBIcon:Hide("DecorVendor") end
 
     self:UnregisterEvent("PLAYER_ENTERING_WORLD")
   elseif event == "MERCHANT_SHOW" then

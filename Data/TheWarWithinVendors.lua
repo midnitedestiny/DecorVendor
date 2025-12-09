@@ -24,7 +24,7 @@ local WarVendors = {
       vendors = {
         { zone = "Gundargaz", id = 221390, title = "Waxmonger Squick", x = 43.2, y = 32.8, mapID = 2214, faction = "neutral" },
         { zone = "Gundargaz", id = 252887, title = "Chert", x = 43.4, y = 33.0, mapID = 2214, faction = "neutral" },
-		{ zone = "missing on live servers", id = 256783, title = "Gabbun", faction = "neutral", mapID = 2214, x = 43.32, y = 33.03 },
+		--{ zone = "missing on live servers", id = 256783, title = "Gabbun", faction = "neutral", mapID = 2214, x = 43.32, y = 33.03 },
       }
     },
   }
