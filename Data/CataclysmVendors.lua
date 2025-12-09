@@ -5,13 +5,14 @@ local CataclysmVendors = {
 {
     name = "Twilight Highlands",
     vendors = {
-      { zone = "Thundermar", name = "Breana Bitterbrand", faction = "Alliance", mapID = 241, x = 0.4971, y = 0.2960 },
-      { zone = "Thundermar", name = "Craw MacGraw", faction = "Alliance", mapID = 241, x = 0.4862, y = 0.3063 },
+      { zone = "Thundermar", id = 253227, title = "Breana Bitterbrand", x = 49.6, y = 29.6, mapID = 241, faction = "alliance" },
+      { zone = "Thundermar", id = 49386, title = "Craw MacGraw", x = 48.6, y = 30.6, mapID = 241 , faction = "alliance"  },
     }
    }
   }
 },
 }
+
 
 -- Make accessible to other files
 _G.CataclysmVendors = CataclysmVendors

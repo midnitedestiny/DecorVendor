@@ -5,7 +5,7 @@ local ShadowlandsVendors = {
     {
       name = "Covenants",
       vendors = {
-        { zone = "Revendreth - Sinfall - Venthyr Only", name = "Chachi the Artiste", faction = "Neutral" },
+        { zone = "Revendreth - Sinfall - Venthyr Only", id = 174710, title = "Chachi the Artiste", x = 54.0, y = 24.8, mapID = 1699, faction = "neutral" },
       }
     },
   }
@@ -16,14 +16,11 @@ local ShadowlandsVendors = {
     {
       name = "The Maw",
       vendors = {
-        { zone = "Ve'nari's Refuge", name = "Ve'nari", faction = "Neutral" , mapID = 1543, x = 0.4692, y = 0.4171 },
+        { zone = "Ve'nari's Refuge", id = 162804, title = "Ve'nari", x = 46.8, y = 41.6, mapID = 1543, faction = "neutral" },
       }
     },
   }
 },
 }
-
-
-
 
 _G.ShadowlandsVendors = ShadowlandsVendors

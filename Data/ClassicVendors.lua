@@ -5,7 +5,8 @@ local ClassicVendors = {
     {
       name = "Bizmo's Brawlpub'",
       vendors = {
-      { zone = "Bizmo's Brawlpub", name = "Paul North", faction = "Horde" , mapID = 503, x = 0.5091, y = 0.2898 },
+      { zone = "Bizmo's Brawlpub", id = 68364, title = "Paul North", x = 52.0, y = 27.8, mapID = 503 , faction = "horde" },
+	  { zone = "Bizmo's Brawlpub", id = 145695, title = "\"Bad Luck\" Symmes", x = 50.84, y = 29.13, mapID = 503 , faction = "horde" }
       }
 	}
   }
@@ -16,7 +17,7 @@ local ClassicVendors = {
     {
       name = "Blasted Lands",
       vendors = {
-      { zone = "Surwich", name = "Maurice Essman", faction = "Alliance" , mapID = 17, x = 0.458, y = 0.886 },
+      { zone = "Surwich",  id = 44337, title = "Maurice Essman", x = 45.8, y = 88.6, mapID = 17 , faction = "alliance"  },
       }
 	}
   }
@@ -27,7 +28,7 @@ local ClassicVendors = {
     {
       name = "Burning Steppes",
       vendors = {
-      { zone = "Chiselgrip", name = "Hoddruc Bladebender", faction = "Neutral" , mapID = 36, x = 0.4678, y = 0.4485 },
+      { zone = "Chiselgrip", faction = "Neutral" , id = 115805, title = "Hoddruc Bladebender", x = 46.8, y = 44.6, mapID = 36 },
       }
 	}
   }
@@ -38,7 +39,7 @@ local ClassicVendors = {
     {
       name = "Darnassus",
       vendors = {
-      { zone = "PRE-DESTRUCTION", name = "Lord Candren", faction = "Alliance" , mapID = 89, x = 0.370, y = 0.478 },
+      { zone = "PRE-DESTRUCTION", id = 50307, title = "Lord Candren", x = 37.2, y = 47.6, mapID = 89 , faction = "alliance" },
       }
 	}
   }
@@ -49,7 +50,8 @@ local ClassicVendors = {
     {
       name = "Deeprun Tram",
       vendors = {
-      { zone = "Deeprun Tram", name = "Quackenbush", faction = "Alliance" , mapID = 500, x = 0.5452, y = 0.2727 },
+      { zone = "Deeprun Tram", id = 68363, title = "Quackenbush", x = 51.0, y = 30.0, mapID = 499 , faction = "alliance"  },
+	   {zone = "Deeprun Tram", id = 151941, title = "Dershway the Triggered", x = 54.25, y = 25.13, mapID = 500 , faction = "alliance" }
       }
 	}
   }
@@ -60,7 +62,7 @@ local ClassicVendors = {
     {
       name = "Dun Morogh",
       vendors = {
-      { zone = "Kharanos", name = "Innkeeper Belm", faction = "Alliance" , mapID = 27, x = 0.544, y = 0.508 },
+      { zone = "Kharanos", id = 1247, title = "Innkeeper Belm", x = 54.4, y = 50.8, mapID = 27 , faction = "alliance"  },
       }
 	}
   }
@@ -71,7 +73,7 @@ local ClassicVendors = {
     {
       name = "Duskwood",
       vendors = {
-      { zone = "Raven Hill", name = "Wilkinson", faction = "Alliance" , mapID = 47, x = 0.2028, y = 0.5824 },
+      { zone = "Raven Hill", id = 44114, title = "Wilkinson", x = 20.27, y = 58.35, mapID = 47 , faction = "alliance" },
       }
 	}
   }
@@ -82,7 +84,7 @@ local ClassicVendors = {
     {
       name = "Dustwallow Marsh",
       vendors = {
-      { zone = "Mudsprocket", name = "Axle", faction = "Neutral" , mapID = 70, x = 0.4192, y = 0.7416 },
+      { zone = "Mudsprocket", faction = "Neutral" , id = 23995, title = "Axle", x = 41.9, y = 73.9, mapID = 70  },
       }
 	}
   }
@@ -93,7 +95,7 @@ local ClassicVendors = {
     {
       name = "Eastern PlagueLands",
       vendors = {
-        { zone = "Lights Hope Chapel", name = "Fiona", faction = "Neutral" , mapID = 23, x = 0.7389, y = 0.5213 },
+        { zone = "Lights Hope Chapel", id = 45417, title = "Fiona", x = 73.8, y = 52.2, mapID = 23, faction = "neutral" },
       }
     },
   }
@@ -104,9 +106,9 @@ local ClassicVendors = {
     {
       name = "Ironforge",
       vendors = {
-      { zone = "The Commons", name = "Dedric Sleetshaper", faction = "Alliance" ,  mapID = 87, x = 0.2444, y = 0.4415 },
-      { zone = "Ironforge", name = "Captain Stonehelm", faction = "Alliance" ,  mapID = 87, x = 0.5592, y = 0.4757 },
-      { zone = "The Library", name = "Inge Brightview", faction = "Alliance" ,  mapID = 87, x = 0.7613, y = 0.0809 },
+      { zone = "The Commons", id = 253235, title = "Dedric Sleetshaper", x = 24.72, y = 43.93, mapID = 87, faction = "alliance" },
+      { zone = "Ironforge", id = 50309, title = "Captain Stonehelm", x = 55.6, y = 48.2, mapID = 87 , faction = "alliance"  },
+      { zone = "The Library", faction = "alliance" ,  id = 253232, title = "Inge Brightview", x = 75.8, y = 9.4, mapID = 87 },
       }
 	}
   }
@@ -117,7 +119,7 @@ local ClassicVendors = {
     {
       name = "Loch Modan",
       vendors = {
-      { zone = "Thelsamar", name = "Drac Roughcut", faction = "Alliance" , mapID = 48, x = 0.3557, y = 0.4901 },
+      { zone = "Thelsamar", id = 1465, title = "Drac Roughcut", x = 35.6, y = 49.0, mapID = 48 , faction = "alliance" },
       }
 	}
   }
@@ -128,9 +130,9 @@ local ClassicVendors = {
     {
       name = "Orgrimmar",
       vendors = {
-      { zone = "Hall of Legends", name = "Joruh", faction = "Horde" , mapID = 85, x = 0.3881, y = 0.7195 },
-      { zone = "Orgrimmar", name = "Stone Guard Nargol", faction = "Horde" , mapID = 85, x = 0.5026, y = 0.5844 },
-      { zone = "The Drag", name = "Lonalo", faction = "Horde" , mapID = 85, x = 0.5855, y = 0.5034 },
+      { zone = "Hall of Legends", faction = "horde" , id = 254606, title = "Joruh", x = 38.8, y = 71.93, mapID = 85 },
+      { zone = "Orgrimmar", id = 50488, title = "Stone Guard Nargol", x = 50.2, y = 58.4, mapID = 85 , faction = "horde" },
+      { zone = "The Drag", faction = "horde" , id = 256119, title = "Lonalo", x = 58.4, y = 50.6, mapID = 85 },
       }
 	}
   }
@@ -141,18 +143,31 @@ local ClassicVendors = {
     {
       name = "Searing Gorge",
       vendors = {
-      { zone = "Thorium Point", name = "Master Smith Burninate", faction = "Neutral" , mapID = 32, x = 0.3858, y = 0.2855 },
+      { zone = "Thorium Point", id = 14624, title = "Master Smith Burninate", x = 38.6, y = 28.7, mapID = 32, faction = "neutral" },
+	  --{ zone = "Blackrock Depths", id = 144129, title = "Plugger Spazzring", x = 49.77, y = 32.22, mapID = 1186 , faction = "alliance" },
       }
 	}
   }
 },
-	{
+{
   name = "Classic",
   continents = {
     {
       name = "Silverpine Forest",
       vendors = {
-      { zone = "The Sepulcher", name = "Edwin Harly", faction = "Horde" , mapID = 21, x = 0.4408, y = 0.3975 },
+      { zone = "The Sepulcher", id = 2140, title = "Edwin Harly", x = 44.06, y = 39.68, mapID = 21 , faction = "horde" },
+      }
+	}
+  }
+},
+{
+  name = "Classic",
+  continents = {
+    {
+      name = "Gilneas",
+      vendors = {
+      { zone = "Stormglen Village", id = 211065, title = "Marie Allen", x = 60.4, y = 92.4, mapID = 217 , faction = "alliance"  },
+      { zone = "Stormglen Village", id = 216888, title = "Samantha Buckley", x = 65.39, y = 47.20, mapID = 218, mapIDWaypoint = 217 , faction = "alliance"  },
       }
 	}
   }
@@ -163,9 +178,9 @@ local ClassicVendors = {
     {
       name = "Stormwind",
       vendors = {
-      { zone = "Stormwind", name = "Captain Lancy Revshon", faction = "Alliance" , mapID = 84, x = 0.6772, y = 0.7302 },
-      { zone = "Mage Quarter", name = "Solelo", faction = "Alliance" ,  mapID = 84, x = 0.494, y = 0.808 },
-      { zone = "Old Town", name = "Riica", faction = "Alliance" ,  mapID = 84, x = 0.778, y = 0.660 },
+      { zone = "Stormwind", id = 49877, title = "Captain Lancy Revshon", x = 67.79, y = 73.05, mapID = 84 , faction = "alliance" },
+      { zone = "Mage Quarter", faction = "alliance" ,id = 256071, title = "Solelo", x = 49.0, y = 80.0, mapID = 84 },
+      { zone = "Old Town", id = 254603, title = "Riica", x = 77.8, y = 65.8, mapID = 84 , faction = "alliance" },
       }
 	}
   }
@@ -176,7 +191,7 @@ local ClassicVendors = {
     {
       name = "Stranglethorn Vale",
       vendors = {
-      { zone = "Nesingwary Expedition", name = "Jacquilina Dramet", faction = "Neutral" , mapID = 50, x = 0.436, y = 0.230 },
+      { zone = "Nesingwary Expedition", title = "Jacquilina Dramet", faction = "Neutral" , id = 2483, x = 43.8, y = 23.2, mapID = 50 },
       }
 	}
   }
@@ -187,7 +202,7 @@ local ClassicVendors = {
     {
       name = "Thunder Bluff",
       vendors = {
-      { zone = "Thunder Bluff", name = "Brave Tuho", faction = "Horde" , mapID = 88, x = 0.468, y = 0.500 },
+      { zone = "Thunder Bluff", id = 50483, title = "Brave Tuho", x = 46.2, y = 50.6, mapID = 88 , faction = "horde" },
       }
 	}
   }
@@ -198,7 +213,7 @@ local ClassicVendors = {
     {
       name = "Undercity",
       vendors = {
-      { zone = "PRE-DESTRUCTION", name = "Captain Donald Adams", faction = "Horde" , mapID = 90, x = 0.636, y = 0.488 },
+      { zone = "PRE-DESTRUCTION", id = 50304, title = "Captain Donald Adams", x = 63.2, y = 49.0, mapID = 90 , faction = "horde"  },
       }
 	}
   }
@@ -209,7 +224,7 @@ local ClassicVendors = {
     {
       name = "Wetlands",
       vendors = {
-      { zone = "Menethil Harbor", name = "Stuart Fleming", faction = "Alliance" , mapID = 56, x = 0.0632, y = 0.5745 },
+      { zone = "Menethil Harbor", id = 3178, title = "Stuart Fleming", x = 6.27, y = 57.45, mapID = 56 , faction = "alliance" },
       }
     }
   }

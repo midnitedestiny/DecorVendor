@@ -1,6 +1,3 @@
--- VendorData.lua
-
-
 
 -- Main VendorData.lua: merge all separate vendor tables
 

@@ -5,7 +5,7 @@ local WrathoftheLichKingVendors = {
     {
       name = "Scholazar Basin",
       vendors = {
-      { zone = "Nesingwary Base Camp", name = "Purser Boulian", faction = "Neutral" , mapID = 119, x = 0.2682, y = 0.5927 },
+      { zone = "Nesingwary Base Camp", id = 28038, title = "Purser Boulian", x = 26.8, y = 59.2, mapID = 119, faction = "neutral" },
       }
     }
   }

@@ -5,12 +5,12 @@ local MidnightVendors = {
     {
       name = "Silvermoon City",
       vendors = {
-		{ zone = "The Bazaar", name = "Corlen Hordralin", faction = "Neutral", mapID = 2393, x = 0.4416, y = 0.6272 },
-        { zone = "The Bazaar", name = "Hesta Forlath", faction = "Neutral", mapID = 2393, x = 0.4416, y = 0.6272 },
-        { zone = "The Bazaar", name = "Naleidea Rivergleam", faction = "Neutral", mapID = 2393, x = 0.5267, y = 0.7796 },
-        { zone = "Murder Row", name = "Dennia Silvertongue", faction = "Neutral", mapID = 2393, x = 0.5116, y = 0.5647 },
-        { zone = "Astalor's Sanctum", name = "Construct Ali'a", faction = "Neutral", mapID = 2393, x = 0.5581, y = 0.6604 },
-        { zone = "The Bazaar", name = "Telemancer Astrandis", faction = "Neutral", mapID = 2393, x = 0.5244, y = 0.7887 },
+		{ zone = "The Bazaar", id = 252915, title = "Corlen Hordralin", faction = "neutral", mapID = 2393, x = 0.4416, y = 0.6272 },
+        { zone = "The Bazaar", id = 252916, title = "Hesta Forlath", faction = "neutral", mapID = 2393, x = 0.4416, y = 0.6272 },
+        { zone = "The Bazaar", id = 242398, title = "Naleidea Rivergleam", faction = "neutral", mapID = 2393, x = 0.5267, y = 0.7796 },
+        { zone = "Murder Row", id = 256828, title = "Dennia Silvertongue", faction = "neutral", mapID = 2393, x = 0.5116, y = 0.5647 },
+        { zone = "Astalor's Sanctum", id = 258181, title = "Construct Ali'a", faction = "neutral", mapID = 2393, x = 0.5581, y = 0.6604 },
+        { zone = "The Bazaar", id = 242399, title = "Telemancer Astrandis", faction = "neutral", mapID = 2393, x = 0.5244, y = 0.7887 },
       }
 	}
   }
@@ -21,8 +21,8 @@ local MidnightVendors = {
     {
       name = "Harandar",
       vendors = {
-        { zone = "The Den", name = "Maku", faction = "Neutral", mapID = 2413, x = 0.5312, y = 0.5093 },
-        { zone = "The Den", name = "Naynar", faction = "Neutral", mapID = 2413, x = 0.5095, y = 0.5074 },
+        { zone = "The Den", id = 255114, title = "Maku", faction = "neutral", mapID = 2413, x = 53.12, y = 50.93 },
+        { zone = "The Den", id = 240407, title = "Naynar", faction = "neutral", mapID = 2413, x = 50.95, y = 50.74 },
       }
 	}
   }
@@ -33,11 +33,11 @@ local MidnightVendors = {
     {
       name = "Eversong Woods",
       vendors = {
-		{ zone = "Eversong Woods", name = "Neriv", faction = "Neutral", mapID = 2395, x = 0.4349, y = 0.4764 },
-        { zone = "Eversong Woods", name = "Ranger Allorn", faction = "Neutral", mapID = 2395, x = 0.4346, y = 0.4755 },
-        { zone = "Eversong Woods", name = "Armorer Goldcrest", faction = "Neutral", mapID = 2395, x = 0.4353, y = 0.475 },
-        { zone = "Eversong Woods", name = "Caeris Fairdawn", faction = "Neutral", mapID = 2395, x = 0.4347, y = 0.4744 },
-        { zone = "Eversong Woods", name = "Apprentice Diell", faction = "Neutral", mapID = 2395, x = 0.4353, y = 0.475 },
+		{ zone = "Eversong Woods", id = 242726, title = "Neriv", faction = "neutral", mapID = 2395, x = 43.49, y = 47.64 },
+        { zone = "Eversong Woods", id = 242724, title = "Ranger Allorn", faction = "neutral", mapID = 2395, x = 43.46, y = 47.55 },
+        { zone = "Eversong Woods", id = 242725, title = "Armorer Goldcrest", faction = "neutral", mapID = 2395, x = 43.53, y = 47.5 },
+        { zone = "Eversong Woods", id = 240838, title = "Caeris Fairdawn", faction = "neutral", mapID = 2395, x = 43.47, y = 47.44 },
+        { zone = "Eversong Woods", id = 242723, title = "Apprentice Diell", faction = "neutral", mapID = 2395, x = 43.53, y = 47.5 },
       }
 	}
   }
@@ -47,16 +47,16 @@ local MidnightVendors = {
   continents = {
       {
       name = "Founders Point",
-      vendors = {
-		{ zone = "Founders Point", name = "Trevor Grenner", faction = "Alliance", mapID = 2352, x = 0.5349, y = 0.4089 },
-        { zone = "Founders Point", name = "Faarden the Builder", faction = "Alliance", mapID = 2352, x = .5204, y = .3837 },
-        { zone = "Founders Point", name = "Balen Starfinder", faction = "Alliance", mapID = 2352, x = .5226, y = .3781 },
-        { zone = "Founders Point", name = "Argan Hammerfist", faction = "Alliance", mapID = 2352, x = .5226, y = .3781 },
-        { zone = "Founders Point", name = "Xiao Dan", faction = "Alliance", mapID = 2352, x = .5204, y = .3837 },
-        { zone = "Founders Point", name = "Yen Malone", faction = "Alliance", mapID = 2352, x = 0.6241, y = 0.8020 },
-        { zone = "Founders Point", name = "High Tides Ren", faction = "Alliance", mapID = 2352, x = 0.6241, y = 0.8020 },
-        { zone = "Founders Point", name = "Len Splinthoof", faction = "Alliance", mapID = 2352, x = 0.6241, y = 0.8020 },
-		{ zone = "Founders Point", name = "Klasa", faction = "Alliance", mapID = 2352, x = 0.5820, y = 0.6180 },
+      vendors = {		
+	    { zone = "Founders Point", id = 255228, title = "\"Len\" Splinthoof", x = 62.4, y = 80.0, mapID = 2352 , faction = "alliance" },
+        { zone = "Founders Point", id = 255222, title = "\"High Tides\" Ren", x = 62.4, y = 80.2, mapID = 2352 , faction = "alliance" },
+        { zone = "Founders Point", id = 255230, title = "\"Yen\" Malone", x = 62.23, y = 80.3, mapID = 2352 , faction = "alliance" },
+        { zone = "Founders Point", id = 255203, title = "Xiao Dan", x = 51.95, y = 38.31, mapID = 2352 , faction = "alliance" },
+        { zone = "Founders Point", id = 255221, title = "Trevor Grenner", x = 53.47, y = 40.93, mapID = 2352 , faction = "alliance" },
+        { zone = "Founders Point", id = 256750, title = "Klasa", x = 58.3, y = 61.68, mapID = 2352, faction = "alliance" },
+        { zone = "Founders Point", id = 255213, title = "Faarden the Builder", x = 52.0, y = 38.4, mapID = 2352 , faction = "alliance"},
+        { zone = "Founders Point", id = 255216, title = "Balen Starfinder", x = 52.2, y = 38.0, mapID = 2352 , faction = "alliance" },
+        { zone = "Founders Point", id = 255218, title = "Argan Hammerfist", x = 52.2, y = 37.8, mapID = 2352 , faction = "alliance" },
       }
 	}
   }
@@ -67,38 +67,38 @@ local MidnightVendors = {
       {
       name = "Razorwind Shores",
       vendors = {
-        { zone = "Razorwind Shores", name = "Jehzar Starfall", faction = "Horde", mapID = 2351, x = 0.5349, y = 0.5849 },
-        { zone = "Razorwind Shores", name = "Lefton Farrer", faction = "Horde", mapID = 2351, x = 0.5349, y = 0.5849 },
-        { zone = "Razorwind Shores", name = "Botanist Boh'an", faction = "Horde", mapID = 2351, x = 0.5367, y = 0.5758 },
-        { zone = "Razorwind Shores", name = "Shon'ja", faction = "Horde", mapID = 2351, x = 0.5411, y = 0.5907 },
-        { zone = "Razorwind Shores", name = "Gronthul", faction = "Horde", mapID = 2351, x = 0.5411, y = 0.5907 },
-        { zone = "Razorwind Shores", name = "Lonomia", faction = "Horde", mapID = 2351, x = 0.6835, y = 0.7549 },
-        { zone = "Razorwind Shores", name = "Yen Malone", faction = "Horde", mapID = 2351, x = 0.4075, y = 0.7309 },
-        { zone = "Razorwind Shores", name = "Len Splinthoof", faction = "Horde", mapID = 2351, x = 0.3994, y = 0.7325 },
-        { zone = "Razorwind Shores", name = "High Tides Ren", faction = "Horde", mapID = 2351, x = 0.3990, y = 0.7278 },
+        { zone = "Razorwind Shores", id = 255222, title = "\"High Tides\" Ren", faction = "horde", mapID = 2351, x = 039.90, y = 72.78 },
+		{ zone = "Razorwind Shores", id = 255319, title = "\"Yen\" Malone", x = 40.3, y = 73.0, mapID = 2351 , faction = "horde"  },
+        { zone = "Razorwind Shores", id = 255326, title = "\"Len\" Splinthoof", x = 39.91, y = 73.3, mapID = 2351 , faction = "horde"  },
+        { zone = "Razorwind Shores", id = 255297, title = "Shon'ja", x = 54.13, y = 59.05, mapID = 2351 , faction = "horde"  },
+        { zone = "Razorwind Shores", id = 240465, title = "Lonomia", x = 68.29, y = 75.5, mapID = 2351 , faction = "horde"  },
+        { zone = "Razorwind Shores", id = 255301, title = "Botanist Boh'an", x = 54.0, y = 58.4, mapID = 2351 , faction = "horde"  },
+        { zone = "Razorwind Shores", id = 255278, title = "Gronthul", x = 54.12, y = 59.11, mapID = 2351 , faction = "horde"  },
+        { zone = "Razorwind Shores", id = 255298, title = "Jehzar Starfall", x = 53.56, y = 58.49, mapID = 2351 , faction = "horde"  },
+        { zone = "Razorwind Shores", id = 255299, title = "Lefton Farrer", x = 53.48, y = 58.53, mapID = 2351 , faction = "horde"  },
       }
 	}
   }
 },
-{
+--[[{
   name = "Midnight",
   continents = {
       {
       name = "Housing Endeavor Vendors",
       vendors = {
-        { zone = "Founders Point", name = "Hesta Forlath", faction = "Alliance", mapID = 2352, x = 0.5314, y = 0.3833 },
-        { zone = "Razorwind Shores", name = "Hesta Forlath", faction = "Horde", mapID = 2351, x = 0.5437, y = 0.5602 },
+        { zone = "Founders Point", name = "Hesta Forlath", faction = "alliance", mapID = 2352, x = 0.5314, y = 0.3833 },
+        { zone = "Razorwind Shores", name = "Hesta Forlath", faction = "horde", mapID = 2351, x = 0.5437, y = 0.5602 },
       }
 	}
   }
-},
+},]]
 {
   name = "Midnight",
   continents = {
       {
       name = "Zul'Aman",
       vendors = {
-		{ zone = "Amani'Zar Village", name = "Magovu", faction = "Neutral", mapID = 2437, x = 0.4595, y = 0.6593 },
+		{ zone = "Amani'Zar Village", id = 240279, title = "Magovu", faction = "neutral", mapID = 2437, x = 46.0, y = 65.9 },
       }
 	}
   }
