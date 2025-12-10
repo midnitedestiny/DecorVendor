@@ -2,8 +2,8 @@
 ## Title: Decor Vendors
 ## Notes: Tracks vendors that sell housing decor Using TomTom for Waypoint Arrow!
 ## Author: Midnitedestiny
-## Version: 1.26
-## IconTexture: Interface\AddOns\DecorVendor\Assets\DecorVendor
+## Version: 1.27
+## IconTexture: 1530229 
 ## SavedVariables: DVDB, vendorsettings
 ## OptionalDeps:TomTom, WaypointUI
 

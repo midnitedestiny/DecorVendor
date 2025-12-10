@@ -82,14 +82,16 @@ if _G.WrathoftheLichKingVendors then
     end
 end
 
-if _G.ProfessionVendors then
+--[[if _G.ProfessionVendors then
     for _, t in ipairs(_G.ProfessionVendors) do
         t.isProfessionVendor = true   -- mark it
         table.insert(VendorData, t)
     end
-end
+end]]
 
 
 -- Make merged table global for your addon
+--SortVendorData(VendorData)
 _G.VendorData = VendorData
+
 

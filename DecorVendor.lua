@@ -88,127 +88,6 @@ local minimapButton
 
 
 
---[[local function SortVendorData(sortBy)
-
-    ----------------------------------------------------
-    -- 1️⃣ Sort EXPANSIONS by release order
-    ----------------------------------------------------
-    local expansionOrder = {
-        ["Classic"] = 1,
-        ["Burning Crusade"]= 2,
-        ["Wrath of the Lich King"] = 3,
-        ["Cataclysm"]= 4,
-        ["Mists of Pandaria"] = 5,
-        ["Warlords of Draenor"] = 6,
-        ["Legion"] = 7,
-        ["Battle for Azeroth"] = 8,
-        ["Shadowlands"] = 9,
-        ["Dragonflight"] = 10,
-        ["The War Within"] = 11,
-        ["Midnight"] = 12,       
-        ["Raids"] = 13,
-    }
-
-    table.sort(VendorData, function(a, b)
-        return (expansionOrder[a.name] or 999) < (expansionOrder[b.name] or 999)
-    end)
-
-
-
-    ----------------------------------------------------
-    -- 2️⃣ SPECIAL HANDLING: Sort continents for ALL expansions
-    --     (because each expansion has many 1-continent tables)
-    ----------------------------------------------------
-
-    local function SortExpansionContinents(expansionName)
-        local idxList = {}
-        local tblList = {}
-
-        -- Gather all matching expansion entries
-        for i, exp in ipairs(VendorData) do
-            if exp.name == expansionName then
-                table.insert(idxList, i)
-                table.insert(tblList, exp)
-            end
-        end
-
-        -- Skip expansions with no continent tables
-        if #tblList == 0 then return end
-
-        -- Sort by the continent name
-        table.sort(tblList, function(a, b)
-            local aName = a.continents and a.continents[1] and a.continents[1].name or ""
-            local bName = b.continents and b.continents[1] and b.continents[1].name or ""
-            return aName < bName
-        end)
-
-        -- Put sorted tables back in their same spots
-        for n, index in ipairs(idxList) do
-            VendorData[index] = tblList[n]
-        end
-    end
-
-    -- List ALL expansions that need special continent sorting
-    local expansionsToSort = {
-        "Classic",
-        "Burning Crusade",
-        "Wrath of the Lich King",
-        "Cataclysm",
-        "Mists of Pandaria",
-        "Warlords of Draenor",
-        "Legion",
-        "Battle for Azeroth",
-        "Shadowlands",
-        "Dragonflight",
-        "The War Within",
-        "Midnight",
-    }
-
-    for _, name in ipairs(expansionsToSort) do
-        SortExpansionContinents(name)
-    end
-
-
-
-    ----------------------------------------------------
-    -- 3️⃣ Sort vendors within each continent / expansion
-    ----------------------------------------------------
-    for _, expansion in ipairs(VendorData) do
-        if expansion.continents then
-            -- Multi-continent structure (or 1 per table)
-            for _, continent in ipairs(expansion.continents) do
-                table.sort(continent.vendors, function(a, b)			
-                    if sortBy == "zone" then
-                        if a.zone == b.zone then
-                            return a.name < b.name
-                        else
-                            return a.zone < b.zone
-                        end
-                    else
-                        return a.name < b.name
-                    end
-                end)
-            end
-
-        elseif expansion.vendors then
-            -- No continents, vendors directly on expansion
-            table.sort(expansion.vendors, function(a, b)
-                if sortBy == "zone" then
-                    if a.zone == b.zone then
-                        return a.name < b.name
-                    else
-                        return a.zone < b.zone
-                    end
-                else
-                    return a.name < b.name
-                end
-            end)
-        end
-    end
-
-end]]
-
-
 local function GetFullTexturePath(texturePath)
     if texturePath and not string.match(texturePath, "[\\/]") then
         return "Interface\\AddOns\\DecorVendor\\Assets\\" .. texturePath
@@ -745,7 +624,7 @@ filterButton:SetupMenu(function(dropdown, root)
 -----------------------------------------------------
 -- EXPANSIONS (multi-select)
 -----------------------------------------------------
-local expansionMenu = root:CreateButton("Expansions")
+--[[local expansionMenu = root:CreateButton("Expansions")
 
 -- Multi-select tracking table
 if not selectedExpansions then selectedExpansions = { All = true } end
@@ -769,6 +648,76 @@ end
 
 local expansionList = buildUniqueSorted(expansionsSeen)
 
+for _, name in ipairs(expansionList) do
+    if name ~= "Professions" then
+        expansionMenu:CreateCheckbox(name,
+            function() return selectedExpansions[name] end,
+            function()
+                selectedExpansions[name] = not selectedExpansions[name]
+                if selectedExpansions[name] then selectedExpansions.All = false end
+
+                local anySelected = false
+                for k,v in pairs(selectedExpansions) do
+                    if k ~= "All" and v then anySelected = true end
+                end
+                if not anySelected then selectedExpansions.All = true end
+
+                BuildUI()
+            end
+        )
+    end
+end]]
+
+-- EXPANSIONS (multi-select)
+local expansionMenu = root:CreateButton("Expansions")
+
+-- Multi-select tracking table
+if not selectedExpansions then selectedExpansions = { All = true } end
+
+-- "All" checkbox first
+expansionMenu:CreateCheckbox("All",
+    function() return selectedExpansions.All end,
+    function()
+        selectedExpansions = { All = true }
+        BuildUI()
+    end
+)
+
+-- Collect unique expansions
+local expansionsSeen = {}
+for _, expansion in ipairs(VendorData or {}) do
+    if expansion.name then
+        expansionsSeen[expansion.name] = true
+    end
+end
+
+-- Convert to list
+local expansionList = {}
+for name in pairs(expansionsSeen) do
+    table.insert(expansionList, name)
+end
+
+-- Sort by release order
+local expansionOrder = {
+    ["Classic"] = 1,
+    ["Burning Crusade"] = 2,
+    ["Wrath of the Lich King"] = 3,
+    ["Cataclysm"] = 4,
+    ["Mists of Pandaria"] = 5,
+    ["Warlords of Draenor"] = 6,
+    ["Legion"] = 7,
+    ["Battle for Azeroth"] = 8,
+    ["Shadowlands"] = 9,
+    ["Dragonflight"] = 10,
+    ["The War Within"] = 11,
+    ["Midnight"] = 12,
+}
+
+table.sort(expansionList, function(a, b)
+    return (expansionOrder[a] or 999) < (expansionOrder[b] or 999)
+end)
+
+-- Create checkboxes for each expansion
 for _, name in ipairs(expansionList) do
     if name ~= "Professions" then
         expansionMenu:CreateCheckbox(name,
@@ -1339,107 +1288,74 @@ function BuildUI()
     -- 1️⃣ Sync saved completed flags with VendorData
     for _, group in ipairs(VendorData) do
         for _, vendor in ipairs(group.vendors or {}) do
-            vendor.completed = vendorSettings.completedVendors[vendor.title] or false
+            vendor.completed = vendorSettings.completedVendors[vendor.title or vendor.name] or false
         end
     end
-	
-	-- Define the expansion order
-    local expansionOrder = {
-        ["Classic"] = 1,
-        ["Burning Crusade"] = 2,
-        ["Wrath of the Lich King"] = 3,
-        ["Cataclysm"] = 4,
-        ["Mists of Pandaria"] = 5,
-        ["Warlords of Draenor"] = 6,
-        ["Legion"] = 7,
-        ["Battle for Azeroth"] = 8,
-        ["Shadowlands"] = 9,
-        ["Dragonflight"] = 10,
-        ["The War Within"] = 11,
-        ["Midnight"] = 12,
-    }
 
-local expansionsToShow = {}
-for _, exp in ipairs(VendorData) do
-    -- Skip the "Professions" expansion unless a profession is selected
-    if exp.name == "Professions" then
-        if not selectedProfessions or selectedProfessions.All then
-            -- no profession selected or "All" selected → skip
+    -- Define expansions to show (apply expansion & profession filters)
+    local expansionsToShow = {}
+    for _, exp in ipairs(VendorData) do
+        if exp.name == "Professions" then
+            if selectedProfessions and not selectedProfessions.All then
+                table.insert(expansionsToShow, exp)
+            end
         else
-            table.insert(expansionsToShow, exp)
-        end
-    else
-        -- normal expansions
-        if not selectedExpansions or selectedExpansions.All or selectedExpansions[exp.name] then
-            table.insert(expansionsToShow, exp)
+            if not selectedExpansions or selectedExpansions.All or selectedExpansions[exp.name] then
+                table.insert(expansionsToShow, exp)
+            end
         end
     end
-end
 
-
-
-    table.sort(expansionsToShow, function(a, b)
-        return (expansionOrder[a.name] or 999) < (expansionOrder[b.name] or 999)
-    end)
-
-    -- Loop through each expansion (already filtered and sorted)
+    -- Loop through each expansion (already filtered)
     for _, expansion in ipairs(expansionsToShow) do
         local subGroups = expansion.continents
         if not subGroups or #subGroups == 0 then
-            subGroups = { expansion }
-        end
-	
-	-- ⭐ Sort your vendor headers alphabetically
-table.sort(subGroups, function(a, b)
-    return (a.name or "") < (b.name or "")
-end)
-
-    for _, subGroup in ipairs(subGroups) do
-        local totalVendors = subGroup.vendors and #subGroup.vendors or 0
-        local visibleVendors = {}
-
-        for _, vendor in ipairs(subGroup.vendors or {}) do
-            -- Attach reference data for filtering
-            vendor.expansion = expansion.name
-            vendor.continent = subGroup.name or expansion.name
-
-            local passesFaction = (selectedFactions.All or selectedFactions[vendor.faction])
-			local passesExpansion = (selectedExpansions.All or selectedExpansions[vendor.expansion])
-			local passesContinent = (continentFilter == "All" or vendor.continent == continentFilter)
-			local passesZone = (zoneFilter == "All" or vendor.zone == zoneFilter)
-			--local passesProfession = (selectedProfessions.All or selectedProfessions[vendor.profession])
-
-
-
-            if passesFaction and passesExpansion and passesContinent and passesZone --[[passesProfession]] then
-    table.insert(visibleVendors, vendor)
-end
-
+            subGroups = { expansion } -- fallback if no continents
         end
 
-        if #visibleVendors > 0 then
-            hasContent = true
+        -- Loop through each continent/group (do NOT sort here!)
+        for _, subGroup in ipairs(subGroups) do
+            local totalVendors = subGroup.vendors and #subGroup.vendors or 0
+            local visibleVendors = {}
 
-            -- Create header
-            local header, collapsed, newY = CreateVendorHeader(scrollChild, subGroup, y, #visibleVendors, totalVendors)
-            y = newY
+            -- Filter vendors
+            for _, vendor in ipairs(subGroup.vendors or {}) do
+                -- Attach reference data for filtering
+                vendor.expansion = expansion.name
+                vendor.continent = subGroup.name or expansion.name
 
-            -- Create visible vendor lines
-            if not collapsed then
-                local originalY = y
-                for _, vendor in ipairs(visibleVendors) do
-                    y = CreateVendorLine(scrollChild, vendor, y)
+                local passesFaction = selectedFactions.All or selectedFactions[vendor.faction]
+                local passesExpansion = selectedExpansions.All or selectedExpansions[vendor.expansion]
+                local passesContinent = continentFilter == "All" or vendor.continent == continentFilter
+                local passesZone = zoneFilter == "All" or vendor.zone == zoneFilter
+                -- local passesProfession = selectedProfessions.All or selectedProfessions[vendor.profession]
+
+                if passesFaction and passesExpansion and passesContinent and passesZone then
+                    table.insert(visibleVendors, vendor)
                 end
-                if y < originalY then
-                    y = y - 10 -- spacing after group
+            end
+
+            -- Only create headers if there are visible vendors
+            if #visibleVendors > 0 then
+                hasContent = true
+
+                -- Create header
+                local header, collapsed, newY = CreateVendorHeader(scrollChild, subGroup, y, #visibleVendors, totalVendors)
+                y = newY
+
+                -- Create vendor lines if not collapsed
+                if not collapsed then
+                    local originalY = y
+                    for _, vendor in ipairs(visibleVendors) do
+                        y = CreateVendorLine(scrollChild, vendor, y)
+                    end
+                    if y < originalY then
+                        y = y - 10 -- spacing after group
+                    end
                 end
             end
         end
     end
-end
-
-
-
 
     -- If no vendors are visible
     if not hasContent then
@@ -1459,6 +1375,7 @@ if not vendorSettings then vendorSettings = {} end
 if not vendorSettings.completedVendors then
     vendorSettings.completedVendors = {}
 end
+
 
 -- UI setup
 BuildUI()
@@ -1611,6 +1528,8 @@ init:SetScript("OnEvent", function(self, event, addon)
     
     vendorSettings.showMinimapButton = vendorSettings.showMinimapButton == nil and true or vendorSettings.showMinimapButton
     if vendorSettings.useTomTom == nil then vendorSettings.useTomTom = true end
+	if vendorSettings.closeOnEsc == nil then vendorSettings.closeOnEsc = true end
+    if vendorSettings.toggleKey == nil then vendorSettings.toggleKey = "SHIFT-H" end
 
     vendorSettings.filters = vendorSettings.filters or {  neutral = true, alliance = true, horde = true}
 
@@ -1622,7 +1541,7 @@ init:SetScript("OnEvent", function(self, event, addon)
     
     local ldb = LibStub:GetLibrary("LibDataBroker-1.1", true)
     if ldb then
-      local dataobj = ldb:NewDataObject("DecorVendor", { type = "launcher", icon = "Interface\\AddOns\\DecorVendor\\Assets\\DecorVendor.tga", label = "DecorVendor", text = "DecorVendor", name = "DecorVendor",
+      local dataobj = ldb:NewDataObject("DecorVendor", { type = "launcher", icon = 1530229, label = "DecorVendor", text = "DecorVendor", name = "DecorVendor",
         OnClick = function(_, button)
           if button == "LeftButton" then
             if not frame:IsShown() then BuildUI() end
