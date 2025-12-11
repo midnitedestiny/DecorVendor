@@ -1,4 +1,4 @@
-local MidnightVendors = {
+--[[local MidnightVendors = {
 {
   name = "Midnight",
   continents = {
@@ -80,7 +80,7 @@ local MidnightVendors = {
 	}
   }
 },
---[[{
+{
   name = "Midnight",
   continents = {
       {
@@ -91,7 +91,7 @@ local MidnightVendors = {
       }
 	}
   }
-},]]
+},
 {
   name = "Midnight",
   continents = {
@@ -106,4 +106,4 @@ local MidnightVendors = {
   }
 
 
-_G.MidnightVendors = MidnightVendors
+_G.MidnightVendors = MidnightVendors]]

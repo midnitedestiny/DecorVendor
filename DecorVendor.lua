@@ -1,10 +1,23 @@
-print("DecorVendor loaded")
+local addonName, dv = ...
 
-local _, dv = ...
+local f = CreateFrame("Frame")
+f:RegisterEvent("ADDON_LOADED")
 
-selectedExpansions = { All = true }
-selectedProfessions = { All = true }
-selectedFactions = { All = true }
+f:SetScript("OnEvent", function(self, event, loadedAddon)
+    if loadedAddon ~= addonName then return end
+
+    print("DecorVendor loaded.")
+
+    -- Initialize filters so UI shows everything
+    selectedExpansions  = { All = true }
+    selectedProfessions = { All = true }
+    selectedFactions    = { All = true }
+    continentFilter = "All"
+    zoneFilter = "All"
+
+    -- Build the UI AFTER filters exist
+    BuildUI()
+end)
 
 
 
@@ -60,7 +73,7 @@ vendorSettings = vendorSettings or {
     Shadowlands = true,
     Dragonflight = true,
     ["The War Within"] = true,
-    Midnight = true,
+   -- Midnight = true,
 }
 
 }
@@ -121,13 +134,6 @@ frame:SetScript("OnMouseUp", function(self, button)
     if button == "LeftButton" then
         self:StopMovingOrSizing()
     end
-end)
-
-local bindingFrame = CreateFrame("Button", "DV_KeyBindListener", UIParent)
-bindingFrame:RegisterForClicks("AnyDown")
-bindingFrame:SetScript("OnClick", function()
-    if not frame:IsShown() then BuildUI() end
-    frame:SetShown(not frame:IsShown())
 end)
 
  -- Close button
@@ -624,49 +630,7 @@ filterButton:SetupMenu(function(dropdown, root)
 -----------------------------------------------------
 -- EXPANSIONS (multi-select)
 -----------------------------------------------------
---[[local expansionMenu = root:CreateButton("Expansions")
 
--- Multi-select tracking table
-if not selectedExpansions then selectedExpansions = { All = true } end
-
--- "All" checkbox first
-expansionMenu:CreateCheckbox("All",
-    function() return selectedExpansions.All end,
-    function()
-        selectedExpansions = { All = true }
-        BuildUI()
-    end
-)
-
--- Collect unique expansions
-local expansionsSeen = {}
-for _, expansion in ipairs(VendorData or {}) do
-    if expansion.name then
-        expansionsSeen[expansion.name] = true
-    end
-end
-
-local expansionList = buildUniqueSorted(expansionsSeen)
-
-for _, name in ipairs(expansionList) do
-    if name ~= "Professions" then
-        expansionMenu:CreateCheckbox(name,
-            function() return selectedExpansions[name] end,
-            function()
-                selectedExpansions[name] = not selectedExpansions[name]
-                if selectedExpansions[name] then selectedExpansions.All = false end
-
-                local anySelected = false
-                for k,v in pairs(selectedExpansions) do
-                    if k ~= "All" and v then anySelected = true end
-                end
-                if not anySelected then selectedExpansions.All = true end
-
-                BuildUI()
-            end
-        )
-    end
-end]]
 
 -- EXPANSIONS (multi-select)
 local expansionMenu = root:CreateButton("Expansions")
@@ -710,7 +674,7 @@ local expansionOrder = {
     ["Shadowlands"] = 9,
     ["Dragonflight"] = 10,
     ["The War Within"] = 11,
-    ["Midnight"] = 12,
+    --["Midnight"] = 12,
 }
 
 table.sort(expansionList, function(a, b)
@@ -740,58 +704,6 @@ end
 
 
 root:CreateDivider()
-
------------------------------------------------------
--- PROFESSIONS (multi-select)
------------------------------------------------------
---[[local professionMenu = root:CreateButton("Professions")
-
-if not selectedProfessions then selectedProfessions = { All = true } end
-
-professionMenu:CreateCheckbox("All",
-    function() return selectedProfessions.All end,
-    function()
-        selectedProfessions = { All = true }
-        BuildUI()
-    end
-)
-
--- Collect unique professions
-local professionsSeen = {}
-for _, expansion in ipairs(VendorData or {}) do
-    for _, vendor in ipairs(expansion.vendors or {}) do
-        if vendor.profession and vendor.profession ~= "" then
-            professionsSeen[vendor.profession] = true
-        end
-    end
-    for _, continent in ipairs(expansion.continents or {}) do
-        for _, vendor in ipairs(continent.vendors or {}) do
-            if vendor.profession and vendor.profession ~= "" then
-                professionsSeen[vendor.profession] = true
-            end
-        end
-    end
-end
-
-local professionList = buildUniqueSorted(professionsSeen)
-
-for _, p in ipairs(professionList) do
-    professionMenu:CreateCheckbox(p,
-        function() return selectedProfessions[p] end,
-        function()
-            selectedProfessions[p] = not selectedProfessions[p]
-            if selectedProfessions[p] then selectedProfessions.All = false end
-
-            local anySelected = false
-            for k,v in pairs(selectedProfessions) do
-                if k ~= "All" and v then anySelected = true end
-            end
-            if not anySelected then selectedProfessions.All = true end
-
-            BuildUI()
-        end
-    )
-end]]
 
 -----------------------------------------------------
 -- FACTION (multi-select)
@@ -1413,14 +1325,7 @@ local function UpdateEscBehavior()
     end
 end
 
---Keybind logic
-local function UpdateKeyBinding()
-    if InCombatLockdown() then return end
-    ClearOverrideBindings(bindingFrame)
-    if vendorSettings.toggleKey and vendorSettings.toggleKey ~= "" then
-        SetOverrideBindingClick(bindingFrame, true, vendorSettings.toggleKey, "DV_KeyBindListener")
-    end
-end
+
 
 --Options panel
 local function CreateOptionsPanel()
@@ -1440,69 +1345,6 @@ local function CreateOptionsPanel()
     escCheck:SetScript("OnClick", function(self)
         vendorSettings.closeOnEsc = self:GetChecked()
         UpdateEscBehavior()
-    end)
-    
-    local keybindLabel = configFrame:CreateFontString(nil, "ARTWORK")
-    keybindLabel:SetFont(STANDARD_TEXT_FONT, 14); keybindLabel:SetTextColor(1, 0.82, 0)
-    keybindLabel:SetPoint("TOPLEFT", escCheck, "BOTTOMLEFT", 0, -20)
-    keybindLabel:SetText("Toggle Frame Keybind")
-    
-    local keybindBtn = CreateFrame("Button", nil, configFrame, "UIPanelButtonTemplate")
-    keybindBtn:SetPoint("LEFT", keybindLabel, "RIGHT", 10, 0)
-    keybindBtn:SetSize(140, 28)
-    keybindBtn.Text:SetFont(STANDARD_TEXT_FONT, 14)
-    keybindBtn:RegisterForClicks("AnyUp") -- Updated to support Right Click
-    keybindBtn:SetText(vendorSettings.toggleKey or "Not Bound")
-    
-    -- Tooltip logic
-    keybindBtn:SetScript("OnEnter", function(self)
-        if vendorSettings.toggleKey and vendorSettings.toggleKey ~= "" then
-            GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-            GameTooltip:AddLine("Decor Vendor (" .. vendorSettings.toggleKey .. ")", 1, 1, 1)
-            GameTooltip:AddLine("|cff00ff00<Right Click to unbind>", 1, 1, 1)
-            GameTooltip:Show()
-        end
-    end)
-    
-    keybindBtn:SetScript("OnLeave", function(self)
-        GameTooltip:Hide()
-    end)
-
-    keybindBtn:SetScript("OnClick", function(self, button)
-        if button == "RightButton" then
-             vendorSettings.toggleKey = nil
-             self:SetText("Not Bound")
-             UpdateKeyBinding()
-             GameTooltip:Hide()
-        else
-            self:SetText("Press a key...")
-            self:EnableKeyboard(true)
-            self:SetScript("OnKeyDown", function(btn, key)
-                --Ignore the modifier key
-                if key == "LSHIFT" or key == "RSHIFT" or key == "LCTRL" or key == "RCTRL" or key == "LALT" or key == "RALT" then
-                    return
-                end
-                
-                if key == "ESCAPE" then
-                    btn:EnableKeyboard(false)
-                    btn:SetText(vendorSettings.toggleKey or "Not Bound")
-                    btn:SetScript("OnKeyDown", nil)
-                else
-                    local modifier = ""
-                    if IsAltKeyDown() then modifier = modifier .. "ALT-" end
-                    if IsControlKeyDown() then modifier = modifier .. "CTRL-" end
-                    if IsShiftKeyDown() then modifier = modifier .. "SHIFT-" end
-                    
-                    local fullKey = modifier .. key
-                    vendorSettings.toggleKey = fullKey
-                    
-                    btn:SetText(fullKey)
-                    btn:EnableKeyboard(false)
-                    btn:SetScript("OnKeyDown", nil)
-                    UpdateKeyBinding()
-                end
-            end)
-        end
     end)
 
     if Settings and Settings.RegisterCanvasLayoutCategory then
@@ -1529,7 +1371,6 @@ init:SetScript("OnEvent", function(self, event, addon)
     vendorSettings.showMinimapButton = vendorSettings.showMinimapButton == nil and true or vendorSettings.showMinimapButton
     if vendorSettings.useTomTom == nil then vendorSettings.useTomTom = true end
 	if vendorSettings.closeOnEsc == nil then vendorSettings.closeOnEsc = true end
-    if vendorSettings.toggleKey == nil then vendorSettings.toggleKey = "SHIFT-H" end
 
     vendorSettings.filters = vendorSettings.filters or {  neutral = true, alliance = true, horde = true}
 
@@ -1562,7 +1403,7 @@ init:SetScript("OnEvent", function(self, event, addon)
     BuildUI()
     CreateOptionsPanel()
     UpdateEscBehavior()
-    UpdateKeyBinding()
+	
     if not vendorSettings.showMinimapButton then LibDBIcon:Hide("DecorVendor") end
 
     self:UnregisterEvent("PLAYER_ENTERING_WORLD")

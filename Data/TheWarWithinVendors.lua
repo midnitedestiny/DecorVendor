@@ -11,7 +11,7 @@ local WarVendors = {
 		{ zone = "Dornogal", id = 252312, title = "Second Chair Pawdo", x = 52.84, y = 68.0, mapID = 2339, faction = "neutral" },
 		{ zone = "Dornogal", id = 219217, title = "Velerd", x = 55.2, y = 76.4, mapID = 2339, faction = "neutral" },
         { zone = "Freywold Village", id = 252901, title = "Cinnabar", x = 42.0, y = 73.0, mapID = 2248, faction = "neutral" },
-        { zone = "Isle of Dorn", d = 226205, title = "Cendvin", x = 74.4, y = 45.2, mapID = 2248, faction = "neutral" },
+        { zone = "Isle of Dorn", id = 226205, title = "Cendvin", x = 74.4, y = 45.2, mapID = 2248, faction = "neutral" },
       }
     },
   }
