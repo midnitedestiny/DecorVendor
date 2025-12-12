@@ -1,5 +1,31 @@
 local addonName, dv = ...
 
+-- Make sure the expansions table exists so all your expansion/vendor data can safely be added
+dv.expansions = dv.expansions or {}
+
+local addonName, dv = ...
+
+dv.expansions = dv.expansions or {}
+
+-- Sort continents and vendors alphabetically
+for _, expansionTable in pairs(dv.expansions or {}) do
+    for _, expansion in ipairs(expansionTable) do
+        if expansion.continents then
+            table.sort(expansion.continents, function(a, b)
+                return (a.name or ""):lower() < (b.name or ""):lower()
+            end)
+            for _, continent in ipairs(expansion.continents) do
+                if continent.vendors then
+                    table.sort(continent.vendors, function(a, b)
+                        return (a.title or ""):lower() < (b.title or ""):lower()
+                    end)
+                end
+            end
+        end
+    end
+end
+
+
 local f = CreateFrame("Frame")
 f:RegisterEvent("ADDON_LOADED")
 
@@ -16,20 +42,14 @@ f:SetScript("OnEvent", function(self, event, loadedAddon)
     zoneFilter = "All"
 
     -- Build the UI AFTER filters exist
-    BuildUI()
+    BuildVendorUI()
 end)
 
-
-
--- Universal addon loaded check (handles Classic + Retail)
+-- Retail-only addon loaded check
 local function IsLoaded(addon)
-    if C_AddOns and C_AddOns.IsAddOnLoaded then
-        return C_AddOns.IsAddOnLoaded(addon)
-    elseif IsAddOnLoaded then
-        return IsAddOnLoaded(addon)
-    end
-    return false
+    return C_AddOns and C_AddOns.IsAddOnLoaded and C_AddOns.IsAddOnLoaded(addon)
 end
+
 
 hasTomTom = IsLoaded("TomTom")
 hasWaypointUI = IsLoaded("WaypointUI")
@@ -44,38 +64,36 @@ vendorSettings = vendorSettings or {
     showMinimapButton = true,           -- show/hide minimap button
     completedVendors = {},              -- tracks visited vendors
     filters = {
-	
-    -- Factions
-    neutral = true,
-    alliance = true,
-    horde = true,
+	    -- Factions
+	    neutral = true,
+	    alliance = true,
+	    horde = true,
 
-    -- Professions
-    Tailoring = true,
-    Leatherworking = true,
-    Jewelcrafting = true,
-    Inscription = true,
-    Engineering = true,
-    Enchanting = true,
-    Blacksmithing = true,
-    Alchemy = true,
-    Cooking = true,
+	    -- Professions
+	    Tailoring = true,
+	    Leatherworking = true,
+	    Jewelcrafting = true,
+	    Inscription = true,
+	    Engineering = true,
+	    Enchanting = true,
+	    Blacksmithing = true,
+	    Alchemy = true,
+	    Cooking = true,
 
-    -- Expansions
-    Classic = true,
-    ["Burning Crusade"] = true,
-    ["Wrath of the Lich King"] = true,
-    Cataclysm = true,
-    ["Mists of Pandaria"] = true,
-    ["Warlords of Draenor"] = true,
-    Legion = true,
-    ["Battle for Azeroth"] = true,
-    Shadowlands = true,
-    Dragonflight = true,
-    ["The War Within"] = true,
-   -- Midnight = true,
-}
-
+	    -- Expansions
+	    Classic = true,
+	    ["Burning Crusade"] = true,
+	    ["Wrath of the Lich King"] = true,
+	    Cataclysm = true,
+	    ["Mists of Pandaria"] = true,
+	    ["Warlords of Draenor"] = true,
+	    Legion = true,
+	    ["Battle for Azeroth"] = true,
+	    Shadowlands = true,
+	    Dragonflight = true,
+	    ["The War Within"] = true,
+	   -- Midnight = true,
+    }
 }
 
 -- ===============================
@@ -98,6 +116,7 @@ local collapsedHeaders = {}    -- tracks which expansion/vendor group headers ar
 -- ===============================
 local LibDBIcon = LibStub("LibDBIcon-1.0", true)
 local minimapButton
+
 
 
 
@@ -251,8 +270,8 @@ infoIcon:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highligh
 infoIcon:SetScript("OnEnter", function(self)
   GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
   GameTooltip:AddLine("Decor Vendor Tips", 1, 0.82, 0)
-  GameTooltip:AddLine("If you see a vendor not listed please inform me on curse!", 1, 1, 1, true)
-  GameTooltip:AddLine("Please correct me if a vendor is incorrectly faction labeled", 1, 1, 1, true)
+  GameTooltip:AddLine("Reverted back to 1.24 due to bugs", 1, 1, 1, true)
+  GameTooltip:AddLine("Let me know if it still doesnt work due to unresponsive headers", 1, 1, 1, true)
   GameTooltip:AddLine("Bare with me I am still learning how to code", 1, 1, 1, true)
   GameTooltip:Show()
 end)
@@ -335,62 +354,68 @@ vendorPopup:SetScript("OnMouseUp", function(self, button)
   end
 end)
 
-local vendorIconCache = {} 
-local function ShowVendorPopup(npcID, vendorName)
-    if not npcID then
+-- Cache frames to reuse
+local vendorCache = {}
+
+-- Helper function: look up vendor info by vendorID in dv.expansions
+local function GetVendorInfo(vendorID)
+    for _, expansionTable in pairs(dv.expansions) do              -- ClassicVendors, WrathoftheLichKingVendors, etc.
+        for _, expansion in ipairs(expansionTable) do
+            for _, continent in ipairs(expansion.continents or {}) do
+                for _, vendor in ipairs(continent.vendors or {}) do
+                    if vendor.id == vendorID then
+                        return vendor
+                    end
+                end
+            end
+        end
+    end
+    return nil
+end
+
+-- Show the vendor popup
+local function ShowVendorPopup(vendorID, vendorName)
+    if not vendorID then
         print("Decor Vendor: No vendor ID provided.")
         return
     end
 
-    -- 1️⃣ Look up the vendor in the merged VendorData
-    local vendorInfo
-    for _, expansion in ipairs(VendorData) do
-        for _, continent in ipairs(expansion.continents or {}) do
-            for _, vendor in ipairs(continent.vendors or {}) do
-                if vendor.id == npcID then
-                    vendorInfo = vendor
-                    break
-                end
-            end
-            if vendorInfo then break end
-        end
-        if vendorInfo then break end
-    end
-
+    local vendorInfo = GetVendorInfo(vendorID)
     if not vendorInfo then
         print("Decor Vendor: Vendor ID not found in database.")
         return
     end
 
-   
-    local items = dv.vendorItems[npcID]
+    local goodies = dv.vendorGoodies[vendorID]
+    if not goodies or #goodies == 0 then
+        print("Decor Vendor: No items found for this vendor.")
+        return
+    end
+
     vendorPopupTitle:SetText((vendorName or "Vendor") .. " sells:")
-    
-    --Hide all existing item frames
-    for _, frame in pairs(vendorIconCache) do
+
+    -- Hide all existing item frames
+    for _, frame in pairs(vendorCache) do
         frame:Hide()
     end
 
     local tileSize = 50
-    local margin = 12 
+    local margin = 12
     local columns = 6
     local startX = 25
     local startY = -48
 
-    local row = 0
-    local col = 0
+    for i, itemID in ipairs(goodies) do
+        local itemFrame = vendorCache[i]
 
-    for i, itemID in ipairs(items) do
-        local itemFrame = vendorIconCache[i]
-        
         if not itemFrame then
             itemFrame = CreateFrame("Frame", nil, vendorPopup, "BackdropTemplate")
             itemFrame:SetSize(tileSize, tileSize)
-            itemFrame:SetClipsChildren(true) 
-            
+            itemFrame:SetClipsChildren(true)
+
             itemFrame:SetBackdrop({
                 edgeFile = "Interface\\Buttons\\WHITE8x8",
-                edgeSize = 2, 
+                edgeSize = 2,
             })
             itemFrame:SetBackdropBorderColor(0.4, 0.4, 0.4, 1)
 
@@ -412,22 +437,20 @@ local function ShowVendorPopup(npcID, vendorName)
             btn:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square")
             btn:GetHighlightTexture():SetBlendMode("ADD")
             btn:GetHighlightTexture():SetAllPoints(icon)
-            
-            itemFrame.btn = btn
 
-            table.insert(vendorIconCache, itemFrame)
+            itemFrame.btn = btn
+            table.insert(vendorCache, itemFrame)
         end
 
-        col = (i - 1) % columns
-        row = math.floor((i - 1) / columns)
-        
+        local col = (i - 1) % columns
+        local row = math.floor((i - 1) / columns)
+
         itemFrame:SetPoint("TOPLEFT", vendorPopup, "TOPLEFT", startX + (col * (tileSize + margin)), startY - (row * (tileSize + margin)))
-        
-        --Update the button data
+
         local btn = itemFrame.btn
         local texture = GetItemIcon(itemID)
         btn.icon:SetTexture(texture or "Interface\\Icons\\INV_Misc_QuestionMark")
-        
+
         btn:SetScript("OnEnter", function(self)
             SetCursor("INSPECT_CURSOR")
             itemFrame:SetBackdropBorderColor(1, 0.82, 0, 1)
@@ -436,14 +459,14 @@ local function ShowVendorPopup(npcID, vendorName)
             GameTooltip:SetHyperlink("item:" .. itemID)
             GameTooltip:Show()
         end)
-        
+
         btn:SetScript("OnLeave", function(self)
             ResetCursor()
             itemFrame:SetBackdropBorderColor(0.4, 0.4, 0.4, 1)
             self.glow:SetColorTexture(0, 0, 0, 0.5)
             GameTooltip:Hide()
         end)
-        
+
         btn:SetScript("OnClick", function()
             DressUpItemLink("item:" .. itemID)
         end)
@@ -451,14 +474,16 @@ local function ShowVendorPopup(npcID, vendorName)
         itemFrame:Show()
     end
 
-    local totalRows = math.floor((#items - 1) / columns) + 1
+    -- Resize popup
+    local totalRows = math.floor((#goodies - 1) / columns) + 1
     local totalHeight = math.abs(startY) + (totalRows * (tileSize + margin)) + 4
     local totalWidth = (startX * 2) + (columns * (tileSize + margin)) - margin
 
     vendorPopup:SetSize(totalWidth, totalHeight)
-    vendorPopup:SetScale(vendorSettings.scale or 1.0) 
+    vendorPopup:SetScale(vendorSettings.scale or 1.0)
     vendorPopup:Show()
 end
+
 
 --Create reusable frame for the texture
 local previewFrame = CreateFrame("Frame", "DV_RewardFrame", UIParent, "BackdropTemplate")
@@ -616,26 +641,15 @@ filterButton:SetText("The Choices")
 filterButton.Text:ClearAllPoints()
 filterButton.Text:SetPoint("CENTER")
 
-local function buildUniqueSorted(tbl)
-    local out = {}
-    for k in pairs(tbl) do table.insert(out, k) end
-    table.sort(out, function(a,b) return (a or ""):lower() < (b or ""):lower() end)
-    return out
-end
 
 
 filterButton:SetupMenu(function(dropdown, root)
     root:CreateDivider()
 
------------------------------------------------------
--- EXPANSIONS (multi-select)
------------------------------------------------------
-
 
 -- EXPANSIONS (multi-select)
 local expansionMenu = root:CreateButton("Expansions")
 
--- Multi-select tracking table
 if not selectedExpansions then selectedExpansions = { All = true } end
 
 -- "All" checkbox first
@@ -643,25 +657,11 @@ expansionMenu:CreateCheckbox("All",
     function() return selectedExpansions.All end,
     function()
         selectedExpansions = { All = true }
-        BuildUI()
+        BuildVendorUI()
     end
 )
 
--- Collect unique expansions
-local expansionsSeen = {}
-for _, expansion in ipairs(VendorData or {}) do
-    if expansion.name then
-        expansionsSeen[expansion.name] = true
-    end
-end
-
--- Convert to list
-local expansionList = {}
-for name in pairs(expansionsSeen) do
-    table.insert(expansionList, name)
-end
-
--- Sort by release order
+-- Release order table
 local expansionOrder = {
     ["Classic"] = 1,
     ["Burning Crusade"] = 2,
@@ -674,33 +674,49 @@ local expansionOrder = {
     ["Shadowlands"] = 9,
     ["Dragonflight"] = 10,
     ["The War Within"] = 11,
-    --["Midnight"] = 12,
 }
 
-table.sort(expansionList, function(a, b)
+-- Collect unique expansions directly from dv.expansions in release order
+local expansionList = {}
+for _, expansionTable in pairs(dv.expansions or {}) do
+    for _, expansion in ipairs(expansionTable) do
+        local name = expansion.name
+        if name and name ~= "Professions" and not expansionList[name] then
+            expansionList[name] = true
+        end
+    end
+end
+
+-- Convert to list
+local expansionListOrdered = {}
+for name in pairs(expansionList) do
+    table.insert(expansionListOrdered, name)
+end
+
+-- Sort by release order
+table.sort(expansionListOrdered, function(a, b)
     return (expansionOrder[a] or 999) < (expansionOrder[b] or 999)
 end)
 
--- Create checkboxes for each expansion
-for _, name in ipairs(expansionList) do
-    if name ~= "Professions" then
-        expansionMenu:CreateCheckbox(name,
-            function() return selectedExpansions[name] end,
-            function()
-                selectedExpansions[name] = not selectedExpansions[name]
-                if selectedExpansions[name] then selectedExpansions.All = false end
+-- Create checkboxes
+for _, name in ipairs(expansionListOrdered) do
+    expansionMenu:CreateCheckbox(name,
+        function() return selectedExpansions[name] end,
+        function()
+            selectedExpansions[name] = not selectedExpansions[name]
+            if selectedExpansions[name] then selectedExpansions.All = false end
 
-                local anySelected = false
-                for k,v in pairs(selectedExpansions) do
-                    if k ~= "All" and v then anySelected = true end
-                end
-                if not anySelected then selectedExpansions.All = true end
-
-                BuildUI()
+            local anySelected = false
+            for k,v in pairs(selectedExpansions) do
+                if k ~= "All" and v then anySelected = true end
             end
-        )
-    end
+            if not anySelected then selectedExpansions.All = true end
+
+            BuildVendorUI()
+        end
+    )
 end
+
 
 
 root:CreateDivider()
@@ -717,14 +733,15 @@ factionMenu:CreateCheckbox("All",
     function() return selectedFactions.All end,
     function()
         selectedFactions = { All = true }
-        BuildUI()
+        BuildVendorUI()
     end
 )
 
-local factionsSeen = { alliance = true, horde = true, neutral = true }
-local factionList = buildUniqueSorted(factionsSeen)
+-- Collect and sort factions alphabetically
+local factionsSeen = { "alliance", "horde", "neutral" }
+table.sort(factionsSeen, function(a,b) return (a or ""):lower() < (b or ""):lower() end)
 
-for _, f in ipairs(factionList) do
+for _, f in ipairs(factionsSeen) do
     factionMenu:CreateCheckbox(f,
         function() return selectedFactions[f] end,
         function()
@@ -737,7 +754,7 @@ for _, f in ipairs(factionList) do
             end
             if not anySelected then selectedFactions.All = true end
 
-            BuildUI()
+            BuildVendorUI()
         end
     )
 end
@@ -750,9 +767,13 @@ root:CreateButton("Reset Filters", function()
     selectedFactions = { All = true }
     continentFilter, zoneFilter = "All", "All"
     filterButton:SetText("The Choices")
-    BuildUI()
+    BuildVendorUI()
 end)
 end)
+
+
+
+
 
 
 local minimapCheckbox = CreateFrame("CheckButton", "DV_MinimapCheckbox", frame, "UICheckButtonTemplate")
@@ -839,24 +860,34 @@ end
 
 local function CreateVendorHeader(parent, group, y, visibleCount, totalCount)
     visibleCount = visibleCount or 0
-    totalCount   = totalCount or (group.vendors and #group.vendors or 0)
 
-    -- If group is an expansion with continents, use "Expansion - Continent" as the key
-local headerKey
-if group.continents then
-    headerKey = group.name -- top-level expansion header
-elseif group.parentName then
-    -- for continents inside an expansion
-    headerKey = group.parentName .. " - " .. group.name
-else
-    headerKey = group.name
-end
+    -- Determine total vendors for the header
+    if group.continents then
+        -- Sum all vendors in all continents of this expansion
+        totalCount = 0
+        for _, continent in ipairs(group.continents) do
+            totalCount = totalCount + #(continent.vendors or {})
+        end
+    else
+        totalCount = group.vendors and #group.vendors or 0
+    end
 
--- Initialize collapsed state if nil
-if collapsedHeaders[headerKey] == nil then
-    collapsedHeaders[headerKey] = true
-end
-local collapsed = collapsedHeaders[headerKey]
+    -- Create a unique header key for collapsed tracking
+    local headerKey
+    if group.continents then
+        headerKey = group.name -- top-level expansion header
+    elseif group.parentName then
+        -- continents inside an expansion
+        headerKey = group.parentName .. " - " .. group.name
+    else
+        headerKey = group.name
+    end
+
+    -- Initialize collapsed state if nil
+    if collapsedHeaders[headerKey] == nil then
+        collapsedHeaders[headerKey] = true
+    end
+    local collapsed = collapsedHeaders[headerKey]
 
 
     local header = CreateFrame("Button", nil, parent)
@@ -912,7 +943,7 @@ header.progress:SetTextColor(color:GetRGBA())
     -- Click and hover scripts
     header:SetScript("OnClick", function()
         collapsedHeaders[group.name] = not collapsed
-        BuildUI()
+        BuildVendorUI()
     end)
     header:SetScript("OnEnter", function(self)
         bg:SetGradient("HORIZONTAL", CreateColor(0.15, 0.10, 0.25, 0.9), CreateColor(0.05, 0.05, 0.15, 0.9))
@@ -1191,83 +1222,95 @@ end
 
 
 -- Build the Vendor UI
-function BuildUI()
+function BuildVendorUI()
     ClearWidgets()
 
     local y = 0
     local hasContent = false
 
     -- 1️⃣ Sync saved completed flags with VendorData
-    for _, group in ipairs(VendorData) do
-        for _, vendor in ipairs(group.vendors or {}) do
-            vendor.completed = vendorSettings.completedVendors[vendor.title or vendor.name] or false
+    for _, expansionTable in pairs(dv.expansions) do        -- e.g., ClassicVendors, BFA Venders
+    for _, expansion in ipairs(expansionTable) do
+        for _, continent in ipairs(expansion.continents or {}) do
+            for _, vendor in ipairs(continent.vendors or {}) do
+                vendor.completed = vendorSettings.completedVendors[vendor.title or vendor.name] or false
+            end
         end
     end
+end
+
 
     -- Define expansions to show (apply expansion & profession filters)
     local expansionsToShow = {}
-    for _, exp in ipairs(VendorData) do
-        if exp.name == "Professions" then
-            if selectedProfessions and not selectedProfessions.All then
-                table.insert(expansionsToShow, exp)
-            end
-        else
-            if not selectedExpansions or selectedExpansions.All or selectedExpansions[exp.name] then
-                table.insert(expansionsToShow, exp)
-            end
+
+for _, expansionTable in pairs(dv.expansions) do
+    for _, expansion in ipairs(expansionTable) do
+        if not selectedExpansions or selectedExpansions.All or selectedExpansions[expansion.name] then
+            table.insert(expansionsToShow, expansion)
         end
     end
+end
+
 
     -- Loop through each expansion (already filtered)
-    for _, expansion in ipairs(expansionsToShow) do
-        local subGroups = expansion.continents
-        if not subGroups or #subGroups == 0 then
-            subGroups = { expansion } -- fallback if no continents
+for _, expansion in ipairs(expansionsToShow) do
+
+    -- If the expansion has a continents table, sort THAT table alphabetically by continent name.
+    -- This sorts the real data source so the UI will always iterate continents in ABC order.
+    if expansion.continents and #expansion.continents > 0 then
+        table.sort(expansion.continents, function(a, b)
+            return (a.name or ""):lower() < (b.name or ""):lower()
+        end)
+        -- Now use the actual sorted continents table
+        subGroups = expansion.continents
+    else
+        -- Fallback: treat the expansion itself as a single group
+        subGroups = { expansion }
+    end
+
+    -- Loop through each continent/group (now guaranteed to be in ABC order when continents exist)
+    for _, subGroup in ipairs(subGroups) do
+        local totalVendors = subGroup.vendors and #subGroup.vendors or 0
+        local visibleVendors = {}
+
+        -- Filter vendors
+        for _, vendor in ipairs(subGroup.vendors or {}) do
+            -- Attach reference data for filtering
+            vendor.expansion = expansion.name
+            vendor.continent = subGroup.name or expansion.name
+
+            local passesFaction = selectedFactions.All or selectedFactions[vendor.faction]
+            local passesExpansion = selectedExpansions.All or selectedExpansions[vendor.expansion]
+            local passesContinent = continentFilter == "All" or vendor.continent == continentFilter
+            local passesZone = zoneFilter == "All" or vendor.zone == zoneFilter
+
+            if passesFaction and passesExpansion and passesContinent and passesZone then
+                table.insert(visibleVendors, vendor)
+            end
         end
 
-        -- Loop through each continent/group (do NOT sort here!)
-        for _, subGroup in ipairs(subGroups) do
-            local totalVendors = subGroup.vendors and #subGroup.vendors or 0
-            local visibleVendors = {}
+        -- Only create headers if there are visible vendors
+        if #visibleVendors > 0 then
+            hasContent = true
 
-            -- Filter vendors
-            for _, vendor in ipairs(subGroup.vendors or {}) do
-                -- Attach reference data for filtering
-                vendor.expansion = expansion.name
-                vendor.continent = subGroup.name or expansion.name
+            -- Create header
+            local header, collapsed, newY = CreateVendorHeader(scrollChild, subGroup, y, #visibleVendors, totalVendors)
+            y = newY
 
-                local passesFaction = selectedFactions.All or selectedFactions[vendor.faction]
-                local passesExpansion = selectedExpansions.All or selectedExpansions[vendor.expansion]
-                local passesContinent = continentFilter == "All" or vendor.continent == continentFilter
-                local passesZone = zoneFilter == "All" or vendor.zone == zoneFilter
-                -- local passesProfession = selectedProfessions.All or selectedProfessions[vendor.profession]
-
-                if passesFaction and passesExpansion and passesContinent and passesZone then
-                    table.insert(visibleVendors, vendor)
+            -- Create vendor lines if not collapsed
+            if not collapsed then
+                local originalY = y
+                for _, vendor in ipairs(visibleVendors) do
+                    y = CreateVendorLine(scrollChild, vendor, y)
                 end
-            end
-
-            -- Only create headers if there are visible vendors
-            if #visibleVendors > 0 then
-                hasContent = true
-
-                -- Create header
-                local header, collapsed, newY = CreateVendorHeader(scrollChild, subGroup, y, #visibleVendors, totalVendors)
-                y = newY
-
-                -- Create vendor lines if not collapsed
-                if not collapsed then
-                    local originalY = y
-                    for _, vendor in ipairs(visibleVendors) do
-                        y = CreateVendorLine(scrollChild, vendor, y)
-                    end
-                    if y < originalY then
-                        y = y - 10 -- spacing after group
-                    end
+                if y < originalY then
+                    y = y - 10 -- spacing after group
                 end
             end
         end
     end
+end
+
 
     -- If no vendors are visible
     if not hasContent then
@@ -1290,7 +1333,7 @@ end
 
 
 -- UI setup
-BuildUI()
+BuildVendorUI()
 
 -- Event handler to mark visited vendors
 local eventFrame = CreateFrame("Frame")
@@ -1304,7 +1347,7 @@ eventFrame:SetScript("OnEvent", function()
                 vendor.completed = true
                 vendorSettings.completedVendors[name] = true
                 if vendorSettings.hideFound then
-                    BuildUI()
+                    BuildVendorUI()
                 end
                 return
             end
@@ -1385,7 +1428,7 @@ init:SetScript("OnEvent", function(self, event, addon)
       local dataobj = ldb:NewDataObject("DecorVendor", { type = "launcher", icon = 1530229, label = "DecorVendor", text = "DecorVendor", name = "DecorVendor",
         OnClick = function(_, button)
           if button == "LeftButton" then
-            if not frame:IsShown() then BuildUI() end
+            if not frame:IsShown() then BuildVendorUI() end
             frame:SetShown(not frame:IsShown())
           end
         end
@@ -1400,7 +1443,7 @@ init:SetScript("OnEvent", function(self, event, addon)
     frame:SetScale(scale); supportFrame:SetScale(scale); scaleSlider:SetValue(scale)
     scaleValueText:SetText(string.format("UI Scale: %.2f", scale))
      vendorPopup:SetScale(scale)
-    BuildUI()
+    BuildVendorUI()
     CreateOptionsPanel()
     UpdateEscBehavior()
 	
@@ -1415,7 +1458,7 @@ init:SetScript("OnEvent", function(self, event, addon)
         if npcID and dv.vendorItems[npcID] and not vendorSettings.completedVendors[npcID] then
           vendorSettings.completedVendors[npcID] = true
           print("|cffffd700Decor Vendor:|r New vendor collected!")
-          BuildUI()
+          BuildVendorUI()
         end
     end
   end
@@ -1427,7 +1470,7 @@ SLASH_DECORVENDOR1 = "/decor"
 SLASH_DECORVENDOR2 = "/dv"
 SLASH_DECORVENDOR3 = "/decorvendor"
 SlashCmdList["DECORVENDOR"] = function()
-        BuildUI()
+        BuildVendorUI()
     frame:Show()
 end
 
