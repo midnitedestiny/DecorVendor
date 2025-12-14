@@ -1,55 +1,14 @@
 local addonName, dv = ...
 
--- Make sure the expansions table exists so all your expansion/vendor data can safely be added
+-- Ensure tables exist
 dv.expansions = dv.expansions or {}
-
-local addonName, dv = ...
-
-dv.expansions = dv.expansions or {}
-
--- Sort continents and vendors alphabetically
-for _, expansionTable in pairs(dv.expansions or {}) do
-    for _, expansion in ipairs(expansionTable) do
-        if expansion.continents then
-            table.sort(expansion.continents, function(a, b)
-                return (a.name or ""):lower() < (b.name or ""):lower()
-            end)
-            for _, continent in ipairs(expansion.continents) do
-                if continent.vendors then
-                    table.sort(continent.vendors, function(a, b)
-                        return (a.title or ""):lower() < (b.title or ""):lower()
-                    end)
-                end
-            end
-        end
-    end
-end
-
-
-local f = CreateFrame("Frame")
-f:RegisterEvent("ADDON_LOADED")
-
-f:SetScript("OnEvent", function(self, event, loadedAddon)
-    if loadedAddon ~= addonName then return end
-
-    print("DecorVendor loaded.")
-
-    -- Initialize filters so UI shows everything
-    selectedExpansions  = { All = true }
-    selectedProfessions = { All = true }
-    selectedFactions    = { All = true }
-    continentFilter = "All"
-    zoneFilter = "All"
-
-    -- Build the UI AFTER filters exist
-    BuildVendorUI()
-end)
+dv.professions = dv.professions or {}
+dv.professionItem = dv.professionItem or {}
 
 -- Retail-only addon loaded check
 local function IsLoaded(addon)
     return C_AddOns and C_AddOns.IsAddOnLoaded and C_AddOns.IsAddOnLoaded(addon)
 end
-
 
 hasTomTom = IsLoaded("TomTom")
 hasWaypointUI = IsLoaded("WaypointUI")
@@ -58,67 +17,75 @@ hasWaypointUI = IsLoaded("WaypointUI")
 -- Saved Vendor Settings
 -- ===============================
 vendorSettings = vendorSettings or {
-    scale = 1.0,                       -- UI scale
-    hideFound = false,                  -- hide vendors already visited
-	useTomTom = true, 
-    showMinimapButton = true,           -- show/hide minimap button
-    completedVendors = {},              -- tracks visited vendors
+    scale = 1.0,
+    hideFound = false,
+    useTomTom = true,
+    showMinimapButton = true,
+    closeOnEsc = true,
     filters = {
-	    -- Factions
-	    neutral = true,
-	    alliance = true,
-	    horde = true,
+        -- Factions
+        neutral = true,
+        alliance = true,
+        horde = true,
 
-	    -- Professions
-	    Tailoring = true,
-	    Leatherworking = true,
-	    Jewelcrafting = true,
-	    Inscription = true,
-	    Engineering = true,
-	    Enchanting = true,
-	    Blacksmithing = true,
-	    Alchemy = true,
-	    Cooking = true,
+        -- Professions
+        Tailoring = true,
+        Leatherworking = true,
+        Jewelcrafting = true,
+        Inscription = true,
+        Engineering = true,
+        Enchanting = true,
+        Blacksmithing = true,
+        Alchemy = true,
+        Cooking = true,
 
-	    -- Expansions
-	    Classic = true,
-	    ["Burning Crusade"] = true,
-	    ["Wrath of the Lich King"] = true,
-	    Cataclysm = true,
-	    ["Mists of Pandaria"] = true,
-	    ["Warlords of Draenor"] = true,
-	    Legion = true,
-	    ["Battle for Azeroth"] = true,
-	    Shadowlands = true,
-	    Dragonflight = true,
-	    ["The War Within"] = true,
-	   -- Midnight = true,
+        -- Expansions
+        Classic = true,
+        ["Burning Crusade"] = true,
+        ["Wrath of the Lich King"] = true,
+        Cataclysm = true,
+        ["Mists of Pandaria"] = true,
+        ["Warlords of Draenor"] = true,
+        Legion = true,
+        ["Battle for Azeroth"] = true,
+        Shadowlands = true,
+        Dragonflight = true,
+        ["The War Within"] = true,
+        -- Midnight = true,
     }
 }
+DVDB = DVDB or {}
+DVDB.minimap = DVDB.minimap or {}
+vendorSettings.missingVendors = vendorSettings.missingVendors or {}
+
+-- Collection cache for housing decor checks
+collectionCache = collectionCache or {}
+
+vendorSettings.completedDrop = vendorSettings.completedDrop or {}
 
 -- ===============================
--- Minimap Button DB
+-- Lookup: item -> profession
 -- ===============================
-DVDB = {
-    minimap = {
-        hide = false
-    }
-}
+local function BuildProfessionLookup()
+    dv.itemToProfession = {}
+    for _, profession in ipairs(dv.professions or {}) do
+        for _, recipe in ipairs(profession.items or {}) do
+            dv.itemToProfession[recipe.id] = profession.name
+        end
+    end
+end
 
 -- ===============================
 -- UI Tracking
 -- ===============================
 local activeWidgets = {}       -- tracks all created lines and headers for clearing
 local collapsedHeaders = {}    -- tracks which expansion/vendor group headers are collapsed
-
+local currentTab = "vendors"
 -- ===============================
 -- Minimap Button Library
 -- ===============================
 local LibDBIcon = LibStub("LibDBIcon-1.0", true)
 local minimapButton
-
-
-
 
 local function GetFullTexturePath(texturePath)
     if texturePath and not string.match(texturePath, "[\\/]") then
@@ -236,6 +203,7 @@ tipEditBox:SetText("ko-fi.com/midnitedestiny")
 tipEditBox:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
 tipEditBox:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
 
+
 -- Title background
 local titleBg = frame:CreateTexture(nil, "BACKGROUND")
 titleBg:SetTexture("Interface\\Buttons\\WHITE8x8")
@@ -263,16 +231,14 @@ local infoIcon = CreateFrame("Button", nil, frame)
 infoIcon:SetSize(24, 24)
 infoIcon:SetPoint("TOPLEFT", 8, -8)
 local iconTexture = infoIcon:CreateTexture(nil, "ARTWORK")
-iconTexture:SetTexture("Interface\\BUTTONS\\UI-GuildButton-PublicNote-Up")
+iconTexture:SetTexture("Interface\\BUTTONS\\UI-GuildButton-OfficerNote-Up")
 iconTexture:SetAllPoints(infoIcon)
 infoIcon:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight", "ADD")
 
 infoIcon:SetScript("OnEnter", function(self)
   GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
-  GameTooltip:AddLine("Decor Vendor Tips", 1, 0.82, 0)
-  GameTooltip:AddLine("Reverted back to 1.24 due to bugs", 1, 1, 1, true)
-  GameTooltip:AddLine("Let me know if it still doesnt work due to unresponsive headers", 1, 1, 1, true)
-  GameTooltip:AddLine("Bare with me I am still learning how to code", 1, 1, 1, true)
+  GameTooltip:AddLine("Decor Vendor Notice", 1, 0.82, 0)
+  GameTooltip:AddLine("Should no longer have any issues since version 1.30", 1, 1, 1, true)
   GameTooltip:Show()
 end)
 
@@ -303,6 +269,30 @@ end)
 supportIcon:SetScript("OnClick", function()
   supportFrame:Show()
 end)
+
+-- Report Missing Vendor Icon
+local reportIcon = CreateFrame("Button", nil, frame)
+reportIcon:SetSize(24, 24)
+reportIcon:SetPoint("LEFT", supportIcon, "RIGHT", 6, 0)
+
+local reportIconTexture = reportIcon:CreateTexture(nil, "ARTWORK")
+reportIconTexture:SetTexture("Interface\\Buttons\\UI-GuildButton-MOTD-Up")
+reportIconTexture:SetAllPoints(reportIcon)
+
+reportIcon:SetHighlightTexture(
+  "Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight",
+  "ADD"
+)
+
+reportIcon:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
+    GameTooltip:AddLine("Updates slowly coming out but are coming!", 1, 0.82, 0)
+    GameTooltip:Show()
+end)
+
+reportIcon:SetScript("OnLeave", GameTooltip_Hide)
+
+
 
 local vendorPopup = CreateFrame("Frame", "DV_VendorPopup", UIParent, "BackdropTemplate")
 vendorPopup:SetSize(350, 100) 
@@ -484,6 +474,32 @@ local function ShowVendorPopup(vendorID, vendorName)
     vendorPopup:Show()
 end
 
+local function ShowReagentsPopup(itemData)
+  local reagents = itemData.reagents
+  if not reagents then return end
+  vendorPopupTitle:SetText("Reagents required:")
+  recipeTitle:Hide()
+  for _, frame in pairs(popupIconCache) do frame:Hide() end
+
+  local tileSize, margin, columns = 50, 12, 6
+  local verticalStep = tileSize + 16 + margin 
+  local index, height = LayoutPopupItems(reagents, "reagent", 0, 25, -48, verticalStep)
+  
+  if itemData.recipe then
+    recipeTitle:Show()
+    recipeTitle:SetPoint("TOPLEFT", vendorPopup, "TOPLEFT", 24, -(height + 4))
+    
+    local recipeY = -(height + 24) 
+    local container = GetPopupIconFrame(index + 1)
+    container:SetPoint("TOPLEFT", vendorPopup, "TOPLEFT", 25, recipeY)
+    SetupPopupButton(container, {id = itemData.recipe}, "recipe")
+    height = math.abs(recipeY) + tileSize + margin
+  end
+
+  local totalWidth = (25 * 2) + (columns * (tileSize + margin)) - margin
+  vendorPopup:SetSize(totalWidth, height + 4)
+  vendorPopup:Show()
+end
 
 --Create reusable frame for the texture
 local previewFrame = CreateFrame("Frame", "DV_RewardFrame", UIParent, "BackdropTemplate")
@@ -572,6 +588,7 @@ previewFrame:SetScript("OnUpdate", function(self, elapsed)
   end
 end)
 
+
 local wowheadPopup = CreateFrame("Frame", "DV_WowheadLinkFrame", UIParent, "BackdropTemplate")
 wowheadPopup:SetSize(350, 90)
 wowheadPopup:SetFrameStrata("DIALOG")
@@ -640,8 +657,6 @@ filterButton:SetPoint("TOPLEFT", 10, -60)
 filterButton:SetText("The Choices")
 filterButton.Text:ClearAllPoints()
 filterButton.Text:SetPoint("CENTER")
-
-
 
 filterButton:SetupMenu(function(dropdown, root)
     root:CreateDivider()
@@ -717,10 +732,58 @@ for _, name in ipairs(expansionListOrdered) do
     )
 end
 
-
-
 root:CreateDivider()
 
+--[[
+-----------------------------------------------------
+-- PROFESSIONS (multi-select)
+-----------------------------------------------------
+local professionMenu = root:CreateButton("Professions")
+-----------------------------------------------------
+-- Profession filter state
+-----------------------------------------------------
+if not selectedProfessions then selectedProfessions = { All = true } end
+
+
+professionMenu:CreateCheckbox("All",
+    function()
+        return selectedProfessions.All
+    end,
+    function()
+        wipe(selectedProfessions)
+        selectedProfessions.All = true
+        BuildVendorUI()
+    end
+)
+
+for _, profession in ipairs(dv.professions or {}) do
+    local name = profession.name
+
+    professionMenu:CreateCheckbox(name,
+        function()
+            return selectedProfessions[name]
+        end,
+        function()
+            selectedProfessions[name] = not selectedProfessions[name]
+            selectedProfessions.All = false
+
+            -- If none selected, fallback to All
+            local any = false
+            for k, v in pairs(selectedProfessions) do
+                if k ~= "All" and v then
+                    any = true
+                end
+            end
+            if not any then
+                selectedProfessions.All = true
+            end
+
+            BuildVendorUI()
+        end
+    )
+end
+
+root:CreateDivider()]]
 -----------------------------------------------------
 -- FACTION (multi-select)
 -----------------------------------------------------
@@ -772,10 +835,6 @@ end)
 end)
 
 
-
-
-
-
 local minimapCheckbox = CreateFrame("CheckButton", "DV_MinimapCheckbox", frame, "UICheckButtonTemplate")
 minimapCheckbox:SetPoint("TOPLEFT", filterButton, "TOPRIGHT", 10, 0)
 minimapCheckbox:SetSize(26, 26)
@@ -784,15 +843,14 @@ minimapCheckboxText:SetPoint("LEFT", minimapCheckbox, "RIGHT", 2, 0)
 minimapCheckboxText:SetText("Minimap Button")
 
 minimapCheckbox:SetScript("OnClick", function(self)
-  if LibDBIcon then
-    if vendorSettings.showMinimapButton then
-      LibDBIcon:Hide("DecorVendor")
-      vendorSettings.showMinimapButton = false
+    local enabled = self:GetChecked()
+    vendorSettings.showMinimapButton = enabled
+
+    if enabled then
+        LibDBIcon:Show("DecorVendor")
     else
-      LibDBIcon:Show("DecorVendor")
-      vendorSettings.showMinimapButton = true
+        LibDBIcon:Hide("DecorVendor")
     end
-  end
 end)
 
 
@@ -840,15 +898,6 @@ scrollFrame.ScrollBar:ClearAllPoints()
 scrollFrame.ScrollBar:SetPoint("TOPRIGHT", scrollFrame, "TOPRIGHT", 15, -8)
 scrollFrame.ScrollBar:SetHeight(385)
 
--- Clear previous widgets from scroll child
-local function ClearWidgets()
-    for _, widget in ipairs(activeWidgets) do
-        widget:Hide()
-    end
-    wipe(activeWidgets)
-end
-
-
 -- Active widgets
 local activeWidgets = {}
 
@@ -860,18 +909,15 @@ end
 
 local function CreateVendorHeader(parent, group, y, visibleCount, totalCount)
     visibleCount = visibleCount or 0
-
     -- Determine total vendors for the header
-    if group.continents then
-        -- Sum all vendors in all continents of this expansion
-        totalCount = 0
-        for _, continent in ipairs(group.continents) do
-            totalCount = totalCount + #(continent.vendors or {})
-        end
-    else
-        totalCount = group.vendors and #group.vendors or 0
+if group.continents then
+    totalCount = 0
+    for _, continent in ipairs(group.continents) do
+        totalCount = totalCount + #(continent.vendors or {})
     end
-
+else
+    totalCount = group.vendors and #group.vendors or 0
+end
     -- Create a unique header key for collapsed tracking
     local headerKey
     if group.continents then
@@ -1034,17 +1080,6 @@ local function CreateVendorLine(parent, vendor, y, faction)
         zoneText:SetTextColor(0.7, 0.7, 0.7, 1)
     end
 		 
---[[local mapText = line:CreateFontString(nil, "OVERLAY")
-    mapText:SetFont(STANDARD_TEXT_FONT, 11); mapText:SetPoint("RIGHT", -10, 0)
-	local mapName = "Unknown Zone"
-    if vendor.mapID then
-        local mapInfo = C_Map.GetMapInfo(vendor.mapID)
-        if mapInfo and mapInfo.name then
-            mapName = mapInfo.name
-        end
-    end
-    mapText:SetText(mapName)
-    mapText:SetTextColor(0.7, 0.7, 0.7)	 ]]
 
     line:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
@@ -1133,51 +1168,6 @@ end)
     end)
 end
 
---[[
-     --  Add TomTom waypoint button
-   if vendor.mapID and vendor.x and vendor.y then
-    local waypointBtn = CreateFrame("Button", nil, line, "UIPanelButtonTemplate")
-    waypointBtn:SetSize(80, 18)
-    waypointBtn:SetPoint("RIGHT", -240, 0)
-    waypointBtn:SetText("Waypoint")
-
-    -- Waypoint tooltip
-    local mapInfo = C_Map.GetMapInfo(vendor.mapID)
-    local mapName = mapInfo and mapInfo.name or "Unknown"
-    local xPct = math.floor(vendor.x * 10000) / 100
-    local yPct = math.floor(vendor.y * 10000) / 100
-    local coordString = string.format("%s %.2f %.2f", mapName, xPct, yPct)
-
-    waypointBtn:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-        GameTooltip:AddLine(vendor.title, 1, 1, 0)
-        GameTooltip:AddLine(coordString, 0, 1, 0)
-        GameTooltip:Show()
-    end)
-
-    waypointBtn:SetScript("OnLeave", function()
-        GameTooltip:Hide()
-    end)
-
-    waypointBtn:SetScript("OnClick", function()
-    -- TomTom waypoint
-    if hasTomTom then
-        TomTom:AddWaypoint(vendor.mapID, vendor.x, vendor.y, {
-            title = vendor.title .. " - " .. (vendor.zone or ""),
-            persistent = false,
-            minimap = true,
-            world = true,
-        })
-    end
-
-    -- Blizzard default waypoint
-    if vendor.mapID and vendor.x and vendor.y then
-        local mapPoint = UiMapPoint.CreateFromVector2D(vendor.mapID, CreateVector2D(vendor.x, vendor.y))
-        C_Map.SetUserWaypoint(mapPoint)
-    end
-end)]]
-
-
 line:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
         GameTooltip:AddLine(vendor.title, 1, 1, 1)
@@ -1219,65 +1209,84 @@ end)
     return y - 24
 end
 
+local function StandardizeLineScripts(line, onEnter, onClick, onLeave)
+  line:SetScript("OnEnter", onEnter)
+  line:SetScript("OnClick", onClick)
+  line:SetScript("OnLeave", function(self)
+    ResetCursor()
+    GameTooltip:Hide()
+    smallPreviewFrame:Hide()
+    if previewFrame then
+      previewFrame:Hide(); previewFrame.model:Hide(); previewFrame.texture:Hide(); previewFrame.currentReward = nil; 
+      if line.nextButton then line.nextButton:Hide() end
+    end
+    if onLeave then onLeave(self) end
+  end)
+end
 
-
--- Build the Vendor UI
 function BuildVendorUI()
     ClearWidgets()
 
     local y = 0
     local hasContent = false
+local expansionOrder = {
+    "ClassicVendors",
+    "BurningCrusadeVendors",
+    "WrathoftheLichKingVendors",
+    "CataclysmVendors",
+    "MOPVendors",
+    "WarlordsVendors",
+    "LegionVendors",
+    "BattleVendors",
+    "ShadowlandsVendors",
+    "DragonVendors",
+	"WarVendors",
+}
 
-    -- 1️⃣ Sync saved completed flags with VendorData
-    for _, expansionTable in pairs(dv.expansions) do        -- e.g., ClassicVendors, BFA Venders
-    for _, expansion in ipairs(expansionTable) do
-        for _, continent in ipairs(expansion.continents or {}) do
-            for _, vendor in ipairs(continent.vendors or {}) do
-                vendor.completed = vendorSettings.completedVendors[vendor.title or vendor.name] or false
+    -- Define expansions to show (apply expansion & profession filters)
+  local expansionsToShow = {}
+
+for _, key in ipairs(expansionOrder) do
+    local expansionTable = dv.expansions[key]
+    if expansionTable then
+        for _, expansion in ipairs(expansionTable) do
+            if not selectedExpansions or selectedExpansions.All or selectedExpansions[expansion.name] then
+                table.insert(expansionsToShow, expansion)
             end
         end
     end
 end
 
+-- Loop through each expansion (already filtered)
+for _, expansion in ipairs(expansionsToShow) do
 
-    -- Define expansions to show (apply expansion & profession filters)
-    local expansionsToShow = {}
+    -- ===============================
+    -- Prepare continent/groups for UI
+    -- ===============================
+    local subGroups = {}
 
-for _, expansionTable in pairs(dv.expansions) do
-    for _, expansion in ipairs(expansionTable) do
-        if not selectedExpansions or selectedExpansions.All or selectedExpansions[expansion.name] then
-            table.insert(expansionsToShow, expansion)
-        end
-    end
+    -- Copy and sort continents for UI
+if expansion.continents and #expansion.continents > 0 then
+    subGroups = {}
+    for i, c in ipairs(expansion.continents) do subGroups[i] = c end
+    table.sort(subGroups, function(a,b) return (a.name or ""):lower() < (b.name or ""):lower() end)
+else
+    subGroups = { expansion }
 end
 
 
-    -- Loop through each expansion (already filtered)
-for _, expansion in ipairs(expansionsToShow) do
-
-    -- If the expansion has a continents table, sort THAT table alphabetically by continent name.
-    -- This sorts the real data source so the UI will always iterate continents in ABC order.
-    if expansion.continents and #expansion.continents > 0 then
-        table.sort(expansion.continents, function(a, b)
-            return (a.name or ""):lower() < (b.name or ""):lower()
-        end)
-        -- Now use the actual sorted continents table
-        subGroups = expansion.continents
-    else
-        -- Fallback: treat the expansion itself as a single group
-        subGroups = { expansion }
-    end
-
-    -- Loop through each continent/group (now guaranteed to be in ABC order when continents exist)
-    for _, subGroup in ipairs(subGroups) do
-        local totalVendors = subGroup.vendors and #subGroup.vendors or 0
+    -- ===============================
+    -- Loop through each group (continent or expansion)
+    -- ===============================
+    for _, group in ipairs(subGroups) do
+        local totalVendors = group.vendors and #group.vendors or 0
         local visibleVendors = {}
 
         -- Filter vendors
-        for _, vendor in ipairs(subGroup.vendors or {}) do
+        for _, vendor in ipairs(group.vendors or {}) do
             -- Attach reference data for filtering
             vendor.expansion = expansion.name
-            vendor.continent = subGroup.name or expansion.name
+            vendor.continent = group.name or expansion.name
 
             local passesFaction = selectedFactions.All or selectedFactions[vendor.faction]
             local passesExpansion = selectedExpansions.All or selectedExpansions[vendor.expansion]
@@ -1293,8 +1302,15 @@ for _, expansion in ipairs(expansionsToShow) do
         if #visibleVendors > 0 then
             hasContent = true
 
+            -- Sort vendors A–Z inside this group
+            if group.vendors then
+                table.sort(group.vendors, function(a, b)
+                    return (a.title or ""):lower() < (b.title or ""):lower()
+                end)
+            end
+
             -- Create header
-            local header, collapsed, newY = CreateVendorHeader(scrollChild, subGroup, y, #visibleVendors, totalVendors)
+            local header, collapsed, newY = CreateVendorHeader(scrollChild, group, y, #visibleVendors, totalVendors)
             y = newY
 
             -- Create vendor lines if not collapsed
@@ -1311,7 +1327,6 @@ for _, expansion in ipairs(expansionsToShow) do
     end
 end
 
-
     -- If no vendors are visible
     if not hasContent then
         local msg = scrollChild:CreateFontString(nil, "OVERLAY")
@@ -1325,36 +1340,6 @@ end
     scrollChild:SetHeight(math.abs(y) + 20)
 end
 
--- Saved settings
-if not vendorSettings then vendorSettings = {} end
-if not vendorSettings.completedVendors then
-    vendorSettings.completedVendors = {}
-end
-
-
--- UI setup
-BuildVendorUI()
-
--- Event handler to mark visited vendors
-local eventFrame = CreateFrame("Frame")
-eventFrame:RegisterEvent("MERCHANT_SHOW")
-eventFrame:SetScript("OnEvent", function()
-    local name = UnitName("target")
-    if not name then return end
-    for _, group in ipairs(VendorData) do
-        for _, vendor in ipairs(group.vendors or {}) do
-            if vendor.title == name then
-                vendor.completed = true
-                vendorSettings.completedVendors[name] = true
-                if vendorSettings.hideFound then
-                    BuildVendorUI()
-                end
-                return
-            end
-        end
-    end
-end)
-
 --Esc logic
 local function UpdateEscBehavior()
     local frameName = "DV_MainFrame"
@@ -1367,8 +1352,6 @@ local function UpdateEscBehavior()
         if foundIndex then table.remove(UISpecialFrames, foundIndex) end
     end
 end
-
-
 
 --Options panel
 local function CreateOptionsPanel()
@@ -1398,80 +1381,93 @@ local function CreateOptionsPanel()
     end
 end
 
---Initialize
+-- ===============================
+-- Initialize on ADDON_LOADED
+-- ===============================
 local init = CreateFrame("Frame")
 init:RegisterEvent("ADDON_LOADED")
 init:RegisterEvent("PLAYER_ENTERING_WORLD")
-init:RegisterEvent("ACHIEVEMENT_EARNED")
-init:RegisterEvent("QUEST_TURNED_IN")
-init:RegisterEvent("MERCHANT_SHOW")
 
-init:SetScript("OnEvent", function(self, event, addon)
-  if event == "ADDON_LOADED" and addon == "DecorVendor" then
-    vendorSettings.completedVendors = vendorSettings.completedVendors or {}
-    vendorSettings.completedDrops = vendorSettings.completedDrops or {}
-    
-    vendorSettings.showMinimapButton = vendorSettings.showMinimapButton == nil and true or vendorSettings.showMinimapButton
-    if vendorSettings.useTomTom == nil then vendorSettings.useTomTom = true end
-	if vendorSettings.closeOnEsc == nil then vendorSettings.closeOnEsc = true end
+init:SetScript("OnEvent", function(self, event, loadedAddon)
+    if event == "ADDON_LOADED" and loadedAddon == addonName then
+        print("DecorVendor loaded.")
 
-    vendorSettings.filters = vendorSettings.filters or {  neutral = true, alliance = true, horde = true}
+        -- Make sure all lookup tables are ready
+        BuildProfessionLookup()
+        --SortExpansions()
 
-    if vendorSettings.filters.neutral == nil then vendorSettings.filters.neutral = true end
-    if vendorSettings.filters.alliance == nil then vendorSettings.filters.alliance = true end
-    if vendorSettings.filters.horde == nil then vendorSettings.filters.horde = true end	
-  
-    minimapCheckbox:SetChecked(vendorSettings.showMinimapButton)
-    
-    local ldb = LibStub:GetLibrary("LibDataBroker-1.1", true)
-    if ldb then
-      local dataobj = ldb:NewDataObject("DecorVendor", { type = "launcher", icon = 1530229, label = "DecorVendor", text = "DecorVendor", name = "DecorVendor",
-        OnClick = function(_, button)
-          if button == "LeftButton" then
-            if not frame:IsShown() then BuildVendorUI() end
-            frame:SetShown(not frame:IsShown())
-          end
+        -- Initialize filters
+        selectedExpansions  = selectedExpansions  or { All = true }
+        selectedProfessions = selectedProfessions or { All = true }
+        selectedFactions    = selectedFactions    or { All = true }
+        continentFilter = continentFilter or "All"
+        zoneFilter = zoneFilter or "All"
+		
+		vendorSettings.completedDrops = vendorSettings.completedDrops or {}
+
+		-- Set checkbox to saved value
+        minimapCheckbox:SetChecked(vendorSettings.showMinimapButton)		
+        -- Ensure DVDB table exists for LibDBIcon
+        DVDB = DVDB or {}
+        DVDB.minimap = DVDB.minimap or {}
+
+        -- Apply saved minimap state BEFORE registering the icon
+        DVDB.minimap.hide = not vendorSettings.showMinimapButton
+
+        -- Register minimap icon
+        local ldb = LibStub:GetLibrary("LibDataBroker-1.1", true)
+        if ldb then
+            local dataobj = ldb:NewDataObject("DecorVendor", {
+                type = "launcher",
+                icon = 1530229,
+                label = "DecorVendor",
+                text = "DecorVendor",
+                name = "DecorVendor",
+                OnClick = function(_, button)
+                    if button == "LeftButton" then
+                        if not frame:IsShown() then BuildVendorUI() end
+                        frame:SetShown(not frame:IsShown())
+                    end
+                end
+            })
+
+            function dataobj:OnTooltipShow()
+                self:AddLine("|cffffffffDecor Vendor|r")
+                self:AddLine("|cff00ff00<Left Click to toggle>")
+                self:SetScale(GameTooltip:GetScale())
+            end
+
+            LibDBIcon:Register("DecorVendor", dataobj, DVDB.minimap)
         end
-      })
-      function dataobj:OnTooltipShow() self:AddLine("|cffffffffDecor Vendor|r"); self:AddLine("|cff00ff00<Left Click to toggle>"); self:SetScale(GameTooltip:GetScale()) end
-      LibDBIcon:Register("DecorVendor", dataobj, DVDB.minimap)
+
+        -- Build Vendor UI
+        BuildVendorUI()
+		CreateOptionsPanel()
+		UpdateEscBehavior()
     end
-  elseif event == "PLAYER_ENTERING_WORLD" then
-    if UnitFactionGroup("player") == "horde" then currentFaction = 2 end
 
-    local scale = vendorSettings.scale or 1.0
-    frame:SetScale(scale); supportFrame:SetScale(scale); scaleSlider:SetValue(scale)
-    scaleValueText:SetText(string.format("UI Scale: %.2f", scale))
-     vendorPopup:SetScale(scale)
-    BuildVendorUI()
-    CreateOptionsPanel()
-    UpdateEscBehavior()
-	
-    if not vendorSettings.showMinimapButton then LibDBIcon:Hide("DecorVendor") end
-
-    self:UnregisterEvent("PLAYER_ENTERING_WORLD")
-  elseif event == "MERCHANT_SHOW" then
-    local guid = UnitGUID("npc")
-    if guid then
-        local npcID = select(6, strsplit("-", guid))
-        npcID = tonumber(npcID)
-        if npcID and dv.vendorItems[npcID] and not vendorSettings.completedVendors[npcID] then
-          vendorSettings.completedVendors[npcID] = true
-          print("|cffffd700Decor Vendor:|r New vendor collected!")
-          BuildVendorUI()
-        end
+    -- Player entering world: apply UI scale, etc. if needed
+    if event == "PLAYER_ENTERING_WORLD" then
+        local scale = vendorSettings.scale or 1.0
+        if frame then frame:SetScale(scale) end
+        if supportFrame then supportFrame:SetScale(scale) end
+        -- Unregister if you only need to run once
+        self:UnregisterEvent("PLAYER_ENTERING_WORLD")
     end
-  end
-end) 
-
+end)
 
 
 SLASH_DECORVENDOR1 = "/decor"
 SLASH_DECORVENDOR2 = "/dv"
 SLASH_DECORVENDOR3 = "/decorvendor"
 SlashCmdList["DECORVENDOR"] = function()
+    if not frame:IsShown() then
         BuildVendorUI()
-    frame:Show()
+        frame:Show()
+    else
+        frame:Hide()
+    end
 end
+
 
 
