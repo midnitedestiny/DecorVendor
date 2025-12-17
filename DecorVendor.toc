@@ -2,7 +2,7 @@
 ## Title: Decor Vendors
 ## Notes: Tracks vendors that sell housing decor!
 ## Author: Midnitedestiny
-## Version: 1.30
+## Version: 1.31
 ## IconTexture: 1530229 
 ## SavedVariables: vendorSettings, DVDB
 ## OptionalDeps:TomTom, WaypointUI
@@ -17,5 +17,8 @@ Libs\LibDBIcon-1.0.lua
 
 # Core files
 dv.lua
+filters.lua
+vendorpopup.lua
+preview.lua
+wowhead.lua
 DecorVendor.lua
-
