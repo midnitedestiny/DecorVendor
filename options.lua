@@ -1,6 +1,8 @@
 local addonName, dv = ...
 
 function dv.CreateOptionsPanel()
+    if dv.optionsCategory then return end  -- prevent double registration
+
     local configFrame = CreateFrame("Frame", "DV_ConfigFrame", UIParent)
     configFrame.name = "Decor Vendor"
 
@@ -10,21 +12,20 @@ function dv.CreateOptionsPanel()
     configTitle:SetText("Decor Vendor Settings")
 
     local escCheck = CreateFrame("CheckButton", nil, configFrame, "UICheckButtonTemplate")
+	escCheck.Text:SetFont(STANDARD_TEXT_FONT, 16)
     escCheck:SetPoint("TOPLEFT", configTitle, "BOTTOMLEFT", 0, -20)
-    escCheck.Text:SetFont(STANDARD_TEXT_FONT, 14)
-    escCheck.Text:SetTextColor(1, 0.82, 0)
-    escCheck.Text:SetText(" Esc to Close Decor Vendor")
+    escCheck.Text:SetText("Esc to Close Decor Vendor")
+    escCheck:SetChecked(vendorSettings.closeOnEsc)
 
-    escCheck:SetChecked(dv.vendorSettings.closeOnEsc)
     escCheck:SetScript("OnClick", function(self)
-        dv.vendorSettings.closeOnEsc = self:GetChecked()
+        vendorSettings.closeOnEsc = self:GetChecked()
         dv.UpdateEscBehavior()
     end)
 
-    if Settings and Settings.RegisterCanvasLayoutCategory then
-        local category = Settings.RegisterCanvasLayoutCategory(configFrame, "Decor Vendor")
-        Settings.RegisterAddOnCategory(category)
-    else
-        InterfaceOptions_AddCategory(configFrame)
-    end
+    -- ✅ NEW SETTINGS API ONLY
+    local category = Settings.RegisterCanvasLayoutCategory(configFrame, "Decor Vendor")
+    Settings.RegisterAddOnCategory(category)
+
+    dv.optionsCategory = category
 end
+

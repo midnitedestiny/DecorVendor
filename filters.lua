@@ -1,191 +1,85 @@
 local addonName, dv = ...
+dv.filters = {
+    expansions = {},   -- empty = all
+    factions   = {},   -- empty = all
+    professions = {},  -- empty = all
+}
 
--- ===============================
--- State
--- ===============================
-dv.currentTab = dv.currentTab or "vendors"
 
-selectedExpansions  = selectedExpansions  or { All = true }
-selectedProfessions = selectedProfessions or { All = true }
-selectedFactions    = selectedFactions    or { All = true }
+function dv.BuildSidebarFilters()
+    local parent = dv.sidebar
+    if not parent then return end
 
--- ===============================
--- Create Filter Dropdown (ONCE)
--- ===============================
-function dv.CreateFilterDropdown(parentFrame)
-    if dv.filterButton then return end
-
-    local filterButton = CreateFrame(
-        "DropdownButton",
-        "DV_FilterButton",
-        parentFrame,
-        "WowStyle1FilterDropdownTemplate"
-    )
-
-    filterButton:SetSize(140, 24)
-    filterButton:SetPoint("TOPLEFT", parentFrame, "TOPLEFT", 10, -60)
-    filterButton:SetText("The Choices")
-
-    filterButton.Text:ClearAllPoints()
-    filterButton.Text:SetPoint("CENTER")
-
-    filterButton:SetFrameStrata("DIALOG")
-    filterButton:SetFrameLevel(parentFrame:GetFrameLevel() + 10)
-
-    filterButton:SetupMenu(function(_, root)
-        dv.BuildFilterMenu(root)
-    end)
-
-    filterButton:Show()
-    dv.filterButton = filterButton
-
-    dv.CreateMinimapCheckbox(parentFrame)
-end
-
--- ===============================
--- Build Filter Menu (TAB AWARE)
--- ===============================
-function dv.BuildFilterMenu(root)
-
-    -------------------------------------------------
-    -- VENDORS TAB
-    -------------------------------------------------
-    if dv.currentTab == "vendors" then
-
-        root:CreateCheckbox(
-            "Hide Found Vendors",
-            function() return vendorSettings.hideCompleted end,
-            function()
-                vendorSettings.hideCompleted = not vendorSettings.hideCompleted
-                BuildVendorUI()
-            end
-        )
-		root:CreateDivider()
-		root:CreateButton("Reset Found Vendors", function()
-                vendorSettings.visited = {}
-                BuildVendorUI()
-            end)
-
-        root:CreateDivider()
-
-        -- Expansions
-        local expMenu = root:CreateButton("Expansions")
-
-        expMenu:CreateCheckbox("All",
-            function() return selectedExpansions.All end,
-            function()
-                selectedExpansions = { All = true }
-                BuildVendorUI()
-            end
-        )
-
-        local seen = {}
-        for _, group in ipairs(dv.npcs or {}) do
-            if group.expansion and not seen[group.expansion] then
-                seen[group.expansion] = true
-
-                expMenu:CreateCheckbox(group.expansion,
-                    function() return selectedExpansions[group.expansion] end,
-                    function()
-                        selectedExpansions[group.expansion] =
-                            not selectedExpansions[group.expansion]
-                        selectedExpansions.All = false
-                        BuildVendorUI()
-                    end
-                )
-            end
-        end
-
-        root:CreateDivider()
-
-        -- Faction
-        local factionMenu = root:CreateButton("Faction")
-
-        factionMenu:CreateCheckbox("All",
-            function() return selectedFactions.All end,
-            function()
-                selectedFactions = { All = true }
-                BuildVendorUI()
-            end
-        )
-
-        for _, f in ipairs({ "alliance", "horde", "neutral" }) do
-            factionMenu:CreateCheckbox(f,
-                function() return selectedFactions[f] end,
-                function()
-                    selectedFactions[f] = not selectedFactions[f]
-                    selectedFactions.All = false
-                    BuildVendorUI()
-                end
-            )
-        end
+    -- wipe old UI
+    for _, child in ipairs({ parent:GetChildren() }) do
+        child:Hide()
+        child:SetParent(nil)
     end
 
-    -------------------------------------------------
-    -- PROFESSIONS TAB
-    -------------------------------------------------
-    if dv.currentTab == "professions" then
-        local profMenu = root:CreateButton("Professions")
+    local y = -6
+    local spacing = 20
 
-        profMenu:CreateCheckbox("All",
-            function() return selectedProfessions.All end,
-            function()
-                wipe(selectedProfessions)
-                selectedProfessions.All = true
-                BuildProfessionList()
-            end
-        )
-
-        for _, profession in ipairs(dv.professions or {}) do
-            profMenu:CreateCheckbox(profession.name,
-                function() return selectedProfessions[profession.name] end,
-                function()
-                    selectedProfessions[profession.name] =
-                        not selectedProfessions[profession.name]
-                    selectedProfessions.All = false
-                    BuildProfessionList()
-                end
-            )
-        end
+    local function Header(text)
+        local h = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        h:SetPoint("TOPLEFT", 12, y)
+        h:SetText(text)
+        h:SetTextColor(1, 0.82, 0)
+        y = y - spacing
     end
 
-    -------------------------------------------------
-    -- RESET (ALWAYS PRESENT)
-    -------------------------------------------------
-    root:CreateDivider()
+    local function Checkbox(label, tbl, key)
+        local cb = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
+        cb:SetPoint("TOPLEFT", 12, y)
+        cb.Text:SetText(label)
+        cb:SetChecked(tbl[key])
 
-    root:CreateButton("Reset Filters", function()
-        selectedExpansions  = { All = true }
-        selectedProfessions = { All = true }
-        selectedFactions    = { All = true }
-
-        if dv.currentTab == "vendors" then
+        cb:SetScript("OnClick", function(self)
+            tbl[key] = self:GetChecked()
             BuildVendorUI()
-        else
-            BuildProfessionList()
+        end)
+
+        y = y - spacing
+    end
+
+    -- Hide found
+    Checkbox("Hide Found Vendors", vendorSettings, "hideCompleted")
+
+    y = y - 6
+    Header("Expansions")
+
+    dv.filters.expansions = dv.filters.expansions or {}
+
+    local seen = {}
+    for _, g in ipairs(dv.npcs or {}) do
+        if g.expansion and not seen[g.expansion] then
+            seen[g.expansion] = true
+            Checkbox(g.expansion, dv.filters.expansions, g.expansion)
         end
-    end)
+    end
+
+    y = y - 6
+    Header("Faction")
+
+    dv.filters.factions = dv.filters.factions or {}
+    for _, f in ipairs({ "alliance", "horde", "neutral" }) do
+        Checkbox(f, dv.filters.factions, f)
+    end
 end
 
--- ===============================
--- Minimap Checkbox (ONCE)
--- ===============================
 function dv.CreateMinimapCheckbox(parentFrame)
     if dv.minimapCheckbox then return end
 
-    local cb = CreateFrame(
-        "CheckButton",
-        "DV_MinimapCheckbox",
-        parentFrame,
-        "UICheckButtonTemplate"
-    )
-
-    cb:SetPoint("LEFT", dv.filterButton, "RIGHT", 10, 0)
+    local cb = CreateFrame("CheckButton", "DV_MinimapCheckbox", parentFrame, "UICheckButtonTemplate")
+    cb:ClearAllPoints()
+    cb:SetPoint("TOPLEFT", parentFrame, "TOPLEFT", 14, -48)
     cb:SetSize(26, 26)
+    cb:SetFrameStrata("DIALOG")
+    cb:SetFrameLevel(parentFrame:GetFrameLevel() + 5)
 
     local label = cb:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    label:SetPoint("LEFT", cb, "RIGHT", 2, 0)
+    label:SetPoint("LEFT", cb, "RIGHT", 4, 1)
     label:SetText("Minimap")
+    label:SetTextColor(0.9, 0.8, 1)
 
     cb:SetChecked(vendorSettings.showMinimapButton)
 

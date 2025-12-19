@@ -186,9 +186,154 @@ function dv.ShowVendorPopup(vendorID, vendorName)
     local totalWidth = (startX * 2) + (columns * (tileSize + margin)) - margin
     popup:SetSize(totalWidth, totalHeight)
     popup:SetScale(dv.vendorSettings and dv.vendorSettings.scale or 1.0)
+	if dv.reagentsPopup then dv.reagentsPopup:Hide() end
     popup:Show()
 end
-dv.popupIconCache = dv.popupIconCache or {}
+
+-- ===============================
+-- Reagents Popup (SEPARATE FRAME)
+-- ===============================
+
+dv.reagentsPopup = dv.reagentsPopup or CreateFrame("Frame", "DV_ReagentsPopup", UIParent, "BackdropTemplate")
+local rpopup = dv.reagentsPopup
+rpopup:SetSize(320, 140)
+rpopup:SetPoint("CENTER")
+rpopup:SetFrameStrata("DIALOG")
+rpopup:SetClampedToScreen(true)
+rpopup:Hide()
+
+rpopup:SetBackdrop({
+    bgFile = "Interface\\Buttons\\WHITE8x8",
+    edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+    edgeSize = 16,
+    insets = { left = 4, right = 4, top = 4, bottom = 4 }
+})
+rpopup:SetBackdropColor(0.1, 0.1, 0.1, 1)
+rpopup:SetBackdropBorderColor(0.64, 0.64, 0.64, 1)
+
+local rgrad = rpopup:CreateTexture(nil, "BACKGROUND")
+rgrad:SetPoint("TOPLEFT", 4, -4)
+rgrad:SetPoint("BOTTOMRIGHT", -4, 4)
+rgrad:SetColorTexture(1, 1, 1, 1)
+rgrad:SetGradient("VERTICAL", CreateColor(0.12, 0.12, 0.12, 1), CreateColor(0.05, 0.05, 0.05, 1))
+
+rpopup.title = rpopup:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
+rpopup.title:SetPoint("TOP", 0, -12)
+rpopup.title:SetTextColor(1, 0.82, 0)
+rpopup.title:SetText("Reagents Required")
+
+local rsep = rpopup:CreateTexture(nil, "ARTWORK")
+rsep:SetHeight(2)
+rsep:SetColorTexture(0.4, 0.4, 0.4, 0.8)
+rsep:SetPoint("TOPLEFT", 10, -36)
+rsep:SetPoint("TOPRIGHT", -10, -36)
+
+rpopup.content = CreateFrame("Frame", nil, rpopup)
+rpopup.content:SetPoint("TOPLEFT", 12, -44)
+rpopup.content:SetPoint("BOTTOMRIGHT", -12, 12)
+
+rpopup.closeBtn = CreateFrame("Button", nil, rpopup, "UIPanelCloseButton")
+rpopup.closeBtn:SetPoint("TOPRIGHT", 0, 0)
+rpopup.closeBtn:SetSize(30, 30)
+rpopup.closeBtn:SetScript("OnClick", function() rpopup:Hide() end)
+
+rpopup:EnableMouse(true)
+rpopup:SetMovable(true)
+rpopup:SetScript("OnMouseDown", function(self, button)
+    if button == "LeftButton" then self:StartMoving() end
+end)
+rpopup:SetScript("OnMouseUp", function(self, button)
+    if button == "LeftButton" then self:StopMovingOrSizing() end
+end)
+
+dv.reagentIconCache = dv.reagentIconCache or {}
+
+local function GetReagentIconFrame(i)
+    local f = dv.reagentIconCache[i]
+    if f then f:Show(); return f end
+
+    f = CreateFrame("Frame", nil, rpopup.content, "BackdropTemplate")
+    f:SetSize(50, 66)
+    f:SetBackdrop({ edgeFile = "Interface\\Buttons\\WHITE8x8", edgeSize = 2 })
+    f:SetBackdropBorderColor(0.4, 0.4, 0.4, 1)
+    f:SetClipsChildren(true)
+
+    local btn = CreateFrame("Button", nil, f)
+    btn:SetAllPoints()
+    btn:RegisterForClicks("AnyUp")
+    f.btn = btn
+
+    local icon = btn:CreateTexture(nil, "ARTWORK")
+    icon:SetPoint("TOPLEFT", 2, -2)
+    icon:SetPoint("BOTTOMRIGHT", -2, 18)
+    icon:SetTexCoord(0.08, 0.92, 0.08, 0.92)
+    f.icon = icon
+
+    local countBg = f:CreateTexture(nil, "BACKGROUND")
+    countBg:SetPoint("BOTTOMLEFT", 0, 0)
+    countBg:SetPoint("BOTTOMRIGHT", 0, 0)
+    countBg:SetHeight(16)
+    countBg:SetColorTexture(0, 0, 0, 1)
+
+    local countText = f:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    countText:SetPoint("BOTTOM", 0, 2)
+    countText:SetTextColor(1, 1, 1, 1)
+    f.countText = countText
+
+    btn:SetScript("OnEnter", function(self)
+        SetCursor("CAST_CURSOR")
+        f:SetBackdropBorderColor(1, 0.82, 0, 1)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:SetHyperlink("item:" .. self.itemID)
+        GameTooltip:Show()
+    end)
+    btn:SetScript("OnLeave", function()
+        ResetCursor()
+        f:SetBackdropBorderColor(0.4, 0.4, 0.4, 1)
+        GameTooltip:Hide()
+    end)
+    btn:SetScript("OnClick", function(self)
+        if dv.ShowWowheadLinkPopup then
+            dv.ShowWowheadLinkPopup(self.itemID, "item")
+        end
+    end)
+
+    dv.reagentIconCache[i] = f
+    return f
+end
+
+function dv.ShowReagentsPopup(itemData)
+    if not itemData or not itemData.reagents or #itemData.reagents == 0 then return end
+
+    -- IMPORTANT: don't reuse vendor popup anymore
+    if dv.vendorPopup then dv.vendorPopup:Hide() end
+
+    rpopup.title:SetText("Reagents Required")
+
+    -- hide old icons
+    for _, f in pairs(dv.reagentIconCache) do f:Hide() end
+
+    local tileSize, spacing = 50, 12
+    for i, reagent in ipairs(itemData.reagents) do
+        local f = GetReagentIconFrame(i)
+        f:ClearAllPoints()
+        f:SetPoint("TOPLEFT", rpopup.content, "TOPLEFT", (i - 1) * (tileSize + spacing), 0)
+
+        f.btn.itemID = reagent.id
+        f.icon:SetTexture(GetItemIcon(reagent.id) or "Interface\\Icons\\INV_Misc_QuestionMark")
+        f.countText:SetText(reagent.amount or 1)
+        f:Show()
+    end
+
+    local width = (#itemData.reagents * (tileSize + spacing)) - spacing
+    rpopup:SetWidth(math.max(240, width + 24))
+    rpopup:SetHeight(140)
+    rpopup:SetScale(dv.vendorSettings and dv.vendorSettings.scale or 1.0)
+    rpopup:Show()
+end
+
+
+--[[dv.popupIconCache = dv.popupIconCache or {}
 
 -- Get / Create Popup Icon Frame
 function dv.GetPopupIconFrame(index)
@@ -257,6 +402,8 @@ function dv.GetPopupIconFrame(index)
     container:Show()
     return container
 end
+
+]]
 
 -- Popup Button: OnEnter
 function dv.PopupButton_OnEnter(self)
@@ -366,7 +513,7 @@ function dv.SetupPopupButton(container, data, typeStr)
     container:Show()
 end
 
--- Reagents Popup (DecorVendor)
+--[[-- Reagents Popup (DecorVendor)
 function dv.ShowReagentsPopup(itemData)
     if not itemData or not itemData.reagents or #itemData.reagents == 0 then
         return
@@ -381,8 +528,6 @@ function dv.ShowReagentsPopup(itemData)
     dv.LayoutPopupItems(itemData.reagents, "reagent")
     popup:Show()
 end
-
-
 
 function dv.LayoutPopupItems(items, typeStr)
     local tileSize = 50
@@ -412,6 +557,6 @@ function dv.LayoutPopupItems(items, typeStr)
     dv.vendorPopup:SetHeight(120)
 end
 
-
+]]
 
 

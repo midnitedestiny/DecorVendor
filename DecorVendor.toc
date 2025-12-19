@@ -2,7 +2,7 @@
 ## Title: Decor Vendors
 ## Notes: Tracks vendors that sell housing decor!
 ## Author: Midnitedestiny
-## Version: 1.31
+## Version: 1.33
 ## IconTexture: 1530229 
 ## SavedVariables: vendorSettings, DVDB
 ## OptionalDeps:TomTom, WaypointUI
@@ -21,4 +21,5 @@ filters.lua
 vendorpopup.lua
 preview.lua
 wowhead.lua
+options.lua
 DecorVendor.lua
