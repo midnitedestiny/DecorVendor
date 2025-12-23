@@ -2174,7 +2174,7 @@ dv.npcs = {
       vendors = {
       { zone = "Harbormaster's Office", id = 135808, title = "Provisioner Fray", x = 67.6, y = 21.8, mapID = 1161 , faction = "alliance" },
       { zone = "Tradewinds Market", id = 252345, title = "Pearl Barlow", x = 70.74, y = 15.66, mapID = 1161, faction = "alliance" },
-      { zone = "Boralus Harbor", id = 142115, title = "Fiona", x = 67.6, y = 40.8, mapID = 1161, faction = "alliance" },
+      { zone = "Boralus Harbor", id = 45417--[[142115]], title = "Fiona", x = 67.6, y = 40.8, mapID = 1161, faction = "alliance" },
 	  { zone = "Hook Point", id = 246721, title = "Janey Forrest", x = 56.29, y = 45.82, mapID = 1161, faction = "alliance" },
 	  { zone = "Norwington Estate", id = 252316, title = "Delphine", x = 53.4, y = 31.2, mapID = 895, faction = "neutral" },
     }
@@ -2334,9 +2334,9 @@ dv.npcs = {
     name = "Founders Point",
 	expansion = "Midnight",
       vendors = {		
-	    { zone = "Founders Point", id = 255228, title = "\"Len\" Splinthoof", x = 62.4, y = 80.0, mapID = 2352 , faction = "alliance" },
+	    { zone = "Founders Point", id = 255326, title = "\"Len\" Splinthoof", x = 62.4, y = 80.0, mapID = 2352 , faction = "alliance" },
         { zone = "Founders Point", id = 255222, title = "\"High Tides\" Ren", x = 62.4, y = 80.2, mapID = 2352 , faction = "alliance" },
-        { zone = "Founders Point", id = 255230, title = "\"Yen\" Malone", x = 62.23, y = 80.3, mapID = 2352 , faction = "alliance" },
+        { zone = "Founders Point", id = 255319, title = "\"Yen\" Malone", x = 62.23, y = 80.3, mapID = 2352 , faction = "alliance" },
         { zone = "Founders Point", id = 255203, title = "Xiao Dan", x = 51.95, y = 38.31, mapID = 2352 , faction = "alliance" },
         { zone = "Founders Point", id = 255221, title = "Trevor Grenner", x = 53.47, y = 40.93, mapID = 2352 , faction = "alliance" },
         { zone = "Founders Point", id = 256750, title = "Klasa", x = 58.3, y = 61.68, mapID = 2352, faction = "alliance" },
@@ -2354,7 +2354,7 @@ dv.npcs = {
         { zone = "Razorwind Shores", id = 255326, title = "\"Len\" Splinthoof", x = 39.91, y = 73.3, mapID = 2351 , faction = "horde"  },
         { zone = "Razorwind Shores", id = 255297, title = "Shon'ja", x = 54.13, y = 59.05, mapID = 2351 , faction = "horde"  },
         { zone = "Razorwind Shores", id = 240465, title = "Lonomia", x = 68.29, y = 75.5, mapID = 2351 , faction = "horde"  },
-        { zone = "Razorwind Shores", id = 255301, title = "Botanist Boh'an", x = 54.0, y = 58.4, mapID = 2351 , faction = "horde"  },
+        { zone = "Razorwind Shores", id = 255301, title = "Botanist Boh'an", x = 53,60, y = 57.54, mapID = 2351 , faction = "horde"  },
         { zone = "Razorwind Shores", id = 255278, title = "Gronthul", x = 54.12, y = 59.11, mapID = 2351 , faction = "horde"  },
         { zone = "Razorwind Shores", id = 255298, title = "Jehzar Starfall", x = 53.56, y = 58.49, mapID = 2351 , faction = "horde"  },
         { zone = "Razorwind Shores", id = 255299, title = "Lefton Farrer", x = 53.48, y = 58.53, mapID = 2351 , faction = "horde"  },
