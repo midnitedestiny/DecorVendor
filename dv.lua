@@ -2174,7 +2174,7 @@ dv.npcs = {
       vendors = {
       { zone = "Harbormaster's Office", id = 135808, title = "Provisioner Fray", x = 67.6, y = 21.8, mapID = 1161 , faction = "alliance" },
       { zone = "Tradewinds Market", id = 252345, title = "Pearl Barlow", x = 70.74, y = 15.66, mapID = 1161, faction = "alliance" },
-      { zone = "Boralus Harbor", id = 45417--[[142115]], title = "Fiona", x = 67.6, y = 40.8, mapID = 1161, faction = "alliance" },
+      { zone = "Boralus Harbor", id = 142115, title = "Fiona", x = 67.6, y = 40.8, mapID = 1161, faction = "alliance" },
 	  { zone = "Hook Point", id = 246721, title = "Janey Forrest", x = 56.29, y = 45.82, mapID = 1161, faction = "alliance" },
 	  { zone = "Norwington Estate", id = 252316, title = "Delphine", x = 53.4, y = 31.2, mapID = 895, faction = "neutral" },
     }

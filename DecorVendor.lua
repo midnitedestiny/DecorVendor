@@ -5,6 +5,7 @@ selectedExpansions  = selectedExpansions  or {}
 selectedProfessions = selectedProfessions or {}
 selectedFactions    = selectedFactions    or {}
 
+
 local function HasAnySelection(tbl)
     if type(tbl) ~= "table" then return false end
     for _, v in pairs(tbl) do
@@ -12,6 +13,7 @@ local function HasAnySelection(tbl)
     end
     return false
 end
+
 
 -- Retail-only addon loaded check
 local function IsLoaded(addon)
@@ -30,17 +32,22 @@ vendorSettings = vendorSettings or {
 	visited = {},              -- Add this
     hideCompleted = false,     -- Add this
 }
+dbDV = dbDV or {}
+dbDV.minimap = dbDV.minimap or { hide = false }
+
+
 local dv_optionsCategory = nil
 local decorThumbCache = {}
 local itemNameCache = {}
 local refreshTimer = nil
 local activeWidgets = {}       -- tracks all created lines and headers for clearing
 local collapsedHeaders = {}    -- tracks which expansion/vendor group headers are collapsed
+
 local LibDBIcon = LibStub("LibDBIcon-1.0", true)
 local minimapButton 
 local initialized = false
  dv.currentTab = "vendors"
- dbDV = {minimap = {hide = false}}
+ 
 dv.searchQuery = ""
 
 
@@ -154,6 +161,10 @@ frame.sidebar:SetBackdropColor(
 
 dv.sidebar = frame.sidebar
 
+-- ===============================
+-- Sidebar containers
+-- ===============================
+
 -- Tabs container (static)
 frame.sidebarTabs = CreateFrame("Frame", nil, frame.sidebar)
 frame.sidebarTabs:SetPoint("TOPLEFT", frame.sidebar, "TOPLEFT", 0, 0)
@@ -177,6 +188,10 @@ frame.sidebarFilters:SetPoint("BOTTOMRIGHT", frame.sidebar, "BOTTOMRIGHT", 0, 0)
 -- IMPORTANT assignments
 dv.sidebarTabs = frame.sidebarTabs
 dv.sidebar     = frame.sidebarFilters
+
+-- ===============================
+-- Tabs
+-- ===============================
 
 local tabs = {}
 local TAB_START_Y = -16
@@ -252,6 +267,79 @@ CreateSideTab("professions", "Professions", "Interface\\Icons\\Trade_Tailoring")
 
 UpdateTabStyles()
 
+local supportFrame = CreateFrame("Frame", "DV_SupportFrame", UIParent, "BackdropTemplate")
+supportFrame:SetSize(400, 210)
+supportFrame:SetPoint("CENTER")
+supportFrame:SetBackdrop({
+  bgFile = "Interface\\Buttons\\WHITE8x8",
+  edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+  tile = false,
+  edgeSize = 16,
+  insets = { left = 4, right = 4, top = 4, bottom = 4 }
+})
+supportFrame:SetBackdropColor(0.02, 0.02, 0.02, 0.95)
+supportFrame:SetBackdropBorderColor(0.3, 0.3, 0.3, 1)
+supportFrame:SetFrameStrata("DIALOG")
+supportFrame:SetMovable(true)
+supportFrame:EnableMouse(true)
+supportFrame:RegisterForDrag("LeftButton")
+supportFrame:SetScript("OnDragStart", supportFrame.StartMoving)
+supportFrame:SetScript("OnDragStop", supportFrame.StopMovingOrSizing)
+supportFrame:Hide()
+
+local supportTitleBg = supportFrame:CreateTexture(nil, "BACKGROUND")
+supportTitleBg:SetTexture("Interface\\Buttons\\WHITE8x8")
+supportTitleBg:SetPoint("TOPLEFT", 4, -4)
+supportTitleBg:SetPoint("TOPRIGHT", -4, -4)
+supportTitleBg:SetHeight(40)
+supportTitleBg:SetGradient("VERTICAL", CreateColor(0.15, 0.10, 0.25, 0.9), CreateColor(0.05, 0.05, 0.15, 0.9))
+
+local supportTitle = supportFrame:CreateFontString(nil, "OVERLAY")
+supportTitle:SetFont(STANDARD_TEXT_FONT, 14, "OUTLINE")
+supportTitle:SetPoint("TOP", 0, -16)
+supportTitle:SetText("Community & Support")
+supportTitle:SetTextColor(1, 0.85, 0, 1)
+
+local supportCloseBtn = CreateFrame("Button", nil, supportFrame, "UIPanelCloseButton")
+supportCloseBtn:SetPoint("TOPRIGHT", -2, -2)
+supportCloseBtn:SetSize(28, 28)
+
+local shareText = supportFrame:CreateFontString(nil, "OVERLAY")
+shareText:SetFont(STANDARD_TEXT_FONT, 12)
+shareText:SetPoint("TOPLEFT", 20, -60)
+shareText:SetText("Please share with your friends!")
+shareText:SetTextColor(0.9, 0.9, 0.9, 1)
+
+local shareEditBox = CreateFrame("EditBox", nil, supportFrame, "InputBoxTemplate")
+shareEditBox:SetSize(350, 20)
+shareEditBox:SetPoint("TOPLEFT", 22, -80)
+shareEditBox:SetAutoFocus(false)
+shareEditBox:SetText("https://www.curseforge.com/wow/addons/Decor-Vendor")
+shareEditBox:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+shareEditBox:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
+
+local tipText = supportFrame:CreateFontString(nil, "OVERLAY")
+tipText:SetFont(STANDARD_TEXT_FONT, 12)
+tipText:SetPoint("TOPLEFT", 20, -120)
+tipText:SetText("You can leave a tip if you like")
+tipText:SetTextColor(0.9, 0.9, 0.9, 1)
+
+local tipEditBox = CreateFrame("EditBox", nil, supportFrame, "InputBoxTemplate")
+tipEditBox:SetSize(350, 20)
+tipEditBox:SetPoint("TOPLEFT", 22, -140)
+tipEditBox:SetAutoFocus(false)
+tipEditBox:SetText("https://buymeacoffee.com/midnitedestiny")
+tipEditBox:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+tipEditBox:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
+
+local tipEditBox = CreateFrame("EditBox", nil, supportFrame, "InputBoxTemplate")
+tipEditBox:SetSize(350, 20)
+tipEditBox:SetPoint("TOPLEFT", 22, -170)
+tipEditBox:SetAutoFocus(false)
+tipEditBox:SetText("ko-fi.com/midnitedestiny")
+tipEditBox:SetScript("OnEscapePressed", function(self) self:ClearFocus() end)
+tipEditBox:SetScript("OnEnterPressed", function(self) self:ClearFocus() end)
+
 -- Title background
 local titleBg = frame:CreateTexture(nil, "BACKGROUND")
 titleBg:SetTexture("Interface\\Buttons\\WHITE8x8")
@@ -286,9 +374,8 @@ infoIcon:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highligh
 infoIcon:SetScript("OnEnter", function(self)
   GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
   GameTooltip:AddLine("Decor Vendor Notice", 1, 0.82, 0)
-  GameTooltip:AddLine("Options Panel has Improved", 1, 1, 1, true)
-  GameTooltip:AddLine("Remove Hide Found Vendors is in the Options Panel", 1, 1, 1, true)
-  GameTooltip:AddLine("Right click minimap to open the Options Panel", 1, 1, 1, true)
+  GameTooltip:AddLine("Professions is on Profession Tab", 1, 1, 1, true)
+  GameTooltip:AddLine("Remove Hide Found Vendors is back!", 1, 1, 1, true)
   GameTooltip:Show()
 end)
 
@@ -368,6 +455,8 @@ searchBox:SetScript("OnTextChanged", function(self)
     -- Refresh display
     BuildVendorUI()
 end)
+
+
 
 local function CreateVendorHeader(parent, group, y, completed, total)
 
@@ -574,6 +663,14 @@ end
 
 local function CreateVendorLine(parent, vendor, y)
 
+    if vendorSettings.hideCompleted
+   and vendorSettings.visited
+   and vendorSettings.visited[vendor.id]
+then
+    return y
+end
+
+
     local line = CreateFrame("Button", nil, parent)
     line:SetPoint("TOPLEFT", 10, y)
     line:SetSize(590, 22)
@@ -689,36 +786,27 @@ local function StandardizeLineScripts(line, onEnter, onClick, onLeave)
   end)
 end
 
+-- Event handler: mark visited vendors when opening a merchant
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("MERCHANT_SHOW")
 
 eventFrame:SetScript("OnEvent", function()
     local targetName = UnitName("target")
     if not targetName then return end
-    if not dv.npcs then return end
 
-    local playerFaction = UnitFactionGroup("player") 
-    if playerFaction then playerFaction = playerFaction:lower() end
+    if not dv.npcs then return end
 
     for _, group in ipairs(dv.npcs) do
         for _, vendor in ipairs(group.vendors or {}) do
-
-            -- normalize vendor faction
-            local vFaction = vendor.faction and vendor.faction:lower() or nil
-
-            -- conditions for match:
-            -- 1. same name
-            -- 2. same faction OR vendor has no faction listed
-            if vendor.title == targetName and
-               (vFaction == nil or vFaction == playerFaction) then
-
-                vendorSettings.visited[vendor.id] = true
-
+            if vendor.title == targetName then
+                vendorSettings.visited = vendorSettings.visited or {}
+				vendorSettings.visited[vendor.id] = true
+                -- Rebuild UI if needed
                 if vendorSettings.hideCompleted then
                     BuildVendorUI()
                 end
 
-                return
+                return  -- stop after finding the first match
             end
         end
     end
@@ -938,12 +1026,21 @@ local function CreateOptionsPanel()
     minimapCheck.Text:SetTextColor(1, 0.82, 0)
     minimapCheck.Text:SetText(" Minimap Button")
 	minimapCheck:SetChecked(vendorSettings.showMinimapButton)
-    minimapCheck:SetScript("OnClick", function(self) 
-    vendorSettings.showMinimapButton = self:GetChecked()
+    minimapCheck:SetScript("OnClick", function(self)
+    local show = self:GetChecked()
+
+    vendorSettings.showMinimapButton = show
+    dbDV.minimap.hide = not show   -- VERY IMPORTANT!
+
     if LibDBIcon then
-       if vendorSettings.showMinimapButton then LibDBIcon:Show("DecorVendor") else LibDBIcon:Hide("DecorVendor") end
+        if show then
+            LibDBIcon:Show("DecorVendor")
+        else
+            LibDBIcon:Hide("DecorVendor")
+        end
     end
-  end)
+end)
+
     ---------------------------
     -- ESC TO CLOSE
     ---------------------------
@@ -1074,24 +1171,17 @@ local function CreateURLBox(anchor, url)
     return box
 end
 
-
 -- Ko-Fi box
 local koFiBox = CreateURLBox(koFiLabel, "https://ko-fi.com/midnitedestiny")
 
 -- CurseForge box
 local curseBox = CreateURLBox(curseLabel, "https://www.curseforge.com/wow/addons/decor-vendor")
 
-
-
-
 local footerText = configFrame:CreateFontString(nil, "OVERLAY")
 footerText:SetFont(STANDARD_TEXT_FONT, 18, "OUTLINE")
 footerText:SetPoint("BOTTOM", configFrame, "BOTTOM", 0, 28)
 footerText:SetText("|cffffdd00Decor Vendor|r • developed by |cff00aaffMidniteDestiny|r\n|cffffffffFirst to introduce vendor tracking|r")
 footerText:SetJustifyH("CENTER")
-
-
-
 
     ---------------------------
     -- Register Category
@@ -1101,36 +1191,13 @@ footerText:SetJustifyH("CENTER")
     dv_optionsCategory = category
 end
 
-local function VendorIsVisitedByFaction(vendor)
-    local playerFaction = UnitFactionGroup("player")
-    if playerFaction then playerFaction = playerFaction:lower() end
-
-    local vendorFaction = vendor.faction and vendor.faction:lower() or nil
-
-    -- If vendor has faction and it does NOT match player faction → DO NOT HIDE
-    if vendorFaction and vendorFaction ~= playerFaction then
-        return false
-    end
-
-    -- Otherwise hide ONLY if vendor.id is visited
-    return vendorSettings.visited[vendor.id] == true
-end
-
-local function VendorIsVisitedByPlayerFaction(vendor)
-    local vID = vendor.id
-    if not vID then return false end
-
-    -- If player found THIS exact vendor ID, we hide it (safe)
-    return vendorSettings.visited[vID] == true
-end
-
 function BuildVendorList()
     dv.ClearWidgets()
 
     local y = 0
     local hasContent = false
 
-    -- Ensure tables exist
+    -- Ensure filter tables exist
     selectedExpansions = selectedExpansions or {}
     selectedFactions   = selectedFactions   or {}
 
@@ -1140,66 +1207,86 @@ function BuildVendorList()
     local hasExpansionFilter = HasAnySelection(expSel)
     local hasFactionFilter   = HasAnySelection(facSel)
 
-    -- Sort groups
+    -- Copy & sort groups A–Z
     local groups = {}
-    for _, g in ipairs(dv.npcs or {}) do groups[#groups+1] = g end
-    table.sort(groups, function(a,b)
+    for _, group in ipairs(dv.npcs or {}) do
+        groups[#groups + 1] = group
+    end
+
+    table.sort(groups, function(a, b)
         return (a.name or ""):lower() < (b.name or ""):lower()
     end)
 
     for _, group in ipairs(groups) do
-        -- Expansion filter
-        if not hasExpansionFilter or expSel[group.expansion] then
-            
+        local passesExpansion =
+            not hasExpansionFilter or expSel[group.expansion]
+
+        if passesExpansion then
             local visibleVendors = {}
 
             for _, vendor in ipairs(group.vendors or {}) do
-                local include = true
+                local includeVendor = true
 
-                ------------------------------------------------------
+                ----------------------------------------------------
                 -- SEARCH FILTER
-                ------------------------------------------------------
-                if dv.searchQuery ~= "" then
-                    local name = string.lower(vendor.title or "")
-                    if not string.find(name, dv.searchQuery, 1, true) then
-                        include = false
+                ----------------------------------------------------
+                if dv.searchQuery and dv.searchQuery ~= "" then
+                    local title = string.lower(vendor.title or "")
+                    if not string.find(title, dv.searchQuery, 1, true) then
+                        includeVendor = false
                     end
                 end
 
-                ------------------------------------------------------
-                -- FACTION FILTER FROM SIDEBAR
-                ------------------------------------------------------
-                if include and hasFactionFilter then
-                    if not facSel[vendor.faction] then
-                        include = false
+                ----------------------------------------------------
+                -- FACTION FILTER
+                ----------------------------------------------------
+                if includeVendor then
+                    local passesFaction =
+                        not hasFactionFilter or facSel[vendor.faction]
+
+                    if not passesFaction then
+                        includeVendor = false
                     end
                 end
 
-                ------------------------------------------------------
-                -- HIDE COMPLETED FILTER (FACTION-SAFE)
-                ------------------------------------------------------
-                if include and vendorSettings.hideCompleted then
-                    if VendorIsVisitedByFaction(vendor) then
-                        include = false
+                ----------------------------------------------------
+                -- HIDE COMPLETED LOGIC
+                ----------------------------------------------------
+                if includeVendor then
+                    local notVisited =
+                        not (
+                            vendorSettings.hideCompleted
+                            and vendorSettings.visited
+                            and vendorSettings.visited[vendor.id]
+                        )
+
+                    if not notVisited then
+                        includeVendor = false
                     end
                 end
 
-                if include then
+                ----------------------------------------------------
+                -- ADD TO VISIBLE LIST
+                ----------------------------------------------------
+                if includeVendor then
                     table.insert(visibleVendors, vendor)
                 end
             end
 
+            --------------------------------------------------------
+            -- CREATE GROUP HEADER + VENDOR LINES
+            --------------------------------------------------------
             if #visibleVendors > 0 then
                 hasContent = true
 
-                table.sort(visibleVendors, function(a,b)
+                table.sort(visibleVendors, function(a, b)
                     return (a.title or ""):lower() < (b.title or ""):lower()
                 end)
 
                 local total, completed = 0, 0
                 for _, vendor in ipairs(group.vendors or {}) do
                     total = total + 1
-                    if VendorIsVisitedByFaction(vendor) then
+                    if vendorSettings.visited and vendorSettings.visited[vendor.id] then
                         completed = completed + 1
                     end
                 end
@@ -1218,6 +1305,9 @@ function BuildVendorList()
         end
     end
 
+    --------------------------------------------------------
+    -- EMPTY RESULTS MESSAGE
+    --------------------------------------------------------
     if not hasContent then
         local msg = scrollChild:CreateFontString(nil, "OVERLAY")
         msg:SetFont(STANDARD_TEXT_FONT, 14)
@@ -1229,6 +1319,7 @@ function BuildVendorList()
 
     scrollChild:SetHeight(math.abs(y) + 20)
 end
+
 
 function BuildVendorUI()   
     if dv.currentTab == "vendors" then
@@ -1281,38 +1372,56 @@ init:SetScript("OnEvent", function(self, event, loadedAddon)
         vendorSettings.completedDrops = vendorSettings.completedDrops or {}
 		vendorSettings.showMinimapButton = vendorSettings.showMinimapButton == nil and true or vendorSettings.showMinimapButton		
 		if vendorSettings.closeOnEsc == nil then vendorSettings.closeOnEsc = true end
+dbDV = dbDV or {}
+dbDV.minimap = dbDV.minimap or {}
+
+-- Convert your setting → LibDBIcon format
+dbDV.minimap.hide = not vendorSettings.showMinimapButton
 
         -- LibDataBroker / LibDBIcon
-        local ldb = LibStub:GetLibrary("LibDataBroker-1.1", true)
-        if ldb then
-            local dataobj = ldb:NewDataObject("DecorVendor", {
-                type  = "launcher",
-                icon  = 1530229,
-                label = "DecorVendor",
-                text  = "DecorVendor",
-                name  = "DecorVendor",
+-- LibDataBroker / LibDBIcon
+local ldb = LibStub:GetLibrary("LibDataBroker-1.1", true)
+if ldb then
+    local dataobj = ldb:NewDataObject("DecorVendor", {
+        type  = "launcher",
+        icon  = 1530229,
+        label = "DecorVendor",
+        text  = "DecorVendor",
+        name  = "DecorVendor",
 
-                OnClick = function(_, button)
-                    if button == "LeftButton" then
-                        if not frame:IsShown() then
-                            BuildVendorUI()
-                        end
-                        frame:SetShown(not frame:IsShown())
-                    elseif button == "RightButton" then Settings.OpenToCategory(dv_optionsCategory:GetID())
-                    end
+        OnClick = function(_, button)
+            if button == "LeftButton" then
+                if not frame:IsShown() then
+                    BuildVendorUI()
                 end
-            })
-
-            function dataobj:OnTooltipShow()
-                self:AddLine("|cffffffffDecor Vendor|r")
-                self:AddLine("|cff00ff00<Left Click>|r Toggle window")
-                self:AddLine("|cff00ff00<Right Click>|r Options")
+                frame:SetShown(not frame:IsShown())
+            elseif button == "RightButton" then
+                Settings.OpenToCategory(dv_optionsCategory:GetID())
             end
-
-            LibDBIcon:Register("DecorVendor", dataobj, dbDV.minimap)
         end
+    })
+
+    function dataobj:OnTooltipShow()
+        self:AddLine("|cffffffffDecor Vendor|r")
+        self:AddLine("|cff00ff00<Left Click>|r Toggle window")
+        self:AddLine("|cff00ff00<Right Click>|r Options")
+    end
+
+    -- Register the icon
+    LibDBIcon:Register("DecorVendor", dataobj, dbDV.minimap)
+
+    --------------------------------------------------
+    -- ⭐ ENSURE MINIMAP BUTTON STAYS HIDDEN ON RELOAD
+    --------------------------------------------------
+    if vendorSettings.showMinimapButton == false then
+        LibDBIcon:Hide("DecorVendor")
+    else
+        LibDBIcon:Show("DecorVendor")
+    end
+end
+
 		local scale = vendorSettings.scale or 1.0
-		frame:SetScale(scale); dv.vendorPopup:SetScale(scale); dv.wowheadPopup:SetScale(scale)
+		frame:SetScale(scale); supportFrame:SetScale(scale); dv.vendorPopup:SetScale(scale); dv.wowheadPopup:SetScale(scale)
    
         -- Final UI setup
 		BuildVendorUI()
