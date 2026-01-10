@@ -2796,7 +2796,6 @@ dv.achievements = {
       { id = 42273, type = "achievement", model3D = 1315073, title = "Trueshot Skeletal Dragon Trophy", faction = "neutral" },
       { id = 42279, type = "achievement", model3D = 1345395, title = "Uncrowned Market Stall", faction = "neutral" },
       { id = 42282, type = "achievement", model3D = 7155606, title = "Valarjar Shield Wall", faction = "neutral" },
-
     }
   },
   {
