@@ -5,6 +5,9 @@ on:
     tags:
       - "v*"
 
+permissions:
+  contents: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -15,17 +18,19 @@ jobs:
 
       - name: Package addon
         run: |
-          mkdir dist
-          zip -r dist/DecorVendor.zip . \
-            -x "*.git*" \
-            -x ".github/*" \
-            -x "dist/*"
+          mkdir -p dist/DecorVendor
+          rsync -av ./ dist/DecorVendor/ \
+            --exclude=".git" \
+            --exclude=".github" \
+            --exclude="dist"
+          cd dist
+          zip -r DecorVendor.zip DecorVendor
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: dist/DecorVendor.zip
-        env:
+
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload to Wago
