@@ -30,8 +30,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: dist/DecorVendor.zip
-
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload to Wago
         uses: BigWigsMods/packager@v2
