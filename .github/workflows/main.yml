@@ -31,7 +31,7 @@ jobs:
         with:
           files: dist/DecorVendor.zip
 
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload to Wago
         uses: BigWigsMods/packager@v2
