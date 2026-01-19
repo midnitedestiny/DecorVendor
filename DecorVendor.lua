@@ -119,6 +119,23 @@ local function BuildProfessionLookup()
     end
 end
 
+local function CountProfessionItems(profession)
+    local total = 0
+    local completed = 0
+
+    for _, item in ipairs(profession.items or {}) do
+        total = total + 1
+
+        -- Optional: if tracking completion later
+        if professionSettings and professionSettings.completed
+           and professionSettings.completed[item.id] then
+            completed = completed + 1
+        end
+    end
+
+    return completed, total
+end
+
 local function IsItemCollected(itemID)
 	if vendorSettings.completedDrop[itemID] then return true end
 	if collectionCache[itemID] ~= nil then return collectionCache[itemID] end
@@ -202,7 +219,7 @@ infoIcon:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highligh
 infoIcon:SetScript("OnEnter", function(self)
   GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
   GameTooltip:AddLine("Decor Vendor Notice", 1, 0.82, 0)
-  GameTooltip:AddLine("Current Working Version 1.44", 1, 1, 1, true)
+  GameTooltip:AddLine("Current Working Version 1.46", 1, 1, 1, true)
   GameTooltip:Show()
 end)
 
@@ -334,8 +351,9 @@ end
     return header, collapsedHeaders[group.name], y - 36
 end
 
-local function CreateProfessionHeader(parent, profession, y)
-    
+local function CreateProfessionHeader(parent, profession, y, completed, total)
+    completed = tonumber(completed) or 0
+    total     = tonumber(total) or 0
 
     if collapsedHeaders["prof_" .. profession.name] == nil then
         collapsedHeaders["prof_" .. profession.name] = true
@@ -377,15 +395,24 @@ end
     header.text = header:CreateFontString(nil, "OVERLAY")
     header.text:SetFont(STANDARD_TEXT_FONT, 13, "OUTLINE")
     header.text:SetPoint("LEFT", 28, 0)
-    header.text:SetText(
-        string.format(profession.name)
-    )
+    header.text:SetText(string.format("%s (%d/%d learned)", profession.name or "Unknown", completed, total))
 
-    -- Progress (RIGHT)
+	    -- Right-side placeholder (optional)
     header.progress = header:CreateFontString(nil, "OVERLAY")
     header.progress:SetFont(STANDARD_TEXT_FONT, 11)
     header.progress:SetPoint("RIGHT", -8, 0)
-    
+    header.progress:SetText(string.format("%d/%d learned", completed, total))
+	
+	-- Progress color
+    local color
+    if total > 0 and completed == total then
+        color = CreateColor(0.2, 1, 0.2, 1)
+    elseif completed >= total / 2 then
+        color = CreateColor(1, 0.82, 0, 1)
+    else
+        color = CreateColor(0.9, 0.9, 0.9, 1)
+    end
+    header.progress:SetTextColor(color:GetRGBA())
 
     -- Click to collapse
     header:SetScript("OnClick", function()
@@ -580,7 +607,7 @@ line:SetSize(590, 22)
 
 local text = line:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 text:SetPoint("LEFT", 0, 0)
-text:SetFont(STANDARD_TEXT_FONT, 14)
+text:SetFont(STANDARD_TEXT_FONT, 12)
 text:SetText(vendor.title or "Unknown Vendor")
 
 local isFound =
@@ -659,7 +686,7 @@ end)
 
     if vendor.mapID and vendor.x and vendor.y then
         local waypointBtn = CreateFrame("Button", nil, line, "UIPanelButtonTemplate")
-        waypointBtn:SetSize(80, 18)
+        waypointBtn:SetSize(80, 16)
         waypointBtn:SetPoint("RIGHT", -240, 0)
         waypointBtn:SetText("Waypoint")
 
@@ -686,7 +713,7 @@ end)
     end
 
     table.insert(activeWidgets, line)
-    return y - 24
+    return y - 20
 end
 
 local function StandardizeLineScripts(line, onEnter, onClick, onLeave)
@@ -703,7 +730,7 @@ local function StandardizeLineScripts(line, onEnter, onClick, onLeave)
     if onLeave then onLeave(self) end
   end)
 end
-
+--[[
 -- Event handler: mark visited vendors when opening a merchant
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("MERCHANT_SHOW")
@@ -733,6 +760,57 @@ eventFrame:SetScript("OnEvent", function()
             end
         end
     end
+end)]]
+
+-- Event handler: mark visited vendors when opening a merchant
+local eventFrame = CreateFrame("Frame")
+eventFrame:RegisterEvent("MERCHANT_SHOW")
+eventFrame:SetScript("OnEvent", function()
+    local targetName = UnitName("target")
+    if not targetName or not dv.npcs then return end
+
+    -- Determine player's faction for comparison
+    local playerFaction = UnitFactionGroup("player") -- "Alliance" or "Horde"
+    if playerFaction then
+        playerFaction = string.lower(playerFaction)
+    end
+
+    for _, group in ipairs(dv.npcs) do
+        for _, vendor in ipairs(group.vendors or {}) do
+            
+            -- Normalize vendor faction
+            local vFaction = vendor.faction and string.lower(vendor.faction) or nil
+
+            ----------------------------------------------------
+            -- Match vendor by BOTH name AND faction if available
+            ----------------------------------------------------
+            local nameMatches = (vendor.title == targetName)
+            local factionMatches = true  -- default if no faction specified
+
+            if vFaction then
+                factionMatches = (vFaction == playerFaction)
+            end
+
+            if nameMatches and factionMatches then
+                vendorSettings.visited = vendorSettings.visited or {}
+
+                -- Already marked
+                if vendorSettings.visited[vendor.id] then
+                    return
+                end
+
+                -- Mark vendor as found
+                vendorSettings.visited[vendor.id] = true
+
+                -- Rebuild UI if needed
+                if vendorSettings.hideFound or vendorSettings.markFound then
+                    BuildVendorUI()
+                end
+
+                return
+            end
+        end
+    end
 end)
 
 function ResetAllVendors()
@@ -743,14 +821,14 @@ end
 local tabBar = CreateFrame("Frame", "DV_TabBar", frame)
 tabBar:SetPoint("TOPRIGHT", frame, "TOPLEFT", -4, 0)
 tabBar:SetPoint("BOTTOMRIGHT", frame, "BOTTOMLEFT", -4, 0)
-tabBar:SetWidth(70)
+tabBar:SetWidth(80)
 
 local verticalTabs = {}
 dv.currentTab = dv.currentTab or "vendors"
 
 local function CreateVerticalTab(id, text, icon, order, anchor)
     local tab = CreateFrame("Button", nil, tabBar, "BackdropTemplate")
-    tab:SetSize(80, 44)
+    tab:SetSize(90, 44)
 
     if anchor == "BOTTOM" then
         tab:SetPoint("BOTTOMLEFT", tabBar, "BOTTOMLEFT", 0, 12)
@@ -1714,12 +1792,12 @@ local function CreateGoodieLine(parent, goodie, y)
     -------------------------------------------------
     local line = CreateFrame("Button", nil, parent)
     line:SetPoint("TOPLEFT", 10, y)
-    line:SetSize(560, 22)
+    line:SetSize(590, 22)
     line:RegisterForClicks("AnyUp")
 
     line.text = line:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     line.text:SetPoint("LEFT", 0, 0)
-    line.text:SetFont(STANDARD_TEXT_FONT, 14)
+    line.text:SetFont(STANDARD_TEXT_FONT, 12)
     line.text:SetText(name)
 
     -------------------------------------------------
@@ -1898,11 +1976,18 @@ AchievementFrame_SelectAchievement(id)
     end)
 
     table.insert(activeWidgets, line)
-    return y - 24
+    return y - 22
 end
 
 local function CreateProfessionLine(parent, profItem, y)
-    local line = CreateFrame("Button", nil, parent)
+local isCompleted = false
+if profItem.spell then
+    isCompleted = IsSpellKnown(profItem.spell) or IsPlayerSpell(profItem.spell)
+end
+
+   
+
+   local line = CreateFrame("Button", nil, parent)
 	local pad = TAB_LEFT_PADDING[dv.currentTab] or 10
 	line:SetPoint("TOPLEFT", pad, y)
 	line:RegisterForClicks("AnyUp") -- 🔥 REQUIRED
@@ -1916,6 +2001,12 @@ local function CreateProfessionLine(parent, profItem, y)
     nameText:SetPoint("TOPLEFT", 0, -2)
     nameText:SetJustifyH("LEFT")
     nameText:SetText("• Loading item...")
+	if isCompleted then
+    nameText:SetTextColor(0.5, 1, 0.5)
+else
+    nameText:SetTextColor(1, 1, 1)
+end
+
 
     -- Async-safe item name
     local itemObj = Item:CreateFromItemID(profItem.id)
@@ -2024,7 +2115,7 @@ end)
 
 
     table.insert(activeWidgets, line)
-    return y - 38
+    return y - 22
 end
 
 local function HasAnySelection(tbl)
@@ -2324,10 +2415,6 @@ function BuildProfessionList()
     local catSel = selectedProfessions
     local hasCategoryFilter = HasAnySelection(catSel)
 
-
-
-
-
     local y = -6
     local hasContent = false
 
@@ -2342,35 +2429,61 @@ function BuildProfessionList()
     for _, profession in ipairs(professions) do
 
         ----------------------------------------------------
-        -- CATEGORY FILTER: skip profession if not selected
+        -- CATEGORY FILTER
         ----------------------------------------------------
         if hasCategoryFilter and not catSel[profession.name] then
-            -- skip entire profession category
+            -- skip profession
         else
             ------------------------------------------------
-            -- Build list of visible profession items
+            -- Build visible items
             ------------------------------------------------
-            local visible = {}
+local visible = {}
+local completedCount = 0
+local totalCount = 0
 
-            for _, item in ipairs(profession.items or {}) do
-                table.insert(visible, item)
-            end
+for _, item in ipairs(profession.items or {}) do
+    totalCount = totalCount + 1
+
+local learned = false
+if item.spell then
+    learned = IsSpellKnown(item.spell) or IsPlayerSpell(item.spell)
+end
+
+if learned then
+    completedCount = completedCount + 1
+end
+
+table.insert(visible, item)
+
+end
+
 
             ------------------------------------------------
-            -- Skip category if no matching items
+            -- Skip if empty
             ------------------------------------------------
             if #visible > 0 then
                 hasContent = true
 
+                ------------------------------------------------
+                -- Get progress values
+                ------------------------------------------------
+                local completed, total = CountProfessionItems(profession)
+
+                ------------------------------------------------
+                -- Create header WITH progress
+                ------------------------------------------------
                 local collapsed, newY =
-                    CreateProfessionHeader(scrollChild, profession, y)
+                    CreateProfessionHeader(scrollChild, profession, y, completedCount, total)
                 y = newY
 
+                ------------------------------------------------
+                -- Draw profession items
+                ------------------------------------------------
                 if not collapsed then
                     for _, item in ipairs(visible) do
                         y = CreateProfessionLine(scrollChild, item, y)
                     end
-                    y = y - 8
+                    y = y - 10
                 end
             end
         end
