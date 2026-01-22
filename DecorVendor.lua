@@ -19,7 +19,8 @@ vendorSettings = vendorSettings or {
     useTomTom = true,
     showMinimapButton = true,
     closeOnEsc = true,
-	visited = {},             
+	visited = {},
+	isFound = {},	
     hideFound = false,     
 	markFound = false,
 	hideCompleted = false,     
@@ -138,20 +139,27 @@ end
 
 local function IsItemCollected(itemID)
 	if vendorSettings.completedDrop[itemID] then return true end
-	if collectionCache[itemID] ~= nil then return collectionCache[itemID] end
-	local decorID = dv.professionItem[itemID] and dv.professionItem[itemID].decorID
-	if not decorID then 
-		collectionCache[itemID] = false
-		return false 
+
+	if collectionCache[itemID] ~= nil then
+		return collectionCache[itemID]
 	end
+
+	local decorID = dv.professionItem[itemID] and dv.professionItem[itemID].decorID
+	if not decorID then
+		collectionCache[itemID] = false
+		return false
+	end
+
 	local info = C_HousingCatalog.GetCatalogEntryInfoByRecordID(1, decorID, true)
 	if info and info.firstAcquisitionBonus == 0 then
 		vendorSettings.completedDrop[itemID] = true
 		return true
 	end
+	
 	collectionCache[itemID] = false
 	return false
 end
+
 
 local frame = CreateFrame("Frame", "DV_MainFrame", UIParent, "BackdropTemplate")
 frame:SetSize(860, 580)
@@ -205,7 +213,7 @@ title:SetTextColor(1, 0.82, 0)
 local subtitle = frame:CreateFontString(nil, "OVERLAY")
 subtitle:SetFont(STANDARD_TEXT_FONT, 14)
 subtitle:SetPoint("TOP", title, "BOTTOM", 0, -2)
-subtitle:SetText("I spy a Housing Vendor")
+subtitle:SetText("So Many Decorations to Collect")
 subtitle:SetTextColor(1, 0.82, 0)
 
 local infoIcon = CreateFrame("Button", nil, frame)
@@ -219,7 +227,7 @@ infoIcon:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highligh
 infoIcon:SetScript("OnEnter", function(self)
   GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
   GameTooltip:AddLine("Decor Vendor Notice", 1, 0.82, 0)
-  GameTooltip:AddLine("Current Working Version 1.46", 1, 1, 1, true)
+  GameTooltip:AddLine("Current Working Version 1.51", 1, 1, 1, true)
   GameTooltip:Show()
 end)
 
@@ -591,6 +599,87 @@ end
     return collapsed, y - 36
 end
 
+local function CreateBossDropHeader(parent, group, collected, total, y)
+    local pad = TAB_LEFT_PADDING[dv.currentTab] or 10
+
+    collapsedHeaders = collapsedHeaders or {}
+    local key = "boss_" .. group.name
+    if collapsedHeaders[key] == nil then collapsedHeaders[key] = true end
+
+    -- AUTO EXPAND based on filter
+    if dv.filtersJustChanged then
+        if selectedBossExpansions and selectedBossExpansions[group.expansion] then
+            collapsedHeaders[key] = false
+        else
+            collapsedHeaders[key] = true
+        end
+    end
+    ----------------------------------------
+    -- COUNT COLLECTED ACROSS ALL BOSSES
+    ----------------------------------------
+local collected = 0
+local total = 0
+
+for _, boss in ipairs(group.items or {}) do
+    total = total + 1
+
+    if IsItemCollected(boss.id) then
+        collected = collected + 1
+    end
+end
+
+	
+    local header = CreateFrame("Button", nil, parent)
+    header:SetPoint("TOPLEFT", pad, y)
+    header:SetSize(600, 32)
+
+    -- background
+    local bg = header:CreateTexture(nil, "BACKGROUND")
+    bg:SetAllPoints()
+    bg:SetTexture("Interface\\Buttons\\WHITE8x8")
+    bg:SetGradient("HORIZONTAL",
+        CreateColor(.15, .10, .25, .9),
+        CreateColor(.05, .05, .15, .9)
+    )
+
+    -- collapse icon
+    header.icon = header:CreateFontString(nil, "OVERLAY")
+    header.icon:SetFont(STANDARD_TEXT_FONT, 14, "OUTLINE")
+    header.icon:SetPoint("LEFT", 8, 0)
+    header.icon:SetText(collapsedHeaders[key] and ">>" or "<<")
+
+    -- TITLE
+    header.text = header:CreateFontString(nil, "OVERLAY")
+    header.text:SetFont(STANDARD_TEXT_FONT, 13, "OUTLINE")
+    header.text:SetPoint("LEFT", 28, 0)
+    header.text:SetText(group.name)
+
+    -- PROGRESS
+    header.progress = header:CreateFontString(nil, "OVERLAY")
+    header.progress:SetFont(STANDARD_TEXT_FONT, 11)
+    header.progress:SetPoint("RIGHT", -10, 0)
+    header.progress:SetText(("%d/%d collected"):format(collected, total))
+
+    -- color code progress
+    if total > 0 and collected == total then
+        header.progress:SetTextColor(0.2,1,0.2)
+    elseif collected >= total/2 then
+        header.progress:SetTextColor(1,.82,0)
+    else
+        header.progress:SetTextColor(1,1,1)
+    end
+
+    -- click to collapse
+    header:SetScript("OnClick", function()
+        collapsedHeaders[key] = not collapsedHeaders[key]
+        BuildVendorUI()
+    end)
+
+    table.insert(activeWidgets, header)
+
+    return collapsedHeaders[key], y - 36
+end
+
 local function CreateVendorLine(parent, vendor, y)
 
     --[[if vendorSettings.hideFound
@@ -607,7 +696,7 @@ line:SetSize(590, 22)
 
 local text = line:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
 text:SetPoint("LEFT", 0, 0)
-text:SetFont(STANDARD_TEXT_FONT, 12)
+text:SetFont(STANDARD_TEXT_FONT, 14)
 text:SetText(vendor.title or "Unknown Vendor")
 
 local isFound =
@@ -686,7 +775,7 @@ end)
 
     if vendor.mapID and vendor.x and vendor.y then
         local waypointBtn = CreateFrame("Button", nil, line, "UIPanelButtonTemplate")
-        waypointBtn:SetSize(80, 16)
+        waypointBtn:SetSize(80, 18)
         waypointBtn:SetPoint("RIGHT", -240, 0)
         waypointBtn:SetText("Waypoint")
 
@@ -713,7 +802,7 @@ end)
     end
 
     table.insert(activeWidgets, line)
-    return y - 20
+    return y - 24
 end
 
 local function StandardizeLineScripts(line, onEnter, onClick, onLeave)
@@ -730,7 +819,7 @@ local function StandardizeLineScripts(line, onEnter, onClick, onLeave)
     if onLeave then onLeave(self) end
   end)
 end
---[[
+
 -- Event handler: mark visited vendors when opening a merchant
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("MERCHANT_SHOW")
@@ -760,58 +849,22 @@ eventFrame:SetScript("OnEvent", function()
             end
         end
     end
-end)]]
+end)
 
--- Event handler: mark visited vendors when opening a merchant
-local eventFrame = CreateFrame("Frame")
-eventFrame:RegisterEvent("MERCHANT_SHOW")
-eventFrame:SetScript("OnEvent", function()
-    local targetName = UnitName("target")
-    if not targetName or not dv.npcs then return end
-
-    -- Determine player's faction for comparison
-    local playerFaction = UnitFactionGroup("player") -- "Alliance" or "Horde"
-    if playerFaction then
-        playerFaction = string.lower(playerFaction)
+local lootEventFrame = CreateFrame("Frame")
+lootEventFrame:RegisterEvent("BAG_UPDATE_DELAYED")
+lootEventFrame:SetScript("OnEvent", function()
+    -- Clear cached ownership state so IsItemCollected re-checks
+    if collectionCache then
+        wipe(collectionCache)
     end
 
-    for _, group in ipairs(dv.npcs) do
-        for _, vendor in ipairs(group.vendors or {}) do
-            
-            -- Normalize vendor faction
-            local vFaction = vendor.faction and string.lower(vendor.faction) or nil
-
-            ----------------------------------------------------
-            -- Match vendor by BOTH name AND faction if available
-            ----------------------------------------------------
-            local nameMatches = (vendor.title == targetName)
-            local factionMatches = true  -- default if no faction specified
-
-            if vFaction then
-                factionMatches = (vFaction == playerFaction)
-            end
-
-            if nameMatches and factionMatches then
-                vendorSettings.visited = vendorSettings.visited or {}
-
-                -- Already marked
-                if vendorSettings.visited[vendor.id] then
-                    return
-                end
-
-                -- Mark vendor as found
-                vendorSettings.visited[vendor.id] = true
-
-                -- Rebuild UI if needed
-                if vendorSettings.hideFound or vendorSettings.markFound then
-                    BuildVendorUI()
-                end
-
-                return
-            end
-        end
+    -- Only rebuild if the addon UI is open
+    if frame and frame:IsShown() then
+        BuildVendorUI()
     end
 end)
+
 
 function ResetAllVendors()
     vendorSettings.visited = {}   -- wipe ALL progress
@@ -825,6 +878,17 @@ tabBar:SetWidth(80)
 
 local verticalTabs = {}
 dv.currentTab = dv.currentTab or "vendors"
+
+function dv.UpdatePreviewSize()
+    if dv.currentTab == "achievements" then
+        dv.previewFrame:SetSize(280, 280)
+        dv.previewFrame.model:SetPosition(0, 0, 0)
+    elseif dv.currentTab == "quests" then
+        dv.previewFrame:SetSize(280, 280)
+    else
+        dv.previewFrame:SetSize(340, 340) -- default vendor size
+    end
+end
 
 local function CreateVerticalTab(id, text, icon, order, anchor)
     local tab = CreateFrame("Button", nil, tabBar, "BackdropTemplate")
@@ -857,6 +921,7 @@ local function CreateVerticalTab(id, text, icon, order, anchor)
 
     tab:SetScript("OnClick", function()
         dv.currentTab = id
+		dv.UpdatePreviewSize()
         UpdateVerticalTabStyles()
         UpdateSidebarForTab()
         BuildVendorUI()
@@ -869,6 +934,7 @@ CreateVerticalTab("vendors", "Vendors", "Interface\\Icons\\inv_misc_5potionbag_s
 CreateVerticalTab("professions", "Professions", "Interface\\Icons\\Trade_Tailoring", 2)
 CreateVerticalTab("quests", "Quests", "Interface\\Icons\\Inv_misc_note_01", 3)
 CreateVerticalTab("achievements", "Achievements", "Interface\\Icons\\achievement_level_100", 4)
+CreateVerticalTab("bossdrops", "Boss Drops", "Interface\\Icons\\achievement_boss_blackhand", 5)
 CreateVerticalTab("about", "About", "Interface\\Icons\\achievement_character_bloodelf_female", 10)
 CreateVerticalTab("support", "Support", "Interface\\Icons\\INV_Misc_Gift_01", 11)
 CreateVerticalTab("tips", "Tips", "Interface\\Icons\\achievement_quests_completed_twilighthighlands", nil, "BOTTOM")
@@ -928,6 +994,7 @@ scrollFrame:SetScrollChild(scrollChild)
 
 dv.previewFrame = CreateFrame("Frame", "DV_RewardFrame", UIParent, "BackdropTemplate")
 local preview = dv.previewFrame
+dv.UpdatePreviewSize()
 preview:SetSize(300, 330)
 preview:SetFrameStrata("TOOLTIP")
 preview:SetBackdrop({
@@ -1403,23 +1470,28 @@ rgrad:SetPoint("BOTTOMRIGHT", -4, 4)
 rgrad:SetColorTexture(1, 1, 1, 1)
 rgrad:SetGradient("VERTICAL", CreateColor(0.12, 0.12, 0.12, 1), CreateColor(0.05, 0.05, 0.05, 1))
 
-rpopup.title = rpopup:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
-rpopup.title:SetPoint("TOP", 0, -12)
+-- Title
+rpopup.title = rpopup:CreateFontString(nil, "OVERLAY", "GameFontHighlightMedium")
+rpopup.title:SetPoint("TOPLEFT", 14, -14)
+rpopup.title:SetPoint("TOPRIGHT", -36, -14) -- leave room for close button
+rpopup.title:SetJustifyH("CENTER")
 rpopup.title:SetTextColor(1, 0.82, 0)
-rpopup.title:SetText("Reagents that are Needed")
+rpopup.title:SetText("Reagents Needed")
+
 
 local rsep = rpopup:CreateTexture(nil, "ARTWORK")
 rsep:SetHeight(2)
 rsep:SetColorTexture(0.4, 0.4, 0.4, 0.8)
-rsep:SetPoint("TOPLEFT", 10, -36)
-rsep:SetPoint("TOPRIGHT", -10, -36)
+rsep:SetPoint("TOPLEFT", 10, -44)
+rsep:SetPoint("TOPRIGHT", -10, -44)
+
 
 rpopup.content = CreateFrame("Frame", nil, rpopup)
-rpopup.content:SetPoint("TOPLEFT", 12, -44)
+rpopup.content:SetPoint("TOPLEFT", 12, -52)
 rpopup.content:SetPoint("BOTTOMRIGHT", -12, 12)
 
 rpopup.recipeFrame = CreateFrame("Button", nil, rpopup.content)
-rpopup.recipeFrame:SetSize(260, 40)
+rpopup.recipeFrame:SetSize(300, 40)
 rpopup.recipeFrame:SetPoint("TOPLEFT", rpopup.content, "TOPLEFT", 0, 0)
 rpopup.recipeFrame:Hide()
 
@@ -1480,7 +1552,10 @@ dv.reagentIconCache = dv.reagentIconCache or {}
 
 local function GetReagentIconFrame(i)
     local f = dv.reagentIconCache[i]
-    if f then f:Show(); return f end
+    if f then
+        f:Show()
+        return f
+    end
 
     f = CreateFrame("Frame", nil, rpopup.content, "BackdropTemplate")
     f:SetSize(50, 66)
@@ -1517,11 +1592,13 @@ local function GetReagentIconFrame(i)
         GameTooltip:SetHyperlink("item:" .. self.itemID)
         GameTooltip:Show()
     end)
+
     btn:SetScript("OnLeave", function()
         ResetCursor()
         f:SetBackdropBorderColor(0.4, 0.4, 0.4, 1)
         GameTooltip:Hide()
     end)
+
     btn:SetScript("OnClick", function(self)
         if dv.ShowWowheadLinkPopup then
             dv.ShowWowheadLinkPopup(self.itemID, "item")
@@ -1533,16 +1610,20 @@ local function GetReagentIconFrame(i)
 end
 
 function dv.ShowReagentsPopup(itemData)
-    if not itemData or not itemData.reagents or #itemData.reagents == 0 then return end
+    if not itemData or not itemData.reagents or #itemData.reagents == 0 then
+        return
+    end
 
     -- Hide old reagent icons
-    for _, f in pairs(dv.reagentIconCache) do f:Hide() end
+    for _, f in pairs(dv.reagentIconCache) do
+        f:Hide()
+    end
 
     local yOffset = 0
 
-    -- ===============================
-    -- SHOW RECIPE (if exists)
-    -- ===============================
+    -------------------------------------------------
+    -- RECIPE HEADER (optional)
+    -------------------------------------------------
     if itemData.recipe then
         rpopup.recipeFrame.recipeID = itemData.recipe
         rpopup.recipeIcon:SetTexture(GetItemIcon(itemData.recipe) or "Interface\\Icons\\INV_Scroll_03")
@@ -1556,19 +1637,26 @@ function dv.ShowReagentsPopup(itemData)
         rpopup.recipeFrame:Hide()
     end
 
-    -- ===============================
-    -- REAGENTS
-    -- ===============================
-    local tileSize, spacing = 50, 12
+    -------------------------------------------------
+    -- REAGENT GRID (FIXED LAYOUT)
+    -------------------------------------------------
+    local tileSize   = 50
+    local spacing    = 12
+    local iconsPerRow = 4
+
     for i, reagent in ipairs(itemData.reagents) do
         local f = GetReagentIconFrame(i)
         f:ClearAllPoints()
+
+        local row = math.floor((i - 1) / iconsPerRow)
+        local col = (i - 1) % iconsPerRow
+
         f:SetPoint(
             "TOPLEFT",
             rpopup.content,
             "TOPLEFT",
-            (i - 1) * (tileSize + spacing),
-            yOffset
+            col * (tileSize + spacing),
+            yOffset - (row * (tileSize + spacing))
         )
 
         f.btn.itemID = reagent.id
@@ -1577,12 +1665,24 @@ function dv.ShowReagentsPopup(itemData)
         f:Show()
     end
 
-    local width = (#itemData.reagents * (tileSize + spacing)) - spacing
-    rpopup:SetWidth(math.max(260, width + 24))
-    rpopup:SetHeight(itemData.recipe and 190 or 140)
+    -------------------------------------------------
+    -- POPUP SIZE (CONSISTENT)
+    -------------------------------------------------
+    local rows = math.ceil(#itemData.reagents / iconsPerRow)
+
+    local popupWidth  =
+        (iconsPerRow * (tileSize + spacing)) - spacing + 24
+
+    local popupHeight =
+        (rows * (tileSize + spacing))
+        + (itemData.recipe and 120 or 80)
+
+    rpopup:SetWidth(popupWidth)
+    rpopup:SetHeight(popupHeight)
     rpopup:SetScale(vendorSettings and vendorSettings.scale or 1.0)
     rpopup:Show()
 end
+
 
 local function CreateOptionsPanel() 
     local configFrame = CreateFrame("Frame", "DV_ConfigFrame", UIParent)
@@ -2118,6 +2218,253 @@ end)
     return y - 22
 end
 
+--[[local function CreateBossDropLine(parent, boss, y)
+    local pad = TAB_LEFT_PADDING[dv.currentTab] or 10
+
+    local line = CreateFrame("Button", nil, parent)
+    line:SetPoint("TOPLEFT", pad, y)
+    line:SetSize(560, 22)
+    line:RegisterForClicks("AnyUp")
+
+    local nameFS = line:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    nameFS:SetPoint("LEFT", 0, 0)
+    nameFS:SetText(boss.title)
+
+local function IsBossCollected(bossID)
+    local goodies = dv.vendorGoodies[bossID]
+    if not goodies then return false end
+
+    for _, itemID in ipairs(goodies) do
+        if IsItemCollected(itemID) then
+            return true
+        end
+    end
+
+    return false
+end
+
+local isCollected = IsBossCollected(boss.id)
+
+
+if isCollected then
+    nameFS:SetTextColor(0.2, 1, 0.2)
+else
+    nameFS:SetTextColor(1,1,1)
+end
+
+    local waypoint = CreateFrame("Button", nil, line, "UIPanelButtonTemplate")
+    waypoint:SetSize(80, 16)
+    waypoint:SetPoint("CENTER", line, "CENTER", 0, 0)
+    waypoint:SetText("Waypoint")
+
+    waypoint:SetScript("OnClick", function()
+        if hasTomTom then
+            TomTom:AddWaypoint(
+                boss.mapID,
+                boss.x / 100,
+                boss.y / 100,
+                {
+                    title = boss.title,
+                    persistent = false,
+                    minimap = true,
+                    world = true,
+                }
+            )
+        end
+
+        local vec = CreateVector2D(boss.x/100, boss.y/100)
+        local mapPoint = UiMapPoint.CreateFromVector2D(boss.mapID, vec)
+        C_Map.SetUserWaypoint(mapPoint)
+        C_SuperTrack.SetSuperTrackedUserWaypoint(true)
+    end)
+
+    local zoneFS = line:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    zoneFS:SetPoint("RIGHT", -8, 0)
+    zoneFS:SetText(boss.zone or "")
+
+line:SetScript("OnEnter", function()
+    SetCursor("INSPECT_CURSOR")
+
+    GameTooltip:SetOwner(line, "ANCHOR_RIGHT")
+    GameTooltip:AddLine(boss.title)
+    GameTooltip:AddLine(boss.zone, 1,1,1)
+    GameTooltip:AddLine("\n|cff00ff00Left-Click|r View Catalogue",1,1,1)
+	GameTooltip:AddLine("\n|cff00ff00Green Name|r Means Collected",1,1,1)
+    GameTooltip:Show()
+
+    local goodies = dv.vendorGoodies[boss.id]
+end)
+
+line:SetScript("OnLeave", function()
+    ResetCursor()
+    GameTooltip:Hide()
+    
+
+    if dv.previewFrame then
+        dv.previewFrame:Hide()
+    end
+end)
+
+line:SetScript("OnClick", function(_, button)
+
+    local goodies = dv.vendorGoodies[boss.id]
+    if not goodies or not goodies[1] then return end
+
+    local itemID = goodies[1]   -- First item this boss drops
+
+    if button == "LeftButton" then
+
+        -- Preferred modern function
+        if C_HousingCatalog.OpenToItem then
+            C_HousingCatalog.OpenToItem(itemID)
+            return
+        end
+
+        -- Fallback for older clients
+        if C_HousingCatalog.OpenToItemID then
+            C_HousingCatalog.OpenToItemID(itemID)
+            return
+        end
+
+        -- FINAL fallback: dress-room preview
+        DressUpItemLink("item:" .. itemID)
+        return
+    end
+
+end)
+
+    table.insert(activeWidgets, line)
+    return y - 28
+end]]
+
+local function CreateBossDropLine(parent, boss, y)
+    local pad = TAB_LEFT_PADDING[dv.currentTab] or 10
+
+    local line = CreateFrame("Button", nil, parent)
+    line:SetPoint("TOPLEFT", pad, y)
+    line:SetSize(560, 22)
+    line:RegisterForClicks("AnyUp")
+
+    -------------------------------------------------
+    -- TEXT
+    -------------------------------------------------
+    local nameFS = line:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+    nameFS:SetPoint("LEFT", 0, 0)
+
+nameFS:SetText("Loading...")
+
+local item = Item:CreateFromItemID(boss.id)
+item:ContinueOnItemLoad(function()
+    local itemName = item:GetItemName()
+    if itemName and nameFS then
+        nameFS:SetText(itemName)
+    end
+end)
+
+
+    -------------------------------------------------
+    -- COLLECTED CHECK
+    -------------------------------------------------
+    local isCollected = IsItemCollected(boss.id)
+
+    if isCollected then
+        nameFS:SetTextColor(0.2, 1, 0.2) -- green
+    else
+        nameFS:SetTextColor(1, 1, 1)
+    end
+
+    -------------------------------------------------
+    -- SOURCE TEXT (RIGHT SIDE)
+    -------------------------------------------------
+    local sourceFS = line:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    sourceFS:SetPoint("RIGHT", -8, 0)
+
+    if boss.bossencounter then
+        local encounterName = EJ_GetEncounterInfo(boss.bossencounter)
+        sourceFS:SetText(encounterName or "Unknown Boss")
+    elseif boss.bossevent then
+        sourceFS:SetText(boss.bossevent)
+    else
+        sourceFS:SetText("Unknown Source")
+    end
+
+    -------------------------------------------------
+    -- TOOLTIP
+    -------------------------------------------------
+    line:SetScript("OnEnter", function()
+        SetCursor("INSPECT_CURSOR")
+
+        GameTooltip:SetOwner(line, "ANCHOR_RIGHT")
+        GameTooltip:SetItemByID(boss.id)
+
+        if boss.bossencounter then
+            GameTooltip:AddLine("\nDrops from:", 1, 0.82, 0)
+            local name = EJ_GetEncounterInfo(boss.bossencounter)
+            GameTooltip:AddLine(name or "Unknown Boss", 1, 1, 1)
+            GameTooltip:AddLine("\n|cff00ff00Left-Click|r View Decor", 1, 1, 1)
+            GameTooltip:AddLine("|cff00ff00Right-Click|r View Dungeon Map", 1, 1, 1)
+        elseif boss.bossevent then
+            GameTooltip:AddLine("\nSource:", 1, 0.82, 0)
+            GameTooltip:AddLine(boss.bossevent, 1, 1, 1)
+            GameTooltip:AddLine("\n|cff00ff00Left-Click|r View Decor", 1, 1, 1)
+            GameTooltip:AddLine("|cff00ff00Right-Click|r View Map", 1, 1, 1)
+        end
+
+        if isCollected then
+            GameTooltip:AddLine("\n|cff00ff00Collected|r", 0.2, 1, 0.2)
+        end
+
+        GameTooltip:Show()
+    end)
+
+    line:SetScript("OnLeave", function()
+        ResetCursor()
+        GameTooltip:Hide()
+
+        if dv.previewFrame then
+            dv.previewFrame:Hide()
+        end
+    end)
+
+    -------------------------------------------------
+    -- CLICK HANDLING
+    -------------------------------------------------
+    line:SetScript("OnClick", function(_, button)
+        -------------------------------------------------
+        -- LEFT CLICK → OPEN HOUSING CATALOG
+        -------------------------------------------------
+        if button == "LeftButton" then
+            if C_HousingCatalog.OpenToItem then
+                C_HousingCatalog.OpenToItem(boss.id)
+                return
+            end
+
+            if C_HousingCatalog.OpenToItemID then
+                C_HousingCatalog.OpenToItemID(boss.id)
+                return
+            end
+
+            DressUpItemLink("item:" .. boss.id)
+            return
+        end
+
+        -------------------------------------------------
+        -- RIGHT CLICK → OPEN MAP (SAFE FOR ALL SOURCES)
+        -------------------------------------------------
+        if button == "RightButton" then
+            if InCombatLockdown() then return end
+            if boss.mapID then
+                C_Map.OpenWorldMap(boss.mapID)
+            end
+        end
+    end)
+
+    table.insert(activeWidgets, line)
+    return y - 24
+end
+
+
+
 local function HasAnySelection(tbl)
     if not tbl then return false end
     for _, v in pairs(tbl) do
@@ -2360,6 +2707,64 @@ end
     end
 end
 
+function dv.BuildBossDropFilters()
+    local parent = dv.sidebarFilters
+
+    -- wipe sidebar
+    for _, child in ipairs({ parent:GetChildren() }) do
+        child:Hide()
+        child:SetParent(nil)
+    end
+
+    local y = -6
+
+    -- Header builder
+    local function Header(text)
+        local fs = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+        fs:SetPoint("TOPLEFT", 12, y)
+        fs:SetTextColor(1, 0.82, 0)
+        fs:SetText(text)
+        y = y - 20
+    end
+
+    -- Checkbox builder
+    local function Checkbox(label, tbl, key)
+        tbl[key] = tbl[key] or false
+        local cb = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
+        cb:SetPoint("TOPLEFT", 20, y)
+        cb.Text:SetText(label)
+        cb:SetChecked(tbl[key])
+
+        cb:SetScript("OnClick", function(self)
+            tbl[key] = self:GetChecked()
+            dv.filtersJustChanged = true
+            BuildVendorUI() -- refresh
+        end)
+
+        y = y - 20
+    end
+
+    ---------------------------------------------------------
+    -- EXPANSIONS (ONLY FILTER WE USE)
+    ---------------------------------------------------------
+    Header("Expansions")
+    selectedBossExpansions = selectedBossExpansions or {}
+
+    local seenExp = {}
+    for _, g in ipairs(dv.bossdrops) do
+        seenExp[g.expansion] = true
+    end
+
+    -- alphabetical order is nice!
+    local list = {}
+    for exp in pairs(seenExp) do table.insert(list, exp) end
+    table.sort(list)
+
+    for _, exp in ipairs(list) do
+        Checkbox(exp, selectedBossExpansions, exp)
+    end
+end
+
 function dv.ResetSidebarFilters()
     if dv.sidebarFilters then
         dv.sidebarFilters:Hide()
@@ -2393,12 +2798,18 @@ function UpdateSidebarForTab()
 		
 	elseif dv.currentTab == "professions" then
 		dv.BuildProfessionFilters()
-
-
+	
+	elseif dv.currentTab == "bossdrops" then
+    dv.BuildBossDropFilters()
 
     -- Scroll width logic
     if scrollChild then
-        if dv.currentTab == "vendors" or dv.currentTab == "quests" or dv.currentTab == "achievements" or dv.currentTab == "professions" then
+        if dv.currentTab == "vendors"
+		or dv.currentTab == "quests"
+		or dv.currentTab == "achievements"
+		or dv.currentTab == "professions"
+		or dv.currentTab == "bossdrops"
+		then
             scrollChild:SetWidth(frame:GetWidth() - dv.sidebar:GetWidth() - 40)
         else
             scrollChild:SetWidth(frame:GetWidth() - 40)
@@ -2738,6 +3149,91 @@ end
     end
 
     scrollChild:SetHeight(math.abs(y) + 20)
+end
+
+function BuildBossDropList()
+    dv.ClearWidgets()
+    local y = -6
+    local hasContent = false
+
+    selectedBossExpansions = selectedBossExpansions or {}
+    local hasExpFilter = HasAnySelection(selectedBossExpansions)
+
+    -- Copy groups
+    local groups = {}
+    for _, g in ipairs(dv.bossdrops or {}) do
+        groups[#groups+1] = g
+    end
+
+    table.sort(groups, function(a,b)
+        return (a.name or "") < (b.name or "")
+    end)
+
+for _, group in ipairs(groups) do
+
+    -----------------------------------------
+    -- EXPANSION FILTER
+    -----------------------------------------
+    if hasExpFilter and not selectedBossExpansions[group.expansion] then
+        -- skip
+    else
+
+        -----------------------------------------
+        -- UI EXISTENCE CHECK  ✅ RIGHT HERE
+        -----------------------------------------
+        if group.items and #group.items > 0 then
+            hasContent = true
+        end
+
+        -----------------------------------------
+        -- COUNT COLLECTED (UNCHANGED)
+        -----------------------------------------
+        local total = 0
+        local collected = 0
+
+        for _, boss in ipairs(group.items or {}) do
+            local goodies = dv.vendorGoodies[boss.id]
+            if goodies then
+                for _, itemID in ipairs(goodies) do
+                    total = total + 1
+                    local _, _, _, _, _, _, _, _, _, _, isCollected =
+                        C_TransmogCollection.GetItemInfo(itemID)
+                    if isCollected then
+                        collected = collected + 1
+                    end
+                end
+            end
+        end
+
+        -----------------------------------------
+        -- HEADER
+        -----------------------------------------
+        local collapsed, newY =
+            CreateBossDropHeader(scrollChild, group, collected, total, y)
+
+        y = newY
+
+        -----------------------------------------
+        -- LINES
+        -----------------------------------------
+        if not collapsed then
+            for _, boss in ipairs(group.items or {}) do
+                y = CreateBossDropLine(scrollChild, boss, y)
+            end
+            y = y - 10
+        end
+    end
+end
+
+
+    if not hasContent then
+        local msg = scrollChild:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
+        msg:SetPoint("TOP", 0, -40)
+        msg:SetText("No boss drop data available.")
+        table.insert(activeWidgets, msg)
+    end
+
+    scrollChild:SetHeight(math.abs(y) + 40)
 end
 
 function BuildVendorList()
@@ -3104,9 +3600,9 @@ end
 
 
     -- Sections
-    AddText("|cffFFD200Wowhead Links|r", 10)
+    AddText("|cffFFD200Items not showing or dropping|r", 10)
     AddText(
-        "Right clicking on quests or achievements lets you view the Wowhead link\n")
+        "Most of these were on 12.0 PTR and Beta  give it time and they will show up if there not out by first week in Midnight launch I will remove them\n")
 
     AddText("|cffFFD200Professions and Quests|r", 10)
     AddText(
@@ -3146,6 +3642,9 @@ function BuildVendorUI()
 
     elseif dv.currentTab == "achievements" then
         BuildAchievementList()
+		
+	elseif dv.currentTab == "bossdrops" then
+    BuildBossDropList()	
 		
 	elseif dv.currentTab == "about" then
         BuildAboutScreen()
@@ -3187,6 +3686,7 @@ selectedFactionz = selectedFactionz or {}
 selectedFactions    = selectedFactions    or {}
 selectedQuests = selectedQuests or {}
 selectedAchievements = selectedAchievements or {}
+selectedBossCategories = selectedBossCategories or {}
 dv.collapsedProfessions = dv.collapsedProfessions or {}
 dv.collapsedAchievements = dv.collapsedAchievements or {}
 dv.collapsedQuests = dv.collapsedQuests or {}
