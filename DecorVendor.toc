@@ -1,11 +1,14 @@
-## Interface: 110207, 120000
+## Interface: 120000, 120001
 ## Title: Decor Vendors
 ## Notes: Tracks vendors that sell housing decor!
 ## Author: Midnitedestiny
-## Version: 1.50
+## Version: 1.58
 ## IconTexture: 1530229 
 ## Category-enUS: Decor Vendors
 ## SavedVariables: vendorSettings, dbDV
+## AddonCompartmentFunc: DecorVendor_OnAddonCompartmentClick
+## AddonCompartmentFuncOnEnter: DecorVendor_OnAddonCompartmentEnter
+## AddonCompartmentFuncOnLeave: DecorVendor_OnAddonCompartmentLeave
 ## OptionalDeps:TomTom, WaypointUI
 
 
@@ -18,4 +21,7 @@ Libs\LibDBIcon-1.0.lua
 
 # Core files
 dv.lua
+filters.lua
+headers.lua
+lines.lua
 DecorVendor.lua

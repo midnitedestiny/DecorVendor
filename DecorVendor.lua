@@ -1,11 +1,6 @@
 local addonName, dv = ...
 local COLLECTED_ICON_TEXTURE = "Interface\\AddOns\\DecorVendor\\Assets\\collected"
 
-local TAB_LEFT_PADDING = {
-    vendors = 180,  -- room for sidebar
-    professions = 10,
-}
-
 local function IsLoaded(addon)
     return C_AddOns and C_AddOns.IsAddOnLoaded and C_AddOns.IsAddOnLoaded(addon)
 end
@@ -31,22 +26,37 @@ vendorSettings = vendorSettings or {
 dbDV = dbDV or {}
 dbDV.minimap = dbDV.minimap or { hide = false }
 
-local activeWidgets = {}
-local questTitleCache = {}
+
 local dv_optionsCategory = nil
 local decorThumbCache = {}
 local itemNameCache = {}
 local collectionCache = {}
 local refreshTimer = nil
-local activeWidgets = {}       -- tracks all created lines and headers for clearing
-local collapsedHeaders = {}    -- tracks which expansion/vendor group headers are collapsed
+--local dv.activeWidgets = {}       -- tracks all created lines and headers for clearing
+--local collapsedHeaders = {}    -- tracks which expansion/vendor group headers are collapsed
 local LibDBIcon = LibStub("LibDBIcon-1.0", true)
 local minimapButton 
 local initialized = false
 local BuildSidebarFilters
+local CORE_TABS = {
+    { id = "vendors",      text = "Vendors",      icon = "Interface\\Icons\\inv_misc_5potionbag_special" },
+    { id = "professions",  text = "Professions",  icon = "Interface\\Icons\\Trade_Tailoring" },
+    { id = "quests",       text = "Quests",       icon = "Interface\\Icons\\Inv_misc_note_01" },
+    { id = "achievements", text = "Achievements", icon = "Interface\\Icons\\achievement_level_100" },
+    { id = "bossdrops",    text = "Boss Drops",   icon = "Interface\\Icons\\achievement_boss_blackhand" },
+	{ id = "events",       text = "Events",       icon = "Interface\\Icons\\inv_misc_ticket_darkmoon_01",},
+}
+local UTILITY_TABS = {
+    { id = "tips",    text = "Tips",    icon = "Interface\\Icons\\achievement_quests_completed_twilighthighlands" },
+    { id = "support", text = "Support", icon = "Interface\\Icons\\INV_Misc_Gift_01" },
+    { id = "about",   text = "About",   icon = "Interface\\Icons\\achievement_character_bloodelf_female" },
+}
 dv.currentTab = "vendors" 
 dv.searchQuery = ""
 dv.activeWowheadBox = nil
+dv.collapsedHeaders = dv.collapsedHeaders or {}
+dv.activeWidgets = dv.activeWidgets or {}
+dv.questTitleCache = dv.questTitleCache or {}
 
 local function GetFullTexturePath(texturePath)
     if texturePath and not string.match(texturePath, "[\\/]") then
@@ -75,7 +85,7 @@ local function RequestUpdate()
   end)
 end
 
-local function GetCachedItemName(itemID)
+function dv.GetCachedItemName(itemID)
   if itemNameCache[itemID] then return itemNameCache[itemID], false end
   
   local item = Item:CreateFromItemID(itemID)
@@ -137,7 +147,7 @@ local function CountProfessionItems(profession)
     return completed, total
 end
 
-local function IsItemCollected(itemID)
+function dv.IsItemCollected(itemID)
 	if vendorSettings.completedDrop[itemID] then return true end
 
 	if collectionCache[itemID] ~= nil then
@@ -160,6 +170,50 @@ local function IsItemCollected(itemID)
 	return false
 end
 
+function dv.IsQuestEffectivelyCompleted(quest)
+    -- SAFETY: quest may be nil
+if not quest then
+    return false
+end
+
+    -- 1️⃣ Normal Blizzard quest completion (ONLY if ID is numeric)
+    if type(quest.id) == "number" then
+        if C_QuestLog.IsQuestFlaggedCompleted(quest.id) then
+            return true
+        end
+    end
+
+    -- 2️⃣ Account-wide decor already owned
+    if quest.rewardDecor then
+        if type(quest.rewardDecor) == "table" then
+            for _, itemID in ipairs(quest.rewardDecor) do
+                if dv.IsItemCollected(itemID) then
+                    return true
+                end
+            end
+        elseif type(quest.rewardDecor) == "number" then
+            if dv.IsItemCollected(quest.rewardDecor) then
+                return true
+            end
+        end
+    end
+
+    return false
+end
+
+local function NormalizeNPCName(name)
+    if not name then return nil end
+
+    -- Remove NPC titles like <Reagents and Repairs>
+    name = name:gsub("%s*<.-%>", "")
+
+    -- Normalize apostrophes and spacing
+    name = name:gsub("’", "'")
+    name = name:trim()
+    name = name:lower()
+
+    return name
+end
 
 local frame = CreateFrame("Frame", "DV_MainFrame", UIParent, "BackdropTemplate")
 frame:SetSize(860, 580)
@@ -208,7 +262,6 @@ title:SetFont(STANDARD_TEXT_FONT, 20, "OUTLINE")
 title:SetPoint("TOP", 0, -14)
 title:SetText("The Original Decor Vendors")
 title:SetTextColor(1, 0.82, 0)
---title:SetTextColor(0, 1, 0.9)
 
 local subtitle = frame:CreateFontString(nil, "OVERLAY")
 subtitle:SetFont(STANDARD_TEXT_FONT, 14)
@@ -227,7 +280,7 @@ infoIcon:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highligh
 infoIcon:SetScript("OnEnter", function(self)
   GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
   GameTooltip:AddLine("Decor Vendor Notice", 1, 0.82, 0)
-  GameTooltip:AddLine("Current Working Version 1.51", 1, 1, 1, true)
+  GameTooltip:AddLine("Current Working Version 1.58", 1, 1, 1, true)
   GameTooltip:Show()
 end)
 
@@ -261,10 +314,10 @@ resetBtn:SetScript("OnClick", function()
 end)
 
 function dv.ClearWidgets()
-    for _, w in ipairs(activeWidgets) do
+    for _, w in ipairs(dv.activeWidgets) do
         w:Hide()
     end
-    wipe(activeWidgets)
+    wipe(dv.activeWidgets)
 end
 
 local searchBox = CreateFrame("EditBox", "DV_SearchBox", frame, "SearchBoxTemplate")
@@ -273,7 +326,6 @@ searchBox:SetPoint("TOPRIGHT", -24, -2)
 searchBox:SetScale(1.2)
 searchBox:SetAutoFocus(false)
 searchBox.Instructions:SetText("Search Vendor Names...")
-
 searchBox:SetScript("OnTextChanged", function(self)
     SearchBoxTemplate_OnTextChanged(self)
 
@@ -284,526 +336,7 @@ searchBox:SetScript("OnTextChanged", function(self)
     BuildVendorUI()
 end)
 
-local function CreateVendorHeader(parent, group, y, completed, total)
-
-    completed = tonumber(completed) or 0
-    total     = tonumber(total) or 0
-
-    -- Collapse state per group
-    if collapsedHeaders[group.name] == nil then
-        collapsedHeaders[group.name] = true
-    end
-
--- 🔥 FILTER-AWARE AUTO COLLAPSE / EXPAND (EXPANSIONS)
-if dv.filtersJustChanged then
-    if selectedExpansions and selectedExpansions[group.name] then
-        collapsedHeaders[group.name] = false
-    else
-        collapsedHeaders[group.name] = true
-    end
-end
-
-
-    local header = CreateFrame("Button", nil, parent)
-    header:SetPoint("TOPLEFT", 0, y)
-    header:SetSize(600, 32)
-
-    -- Background
-    local bg = header:CreateTexture(nil, "BACKGROUND")
-    bg:SetAllPoints()
-    bg:SetTexture("Interface\\Buttons\\WHITE8x8")
-    bg:SetGradient("HORIZONTAL",
-        CreateColor(0.15, 0.10, 0.25, 0.9),
-        CreateColor(0.05, 0.05, 0.15, 0.9)
-    )
-
-    -- Collapse icon
-    header.icon = header:CreateFontString(nil, "OVERLAY")
-    header.icon:SetFont(STANDARD_TEXT_FONT, 14, "OUTLINE")
-    header.icon:SetPoint("LEFT", 8, 0)
-    header.icon:SetText(collapsedHeaders[group.name] and ">>" or "<<")
-    header.icon:SetTextColor(0.8, 0.8, 0.8, 1)
-
-    -- Header title
-    header.text = header:CreateFontString(nil, "OVERLAY")
-    header.text:SetFont(STANDARD_TEXT_FONT, 13, "OUTLINE")
-    header.text:SetPoint("LEFT", 28, 0)
-    header.text:SetText(
-        string.format("%s (%d/%d found)", group.name or "Unknown", completed, total)
-    )
-
-    -- Progress (right)
-    header.progress = header:CreateFontString(nil, "OVERLAY")
-    header.progress:SetFont(STANDARD_TEXT_FONT, 11)
-    header.progress:SetPoint("RIGHT", -8, 0)
-    header.progress:SetText(string.format("%d/%d found", completed, total))
-
-    -- Progress color
-    local color
-    if total > 0 and completed == total then
-        color = CreateColor(0.2, 1, 0.2, 1)
-    elseif completed >= total / 2 then
-        color = CreateColor(1, 0.82, 0, 1)
-    else
-        color = CreateColor(0.9, 0.9, 0.9, 1)
-    end
-    header.progress:SetTextColor(color:GetRGBA())
-
-    -- Click behavior
-    header:SetScript("OnClick", function()
-        collapsedHeaders[group.name] = not collapsedHeaders[group.name]
-        BuildVendorUI()
-    end)
-
-    table.insert(activeWidgets, header)
-    return header, collapsedHeaders[group.name], y - 36
-end
-
-local function CreateProfessionHeader(parent, profession, y, completed, total)
-    completed = tonumber(completed) or 0
-    total     = tonumber(total) or 0
-
-    if collapsedHeaders["prof_" .. profession.name] == nil then
-        collapsedHeaders["prof_" .. profession.name] = true
-    end
--- 🔥 AUTO COLLAPSE / EXPAND BASED ON FILTERS
-if dv.filtersJustChanged then
-    if selectedProfessions and selectedProfessions[profession.name] then
-        collapsedHeaders["prof_" .. profession.name] = false
-    else
-        collapsedHeaders["prof_" .. profession.name] = true
-    end
-end
-
-
-    local collapsed = collapsedHeaders["prof_" .. profession.name]
-
-    local header = CreateFrame("Button", nil, parent)
-    local pad = TAB_LEFT_PADDING[dv.currentTab] or 10
-	header:SetPoint("TOPLEFT", pad, y)
-   --header:SetPoint("TOPLEFT", 0, y)    
-	header:SetSize(600, 32)
-
-    -- Background
-    local bg = header:CreateTexture(nil, "BACKGROUND")
-    bg:SetAllPoints()
-    bg:SetTexture("Interface\\Buttons\\WHITE8x8")
-    bg:SetGradient("HORIZONTAL",
-        CreateColor(0.15, 0.10, 0.25, 0.9),
-        CreateColor(0.05, 0.05, 0.15, 0.9)
-    )
-
-    -- Collapse icon
-    header.icon = header:CreateFontString(nil, "OVERLAY")
-    header.icon:SetFont(STANDARD_TEXT_FONT, 14, "OUTLINE")
-    header.icon:SetPoint("LEFT", 8, 0)
-    header.icon:SetText(collapsed and ">>" or "<<")
-
-    -- Title (LEFT)
-    header.text = header:CreateFontString(nil, "OVERLAY")
-    header.text:SetFont(STANDARD_TEXT_FONT, 13, "OUTLINE")
-    header.text:SetPoint("LEFT", 28, 0)
-    header.text:SetText(string.format("%s (%d/%d learned)", profession.name or "Unknown", completed, total))
-
-	    -- Right-side placeholder (optional)
-    header.progress = header:CreateFontString(nil, "OVERLAY")
-    header.progress:SetFont(STANDARD_TEXT_FONT, 11)
-    header.progress:SetPoint("RIGHT", -8, 0)
-    header.progress:SetText(string.format("%d/%d learned", completed, total))
-	
-	-- Progress color
-    local color
-    if total > 0 and completed == total then
-        color = CreateColor(0.2, 1, 0.2, 1)
-    elseif completed >= total / 2 then
-        color = CreateColor(1, 0.82, 0, 1)
-    else
-        color = CreateColor(0.9, 0.9, 0.9, 1)
-    end
-    header.progress:SetTextColor(color:GetRGBA())
-
-    -- Click to collapse
-    header:SetScript("OnClick", function()
-        collapsedHeaders["prof_" .. profession.name] = not collapsed
-        BuildVendorUI()
-    end)
-
-    table.insert(activeWidgets, header)
-    return collapsed, y - 36
-end
-
-local function CreateAchievementHeader(parent, achievement, y, completed, total)
-	completed = tonumber(completed) or 0
-    total     = tonumber(total) or 0
-	
-    -- Accept both string category headers AND table objects
-    local headerName
-    if type(achievement) == "string" then
-        headerName = achievement
-    elseif type(achievement) == "table" and achievement.name then
-        headerName = achievement.name
-    else
-        headerName = "Unknown Category"
-    end
-
-    -- Build collapse identifier safely
-    local collapseKey = "ach_" .. headerName
-
-    if collapsedHeaders[collapseKey] == nil then
-        collapsedHeaders[collapseKey] = true
-    end
-
--- 🔥 FILTER-AWARE AUTO COLLAPSE / EXPAND
-if dv.filtersJustChanged then
-    if selectedCategories and selectedCategories[headerName] then
-        collapsedHeaders[collapseKey] = false
-    else
-        collapsedHeaders[collapseKey] = true
-    end
-end
-
-
-    local collapsed = collapsedHeaders[collapseKey]
-
-    local header = CreateFrame("Button", nil, parent)
-    local pad = TAB_LEFT_PADDING[dv.currentTab] or 10
-    header:SetPoint("TOPLEFT", pad, y)
-    header:SetSize(600, 32)
-
-    -- Background gradient
-    local bg = header:CreateTexture(nil, "BACKGROUND")
-    bg:SetAllPoints()
-    bg:SetTexture("Interface\\Buttons\\WHITE8x8")
-    bg:SetGradient("HORIZONTAL",
-        CreateColor(0.15, 0.10, 0.25, 0.9),
-        CreateColor(0.05, 0.05, 0.15, 0.9)
-    )
-
-    -- Collapse icon
-    header.icon = header:CreateFontString(nil, "OVERLAY")
-    header.icon:SetFont(STANDARD_TEXT_FONT, 14, "OUTLINE")
-    header.icon:SetPoint("LEFT", 8, 0)
-    header.icon:SetText(collapsed and ">>" or "<<")
-
-    -- Header title
-    header.text = header:CreateFontString(nil, "OVERLAY")
-    header.text:SetFont(STANDARD_TEXT_FONT, 13, "OUTLINE")
-    header.text:SetPoint("LEFT", 28, 0)
-    header.text:SetText(string.format("%s (%d/%d completed)", headerName or "Unknown", completed, total))
-	
-	    -- Right-side placeholder (optional)
-    header.progress = header:CreateFontString(nil, "OVERLAY")
-    header.progress:SetFont(STANDARD_TEXT_FONT, 11)
-    header.progress:SetPoint("RIGHT", -8, 0)
-    header.progress:SetText(string.format("%d/%d completed", completed, total))
-	
-	-- Progress color
-    local color
-    if total > 0 and completed == total then
-        color = CreateColor(0.2, 1, 0.2, 1)
-    elseif completed >= total / 2 then
-        color = CreateColor(1, 0.82, 0, 1)
-    else
-        color = CreateColor(0.9, 0.9, 0.9, 1)
-    end
-    header.progress:SetTextColor(color:GetRGBA())
-
-    -- Click to collapse
-    header:SetScript("OnClick", function()
-        collapsedHeaders[collapseKey] = not collapsedHeaders[collapseKey]
-        BuildVendorUI()
-    end)
-
-    table.insert(activeWidgets, header)
-    return collapsed, y - 36
-end
-
-local function CreateQuestHeader(parent, questGroup, y, completed, total)
-    -- Normalize group name (string OR table)
-	completed = tonumber(completed) or 0
-    total     = tonumber(total) or 0
-	
-    local groupName = questGroup.name or tostring(questGroup)
-
-    -- Create unique collapse key
-    local collapseKey = "quest_" .. groupName
-
-    -- Initialize collapse state
-    if collapsedHeaders[collapseKey] == nil then
-        collapsedHeaders[collapseKey] = true
-    end
-
--- 🔥 FILTER-AWARE AUTO COLLAPSE / EXPAND
-if dv.filtersJustChanged then
-    if selectedCategories and selectedCategories[headerName] then
-        collapsedHeaders[collapseKey] = false
-    else
-        collapsedHeaders[collapseKey] = true
-    end
-end
-
-
-    local collapsed = collapsedHeaders[collapseKey]
-
-    -- Create header
-    local header = CreateFrame("Button", nil, parent)
-    local pad = TAB_LEFT_PADDING[dv.currentTab] or 10
-    header:SetPoint("TOPLEFT", pad, y)
-    header:SetSize(600, 32)
-
-    -- Background
-    local bg = header:CreateTexture(nil, "BACKGROUND")
-    bg:SetAllPoints()
-    bg:SetTexture("Interface\\Buttons\\WHITE8x8")
-    bg:SetGradient("HORIZONTAL",
-        CreateColor(0.15, 0.10, 0.25, 0.9),
-        CreateColor(0.05, 0.05, 0.15, 0.9)
-    )
-
-    -- Collapse icon
-    header.icon = header:CreateFontString(nil, "OVERLAY")
-    header.icon:SetFont(STANDARD_TEXT_FONT, 14, "OUTLINE")
-    header.icon:SetPoint("LEFT", 8, 0)
-    header.icon:SetText(collapsed and ">>" or "<<")
-
-    -- Title label
-    header.text = header:CreateFontString(nil, "OVERLAY")
-    header.text:SetFont(STANDARD_TEXT_FONT, 13, "OUTLINE")
-    header.text:SetPoint("LEFT", 28, 0)
-    header.text:SetText(string.format("%s (%d/%d completed)", groupName or "Unknown", completed, total))
-
-    -- Right-side placeholder (optional)
-    header.progress = header:CreateFontString(nil, "OVERLAY")
-    header.progress:SetFont(STANDARD_TEXT_FONT, 11)
-    header.progress:SetPoint("RIGHT", -8, 0)
-    header.progress:SetText(string.format("%d/%d completed", completed, total))
-	
-	-- Progress color
-    local color
-    if total > 0 and completed == total then
-        color = CreateColor(0.2, 1, 0.2, 1)
-    elseif completed >= total / 2 then
-        color = CreateColor(1, 0.82, 0, 1)
-    else
-        color = CreateColor(0.9, 0.9, 0.9, 1)
-    end
-    header.progress:SetTextColor(color:GetRGBA())
-
-    -- Collapse behavior
-    header:SetScript("OnClick", function()
-        collapsedHeaders[collapseKey] = not collapsed
-        BuildVendorUI()
-    end)
-
-    table.insert(activeWidgets, header)
-    return collapsed, y - 36
-end
-
-local function CreateBossDropHeader(parent, group, collected, total, y)
-    local pad = TAB_LEFT_PADDING[dv.currentTab] or 10
-
-    collapsedHeaders = collapsedHeaders or {}
-    local key = "boss_" .. group.name
-    if collapsedHeaders[key] == nil then collapsedHeaders[key] = true end
-
-    -- AUTO EXPAND based on filter
-    if dv.filtersJustChanged then
-        if selectedBossExpansions and selectedBossExpansions[group.expansion] then
-            collapsedHeaders[key] = false
-        else
-            collapsedHeaders[key] = true
-        end
-    end
-    ----------------------------------------
-    -- COUNT COLLECTED ACROSS ALL BOSSES
-    ----------------------------------------
-local collected = 0
-local total = 0
-
-for _, boss in ipairs(group.items or {}) do
-    total = total + 1
-
-    if IsItemCollected(boss.id) then
-        collected = collected + 1
-    end
-end
-
-	
-    local header = CreateFrame("Button", nil, parent)
-    header:SetPoint("TOPLEFT", pad, y)
-    header:SetSize(600, 32)
-
-    -- background
-    local bg = header:CreateTexture(nil, "BACKGROUND")
-    bg:SetAllPoints()
-    bg:SetTexture("Interface\\Buttons\\WHITE8x8")
-    bg:SetGradient("HORIZONTAL",
-        CreateColor(.15, .10, .25, .9),
-        CreateColor(.05, .05, .15, .9)
-    )
-
-    -- collapse icon
-    header.icon = header:CreateFontString(nil, "OVERLAY")
-    header.icon:SetFont(STANDARD_TEXT_FONT, 14, "OUTLINE")
-    header.icon:SetPoint("LEFT", 8, 0)
-    header.icon:SetText(collapsedHeaders[key] and ">>" or "<<")
-
-    -- TITLE
-    header.text = header:CreateFontString(nil, "OVERLAY")
-    header.text:SetFont(STANDARD_TEXT_FONT, 13, "OUTLINE")
-    header.text:SetPoint("LEFT", 28, 0)
-    header.text:SetText(group.name)
-
-    -- PROGRESS
-    header.progress = header:CreateFontString(nil, "OVERLAY")
-    header.progress:SetFont(STANDARD_TEXT_FONT, 11)
-    header.progress:SetPoint("RIGHT", -10, 0)
-    header.progress:SetText(("%d/%d collected"):format(collected, total))
-
-    -- color code progress
-    if total > 0 and collected == total then
-        header.progress:SetTextColor(0.2,1,0.2)
-    elseif collected >= total/2 then
-        header.progress:SetTextColor(1,.82,0)
-    else
-        header.progress:SetTextColor(1,1,1)
-    end
-
-    -- click to collapse
-    header:SetScript("OnClick", function()
-        collapsedHeaders[key] = not collapsedHeaders[key]
-        BuildVendorUI()
-    end)
-
-    table.insert(activeWidgets, header)
-
-    return collapsedHeaders[key], y - 36
-end
-
-local function CreateVendorLine(parent, vendor, y)
-
-    --[[if vendorSettings.hideFound
-   and vendorSettings.visited
-   and vendorSettings.visited[vendor.id]
-then
-    return y
-end]]
-
-
-local line = CreateFrame("Button", nil, parent)
-line:SetPoint("TOPLEFT", 10, y)
-line:SetSize(590, 22)
-
-local text = line:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-text:SetPoint("LEFT", 0, 0)
-text:SetFont(STANDARD_TEXT_FONT, 14)
-text:SetText(vendor.title or "Unknown Vendor")
-
-local isFound =
-    vendorSettings.visited
-    and vendorSettings.visited[vendor.id]
-
-
-    -- Faction color
-    local function SetFactionColor()
-        if vendor.faction == "alliance" then
-            text:SetTextColor(0.3, 0.6, 1)
-        elseif vendor.faction == "horde" then
-            text:SetTextColor(1, 0.2, 0.2)
-        else
-            text:SetTextColor(0.2, 0.8, 0.3)
-        end
-    end
-    SetFactionColor()
-	
-	-- VISUAL MARK FOR FOUND VENDORS
-if isFound and vendorSettings.markFound then
-    text:SetTextColor(0.6, 0.6, 0.6) -- greyed out
-    text:SetAlpha(0.7)
-end
-
-
-    -- Zone text
-    if vendor.zone then
-        local zoneText = line:CreateFontString(nil, "OVERLAY")
-        zoneText:SetFont(STANDARD_TEXT_FONT, 11)
-        zoneText:SetPoint("RIGHT", -10, 0)
-        zoneText:SetText(vendor.zone)
-        zoneText:SetTextColor(1, 0.82, 0)
-    end
-
-    -- Click → vendor popup
-    line:SetScript("OnClick", function(_, button)
-        if button == "LeftButton" then
-            dv.ShowVendorPopup(vendor.id, vendor.title)
-        end
-    end)
-
-    -- Tooltip (ONE handler)
-    line:SetScript("OnEnter", function()
-        text:SetTextColor(1, 0.82, 0, 1)
-
-        GameTooltip:SetOwner(line, "ANCHOR_RIGHT")
-        GameTooltip:AddLine(vendor.title, 1, 1, 1)
-
-        if vendor.zone then
-            GameTooltip:AddLine("Zone: " .. vendor.zone, 0.8, 0.8, 0.8)
-        end
-
-        if vendor.mapID then
-            local mapInfo = C_Map.GetMapInfo(vendor.mapID)
-            if mapInfo then
-                GameTooltip:AddLine(mapInfo.name, 1, 0.82, 0)
-            end
-        end
-
-        GameTooltip:AddLine("\n|cff00ff00<Left Click>|r Open Vendor Items", 1, 1, 1)
-        GameTooltip:Show()
-    end)
-
-line:SetScript("OnLeave", function()
-    if isFound and vendorSettings.markFound then
-        text:SetTextColor(0.6, 0.6, 0.6)
-        text:SetAlpha(0.7)
-    else
-        SetFactionColor()
-        text:SetAlpha(1)
-    end
-    GameTooltip:Hide()
-end)
-
-
-    if vendor.mapID and vendor.x and vendor.y then
-        local waypointBtn = CreateFrame("Button", nil, line, "UIPanelButtonTemplate")
-        waypointBtn:SetSize(80, 18)
-        waypointBtn:SetPoint("RIGHT", -240, 0)
-        waypointBtn:SetText("Waypoint")
-
-        waypointBtn:SetScript("OnClick", function()
-            if hasTomTom then
-                TomTom:AddWaypoint(
-                    vendor.mapID,
-                    vendor.x / 100,
-                    vendor.y / 100,
-                    {
-                        title = vendor.title.. " - " .. (vendor.zone or ""),
-                        persistent = false,
-                        minimap = true,
-                        world = true,
-                    }
-                )
-            end
-
-            local vec = CreateVector2D(vendor.x / 100, vendor.y / 100)
-            local mapPoint = UiMapPoint.CreateFromVector2D(vendor.mapID, vec)
-            C_Map.SetUserWaypoint(mapPoint)
-            C_SuperTrack.SetSuperTrackedUserWaypoint(true)
-        end)
-    end
-
-    table.insert(activeWidgets, line)
-    return y - 24
-end
+-- Where Headers were Originally
 
 local function StandardizeLineScripts(line, onEnter, onClick, onLeave)
   line:SetScript("OnEnter", onEnter)
@@ -820,19 +353,25 @@ local function StandardizeLineScripts(line, onEnter, onClick, onLeave)
   end)
 end
 
+-- Vendor Line Original Location
+
 -- Event handler: mark visited vendors when opening a merchant
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("MERCHANT_SHOW")
 eventFrame:SetScript("OnEvent", function()
-    local targetName = UnitName("target")
-    if not targetName or not dv.npcs then return end
+    if not dv.npcs then return end
+
+    local targetName = NormalizeNPCName(UnitName("target"))
+    if not targetName then return end
 
     for _, group in ipairs(dv.npcs) do
         for _, vendor in ipairs(group.vendors or {}) do
-            if vendor.title == targetName then
+            local vendorName = NormalizeNPCName(vendor.title)
+
+            if vendorName and vendorName == targetName then
                 vendorSettings.visited = vendorSettings.visited or {}
 
-                -- If already marked, do nothing
+                -- Already marked
                 if vendorSettings.visited[vendor.id] then
                     return
                 end
@@ -840,7 +379,7 @@ eventFrame:SetScript("OnEvent", function()
                 -- Mark vendor as found
                 vendorSettings.visited[vendor.id] = true
 
-                -- 🔄 Rebuild UI if either hide OR mark is enabled
+                -- 🔄 Rebuild UI if needed
                 if vendorSettings.hideFound or vendorSettings.markFound then
                     BuildVendorUI()
                 end
@@ -854,7 +393,7 @@ end)
 local lootEventFrame = CreateFrame("Frame")
 lootEventFrame:RegisterEvent("BAG_UPDATE_DELAYED")
 lootEventFrame:SetScript("OnEvent", function()
-    -- Clear cached ownership state so IsItemCollected re-checks
+    -- Clear cached ownership state so dv.IsItemCollected re-checks
     if collectionCache then
         wipe(collectionCache)
     end
@@ -865,19 +404,10 @@ lootEventFrame:SetScript("OnEvent", function()
     end
 end)
 
-
 function ResetAllVendors()
     vendorSettings.visited = {}   -- wipe ALL progress
     print("|cff88ff88DecorVendor:|r Vendor progress reset.")
 end
-
-local tabBar = CreateFrame("Frame", "DV_TabBar", frame)
-tabBar:SetPoint("TOPRIGHT", frame, "TOPLEFT", -4, 0)
-tabBar:SetPoint("BOTTOMRIGHT", frame, "BOTTOMLEFT", -4, 0)
-tabBar:SetWidth(80)
-
-local verticalTabs = {}
-dv.currentTab = dv.currentTab or "vendors"
 
 function dv.UpdatePreviewSize()
     if dv.currentTab == "achievements" then
@@ -890,15 +420,18 @@ function dv.UpdatePreviewSize()
     end
 end
 
-local function CreateVerticalTab(id, text, icon, order, anchor)
-    local tab = CreateFrame("Button", nil, tabBar, "BackdropTemplate")
-    tab:SetSize(90, 44)
+local rightTabBar = CreateFrame("Frame", "DV_RightTabBar", frame)
+rightTabBar:SetPoint("TOPLEFT", frame, "TOPRIGHT", 2, 0)
+rightTabBar:SetPoint("BOTTOMLEFT", frame, "BOTTOMRIGHT", 2, 0)
+rightTabBar:SetWidth(90)
 
-    if anchor == "BOTTOM" then
-        tab:SetPoint("BOTTOMLEFT", tabBar, "BOTTOMLEFT", 0, 12)
-    else
-        tab:SetPoint("TOPLEFT", tabBar, "TOPLEFT", 0, -((order - 1) * 48))
-    end
+local verticalTabs = {}
+dv.currentTab = dv.currentTab or "vendors"
+
+local function CreateCoreVerticalTab(data, order)
+    local tab = CreateFrame("Button", nil, rightTabBar, "BackdropTemplate")
+    tab:SetSize(90, 44)
+    tab:SetPoint("TOPLEFT", rightTabBar, "TOPLEFT", 0, -((order - 1) * 48))
 
     tab:SetBackdrop({
         bgFile = "Interface\\Buttons\\WHITE8x8",
@@ -906,22 +439,23 @@ local function CreateVerticalTab(id, text, icon, order, anchor)
         edgeSize = 10,
         insets = { left = 2, right = 2, top = 2, bottom = 2 }
     })
+    tab:SetBackdropColor(0.15, 0.15, 0.15, 0.95)
 
-    local iconT = tab:CreateTexture(nil, "ARTWORK")
-    iconT:SetSize(20, 20)
-    iconT:SetPoint("TOP", 0, -5)
-    iconT:SetTexture(icon)
+    local icon = tab:CreateTexture(nil, "ARTWORK")
+    icon:SetSize(20, 20)
+    icon:SetPoint("TOP", 0, -5)
+    icon:SetTexture(data.icon)
 
     local label = tab:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    label:SetPoint("TOP", iconT, "BOTTOM", 0, -2)
-    label:SetText(text)
+    label:SetPoint("TOP", icon, "BOTTOM", 0, -2)
+    label:SetText(data.text)
 
-    tab.id = id
+    tab.id = data.id
     table.insert(verticalTabs, tab)
 
     tab:SetScript("OnClick", function()
-        dv.currentTab = id
-		dv.UpdatePreviewSize()
+        dv.currentTab = data.id
+        dv.UpdatePreviewSize()
         UpdateVerticalTabStyles()
         UpdateSidebarForTab()
         BuildVendorUI()
@@ -930,16 +464,64 @@ local function CreateVerticalTab(id, text, icon, order, anchor)
     return tab
 end
 
-CreateVerticalTab("vendors", "Vendors", "Interface\\Icons\\inv_misc_5potionbag_special", 1)
-CreateVerticalTab("professions", "Professions", "Interface\\Icons\\Trade_Tailoring", 2)
-CreateVerticalTab("quests", "Quests", "Interface\\Icons\\Inv_misc_note_01", 3)
-CreateVerticalTab("achievements", "Achievements", "Interface\\Icons\\achievement_level_100", 4)
-CreateVerticalTab("bossdrops", "Boss Drops", "Interface\\Icons\\achievement_boss_blackhand", 5)
-CreateVerticalTab("about", "About", "Interface\\Icons\\achievement_character_bloodelf_female", 10)
-CreateVerticalTab("support", "Support", "Interface\\Icons\\INV_Misc_Gift_01", 11)
-CreateVerticalTab("tips", "Tips", "Interface\\Icons\\achievement_quests_completed_twilighthighlands", nil, "BOTTOM")
+for i, tabData in ipairs(CORE_TABS) do
+    CreateCoreVerticalTab(tabData, i)
+end
 
---CreateVerticalTab("currency", "Currency", "Interface\\Icons\\inv_misc_coin_01", 7)
+local utilityBar = CreateFrame("Frame", "DV_UtilityBar", frame)
+utilityBar:SetPoint("BOTTOM", frame, "BOTTOM", 0, -36)
+utilityBar:SetSize(300, 36)
+
+local utilityTabs = {}
+local function CreateUtilityTab(parent, data, index, total)
+    local tab = CreateFrame("Button", nil, parent, "BackdropTemplate")
+    tab:SetSize(80, 32)
+
+    local spacing = 8
+    local totalWidth = (total * 80) + ((total - 1) * spacing)
+    local startX = -totalWidth / 2
+
+    tab:SetPoint("LEFT", parent, "CENTER", startX + ((index - 1) * (80 + spacing)), 0)
+
+    tab:SetBackdrop({
+        bgFile = "Interface\\Buttons\\WHITE8x8",
+        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+        edgeSize = 8,
+        insets = { left = 2, right = 2, top = 2, bottom = 2 }
+    })
+    tab:SetBackdropColor(0.12, 0.12, 0.12, 0.9)
+
+    local icon = tab:CreateTexture(nil, "ARTWORK")
+    icon:SetSize(16, 16)
+    icon:SetPoint("LEFT", 6, 0)
+    icon:SetTexture(data.icon)
+
+    local label = tab:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+    label:SetPoint("LEFT", icon, "RIGHT", 6, 0)
+    label:SetText(data.text)
+
+    tab:SetScript("OnEnter", function()
+        tab:SetBackdropColor(0.25, 0.25, 0.25, 1)
+    end)
+
+    tab:SetScript("OnLeave", function()
+        tab:SetBackdropColor(0.12, 0.12, 0.12, 0.9)
+    end)
+
+    tab:SetScript("OnClick", function()
+        dv.currentTab = data.id
+		dv.UpdatePreviewSize()
+        UpdateVerticalTabStyles()
+        UpdateSidebarForTab()
+        BuildVendorUI()
+    end)
+
+    table.insert(utilityTabs, tab)
+end
+
+for i, tabData in ipairs(UTILITY_TABS) do
+    CreateUtilityTab(utilityBar, tabData, i, #UTILITY_TABS)
+end
 
 function UpdateVerticalTabStyles()
     for _, tab in ipairs(verticalTabs) do
@@ -958,8 +540,6 @@ frame.sidebar = CreateFrame("Frame", "DV_Sidebar", frame, "BackdropTemplate")
 frame.sidebar:SetWidth(170)
 frame.sidebar:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, -72)
 frame.sidebar:SetPoint("BOTTOMLEFT", frame, "BOTTOMLEFT", 10, 10)
-
--- Remove backdrop so gradient is visible
 frame.sidebar:SetBackdrop(nil)
 
 -- Gradient background
@@ -997,6 +577,7 @@ local preview = dv.previewFrame
 dv.UpdatePreviewSize()
 preview:SetSize(300, 330)
 preview:SetFrameStrata("TOOLTIP")
+preview:SetFrameLevel(200)
 preview:SetBackdrop({
     bgFile   = "Interface\\Buttons\\WHITE8x8",
     edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
@@ -1023,7 +604,29 @@ preview.model = CreateFrame("PlayerModel", nil, preview)
 local model = preview.model
 model:SetSize(288, 288)
 model:SetPoint("BOTTOM", 0, 6)
+model:EnableMouse(false)
+model:SetScript("OnMouseDown", nil)
+model:SetScript("OnMouseUp", nil)
+model:SetScript("OnMouseWheel", nil)
 model:SetScript("OnModelLoaded", function(self)
+    if dv.currentTab == "vendors" or preview._isVendorPreview then
+        -- 🧙 Vendor / NPC portrait mode
+        self:SetPosition(0, 0, 0)
+        self:SetRotation(0)
+
+        -- 🔥 THIS is the zoom that fixes tiny NPCs
+        self:SetPortraitZoom(0)
+
+        self:SetFacing(0)
+        self:EnableMouse(false)
+
+        -- Idle animation (safe)
+        self:SetAnimation(2)
+
+        return
+    end
+
+    -- Everything else (quests, achievements, professions)
     self:MakeCurrentCameraCustom()
 
     local modelID = self:GetModelFileID()
@@ -1034,18 +637,20 @@ model:SetScript("OnModelLoaded", function(self)
         self:SetCameraPosition(0, 0, posData.camera_y)
         self:SetCameraDistance(posData.zoom)
     else
-        -- Default camera setup
         self:SetPosition(0, 0, 0)
         self:SetCameraPosition(0, 0, 4)
         self:SetCameraDistance(10)
     end
 end)
+
 model:Hide()
 
--- Rotation
 local rotation = 0
 preview:SetScript("OnUpdate", function(self, elapsed)
-    if self:IsShown() and self.model:IsShown() then
+    if self:IsShown()
+    and self.model:IsShown()
+	and dv.currentTab ~= "vendors"
+    and not preview._isVendorPreview then
         rotation = rotation + elapsed * 0.4
         self.model:SetFacing(rotation)
     end
@@ -1351,7 +956,7 @@ local function SetupPopupButton(container, data, typeStr)
 	btn.isRecipe = (typeStr == "recipe")
 	btn.isCollected = false
 	if typeStr == "vendor" then
-		btn.isCollected = IsItemCollected(itemID)
+		btn.isCollected = dv.IsItemCollected(itemID)
 		borderFrame:SetBackdropBorderColor(btn.isCollected and 1 or 0.4, btn.isCollected and 1 or 0.4, btn.isCollected and 1 or 0.4, 1)
 		
 		if btn.isCollected and vendorSettings.showVendorCheckmarks then 
@@ -1478,13 +1083,11 @@ rpopup.title:SetJustifyH("CENTER")
 rpopup.title:SetTextColor(1, 0.82, 0)
 rpopup.title:SetText("Reagents Needed")
 
-
 local rsep = rpopup:CreateTexture(nil, "ARTWORK")
 rsep:SetHeight(2)
 rsep:SetColorTexture(0.4, 0.4, 0.4, 0.8)
 rsep:SetPoint("TOPLEFT", 10, -44)
 rsep:SetPoint("TOPRIGHT", -10, -44)
-
 
 rpopup.content = CreateFrame("Frame", nil, rpopup)
 rpopup.content:SetPoint("TOPLEFT", 12, -52)
@@ -1683,7 +1286,6 @@ function dv.ShowReagentsPopup(itemData)
     rpopup:Show()
 end
 
-
 local function CreateOptionsPanel() 
     local configFrame = CreateFrame("Frame", "DV_ConfigFrame", UIParent)
     configFrame.name = "Decor Vendor"
@@ -1850,620 +1452,7 @@ footerText:SetJustifyH("CENTER")
     dv_optionsCategory = category
 end
 
-local function CreateGoodieLine(parent, goodie, y)
-    local id = goodie.id
-    local name, loading = nil, false
-
-    -------------------------------------------------
-    -- 0. COMPLETION CHECK (quest / achievement)
-    -------------------------------------------------
-    local isCompleted = false
-
-    if goodie.type == "achievement" then
-        local _, _, _, completed = GetAchievementInfo(id)
-        isCompleted = completed
-
-    elseif goodie.type == "quest" then
-        isCompleted = C_QuestLog.IsQuestFlaggedCompleted(id)
-    end
-
-    -- Hide ONLY if Hide Completed ON and Mark Completed OFF
-    if isCompleted and vendorSettings.hideCompleted and not vendorSettings.markCompleted then
-        return y
-    end
-
-    -------------------------------------------------
-    -- 1. NAME RESOLUTION
-    -------------------------------------------------
-    if goodie.type == "quest" then
-        name = questTitleCache[id] or C_QuestLog.GetTitleForQuestID(id)
-        if name then
-            questTitleCache[id] = name
-        else
-            name = "Loading quest..."
-            loading = true
-        end
-    else
-        name = select(2, GetAchievementInfo(id)) or "Unknown Achievement"
-    end
-
-    -------------------------------------------------
-    -- 2. LINE FRAME
-    -------------------------------------------------
-    local line = CreateFrame("Button", nil, parent)
-    line:SetPoint("TOPLEFT", 10, y)
-    line:SetSize(590, 22)
-    line:RegisterForClicks("AnyUp")
-
-    line.text = line:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    line.text:SetPoint("LEFT", 0, 0)
-    line.text:SetFont(STANDARD_TEXT_FONT, 12)
-    line.text:SetText(name)
-
-    -------------------------------------------------
-    -- 3. WOWHEAD COPY BOX
-    -------------------------------------------------
-    local wowheadBox = CreateFrame("EditBox", nil, parent, "InputBoxTemplate")
-    wowheadBox:SetSize(260, 22)
-    wowheadBox:SetPoint("LEFT", line.text, "RIGHT", 8, 0)
-    wowheadBox:SetAutoFocus(false)
-    wowheadBox:Hide()
-
-    wowheadBox:SetScript("OnChar", function(self)
-        self:SetText(self:GetText())
-        self:HighlightText()
-    end)
-
-    wowheadBox:SetScript("OnMouseUp", function(self)
-        self:HighlightText()
-    end)
-
-    -------------------------------------------------
-    -- 4. BASE COLOR (faction)
-    -------------------------------------------------
-    local function SetBaseColor()
-        if isCompleted and vendorSettings.markCompleted then
-            line.text:SetTextColor(0.62, 0.62, 0.62)
-            line.text:SetAlpha(0.7)
-            return
-        end
-
-        line.text:SetAlpha(1)
-
-        if goodie.faction then
-            local f = string.lower(goodie.faction)
-            if f == "alliance" then
-                line.text:SetTextColor(0.3, 0.6, 1)
-            elseif f == "horde" then
-                line.text:SetTextColor(1, 0.2, 0.2)
-            elseif f == "neutral" then
-                line.text:SetTextColor(0.2, 0.8, 0.3)
-            end
-        else
-            line.text:SetTextColor(0.9, 0.9, 0.9)
-        end
-    end
-
-    SetBaseColor()
-
-    -------------------------------------------------
-    -- 5. QUEST TITLE UPDATE (async)
-    -------------------------------------------------
-    if loading then
-        QuestEventListener:AddCallback(id, function()
-            local newName = C_QuestLog.GetTitleForQuestID(id)
-            if newName and line.text:IsVisible() then
-                line.text:SetText(newName)
-                questTitleCache[id] = newName
-            end
-        end)
-    end
-
-local modelData = goodie.model3D
-local textureData = goodie.texture
-
-local function UpdatePreview(goodie)
-   -- Set the title if provided
-    if goodie and goodie.title then
-        dv.previewFrame.title:SetText(goodie.title)
-    else
-        dv.previewFrame.title:SetText("Preview")
-    end
-    if modelData then
-        dv.previewFrame.texture:Hide()
-        dv.previewFrame.model:Show()
-
-        local model = dv.previewFrame.model
-        model:SetModel(modelData)
-
-        -- 🔥 REQUIRED RIGHT HERE
-        model:MakeCurrentCameraCustom()
-
-        -- Apply custom camera data
-        local pos = dv.modelPositions[modelData]
-        if pos then
-            model:SetPosition(pos.model_x, 0, pos.model_z)
-            model:SetCameraPosition(0, 0, pos.camera_y)
-            model:SetCameraDistance(pos.zoom)
-        else
-            -- fallback
-            model:SetPosition(0, 0, 0)
-            model:SetCameraPosition(0, 0, 4)
-            model:SetCameraDistance(10)
-        end
-
-    elseif textureData then
-        dv.previewFrame.model:Hide()
-        dv.previewFrame.texture:Show()
-        dv.previewFrame.texture:SetTexture(textureData)
-
-    else
-        dv.previewFrame.model:Hide()
-        dv.previewFrame.texture:Hide()
-    end
-end
-    -------------------------------------------------
-    -- 6. TOOLTIP + PREVIEW
-    -------------------------------------------------
-    line:SetScript("OnEnter", function()
-        line.text:SetTextColor(1, 0.82, 0)
-
-        GameTooltip:SetOwner(line, "ANCHOR_RIGHT")
-        if goodie.type == "quest" then
-            GameTooltip:SetHyperlink("quest:" .. id)
-        else
-            GameTooltip:SetHyperlink(GetAchievementLink(id))
-        end
-
-        GameTooltip:AddLine(" ")
-
-        if goodie.type == "achievement" then
-            GameTooltip:AddLine("|cff00ff00<Left Click>|r Open Achievement")
-            GameTooltip:AddLine("|cffff5500<Right Click>|r Copy Wowhead Link")
-        else
-            GameTooltip:AddLine("|cffff5500<Right Click>|r Copy Wowhead Link")
-        end
-
-        GameTooltip:Show()
-
-        dv.AnchorPreviewBelowTooltip(dv.previewFrame, GameTooltip)
-        UpdatePreview(goodie)
-    end)
-
-    -------------------------------------------------
-    -- 7. CLICK HANDLING
-    -------------------------------------------------
-    line:SetScript("OnClick", function(_, button)
-        if button == "LeftButton" and goodie.type == "achievement" then
-if not AchievementFrame or not AchievementFrame:IsShown() then
-    AchievementFrame_LoadUI()
-    AchievementFrame_ToggleAchievementFrame()
-end
-
-AchievementFrame_SelectAchievement(id)
-
-            
-
-        elseif button == "RightButton" then
-            local url = dv:GetWowheadLink(id, goodie.type)
-
-            if dv.activeWowheadBox and dv.activeWowheadBox ~= wowheadBox then
-                dv.activeWowheadBox:Hide()
-            end
-
-            wowheadBox:SetText(url)
-            wowheadBox:Show()
-            wowheadBox:SetFocus()
-            wowheadBox:HighlightText()
-            dv.activeWowheadBox = wowheadBox
-        end
-    end)
-
-    -------------------------------------------------
-    -- 8. MOUSE LEAVE
-    -------------------------------------------------
-    line:SetScript("OnLeave", function()
-        GameTooltip:Hide()
-        dv.previewFrame:Hide()
-        SetBaseColor()
-    end)
-
-    wowheadBox:SetScript("OnEditFocusLost", function()
-        wowheadBox:Hide()
-        if dv.activeWowheadBox == wowheadBox then
-            dv.activeWowheadBox = nil
-        end
-    end)
-
-    table.insert(activeWidgets, line)
-    return y - 22
-end
-
-local function CreateProfessionLine(parent, profItem, y)
-local isCompleted = false
-if profItem.spell then
-    isCompleted = IsSpellKnown(profItem.spell) or IsPlayerSpell(profItem.spell)
-end
-
-   
-
-   local line = CreateFrame("Button", nil, parent)
-	local pad = TAB_LEFT_PADDING[dv.currentTab] or 10
-	line:SetPoint("TOPLEFT", pad, y)
-	line:RegisterForClicks("AnyUp") -- 🔥 REQUIRED
-	--line:SetPoint("TOPLEFT", 10, y)
-	line:SetSize(560, 22)
-
-    -------------------------------------------------
-    -- ITEM NAME (FAST / ASYNC)
-    -------------------------------------------------
-    local nameText = line:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    nameText:SetPoint("TOPLEFT", 0, -2)
-    nameText:SetJustifyH("LEFT")
-    nameText:SetText("• Loading item...")
-	if isCompleted then
-    nameText:SetTextColor(0.5, 1, 0.5)
-else
-    nameText:SetTextColor(1, 1, 1)
-end
-
-
-    -- Async-safe item name
-    local itemObj = Item:CreateFromItemID(profItem.id)
-    itemObj:ContinueOnItemLoad(function()
-        if nameText then
-            nameText:SetText(itemObj:GetItemName())
-        end
-    end)
-
-
-    -------------------------------------------------
-    -- SKILL LINE (THIS IS THE PART YOU ASKED FOR)
-    -------------------------------------------------
-    local skillText = line:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-	skillText:SetPoint("RIGHT", line, "RIGHT", -12, 0)
-	skillText:SetJustifyH("RIGHT")
-
-	local skillString = (profItem.skill or "Skill") .. " (" .. (profItem.skillNeeded or 0) .. ")"
-	skillText:SetText(skillString)
-    skillText:SetTextColor(1, 0.82, 0)
-
-	local function UpdatePreview(profItem)
-    local modelID = profItem and profItem.model3D
-    local model = dv.previewFrame.model
-   -- Set the title if provided
-	if profItem and itemObj then
-    itemObj:ContinueOnItemLoad(function()
-        if dv.previewFrame and dv.previewFrame.title then
-            dv.previewFrame.title:SetText(itemObj:GetItemName() or "Preview")
-        end
-    end)
-	else
-    dv.previewFrame.title:SetText("Preview")
-	end
-
-    if modelID then
-        model:ClearModel()
-        model:SetModel(modelID)
-        model:Show()
-        if dv.previewFrame.texture then
-            dv.previewFrame.texture:Hide()
-        end
-    else
-        model:Hide()
-    end
-end
-
-
-    -------------------------------------------------
-    -- HOVER: TOOLTIP + PREVIEW
-    -------------------------------------------------
-line:SetScript("OnEnter", function(self)
-    SetCursor("INSPECT_CURSOR")
-
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-    GameTooltip:SetItemByID(profItem.id)
-    GameTooltip:AddLine("\n|cff00ff00<Left Click>|r View Decor", 1, 1, 1)
-    GameTooltip:AddLine("|cff00ff00<Right Click>|r View Reagents", 1, 1, 1)
-    GameTooltip:Show()
-local decorData = dv.professionItem[profItem.id]
-			if decorData and not decorData.thumbnailID then
-				local info = C_HousingCatalog.GetCatalogEntryInfoByRecordID(1, decorData.decorID, true)
-				decorData.thumbnailID = info and info.iconTexture
-			end
-			if decorData and decorData.thumbnailID then
-				dv.smallPreviewTexture:SetTexture(decorData.thumbnailID)
-				dv.AnchorPreviewBelowTooltip(dv.smallPreviewFrame, GameTooltip)
-			end
-       -- Position preview below tooltip
-    --dv.AnchorPreviewBelowTooltip(dv.previewFrame, GameTooltip)
-
-    -- Update the model/texture
-    UpdatePreview(profItem) 
-    end)
-
-line:SetScript("OnLeave", function()
-    ResetCursor()
-    GameTooltip:Hide()
-
-    if dv.smallPreviewFrame then
-        dv.smallPreviewFrame:Hide()
-    end
-
-    if dv.previewFrame then
-        dv.previewFrame:Hide()
-    end
-end)
-
-
-    -------------------------------------------------
-    -- CLICK BEHAVIOR
-    -------------------------------------------------
-    line:SetScript("OnClick", function(_, button)
-
-    if IsModifiedClick("CHATLINK") then
-        local _, link = GetItemInfo(profItem.id)
-        if link then ChatEdit_InsertLink(link) end
-
-    elseif button == "LeftButton" then
-        DressUpItemLink("item:" .. profItem.id)
-
-    elseif button == "RightButton" then
-            dv.ShowReagentsPopup(profItem)   
-    end
-end)
-
-
-    table.insert(activeWidgets, line)
-    return y - 22
-end
-
---[[local function CreateBossDropLine(parent, boss, y)
-    local pad = TAB_LEFT_PADDING[dv.currentTab] or 10
-
-    local line = CreateFrame("Button", nil, parent)
-    line:SetPoint("TOPLEFT", pad, y)
-    line:SetSize(560, 22)
-    line:RegisterForClicks("AnyUp")
-
-    local nameFS = line:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    nameFS:SetPoint("LEFT", 0, 0)
-    nameFS:SetText(boss.title)
-
-local function IsBossCollected(bossID)
-    local goodies = dv.vendorGoodies[bossID]
-    if not goodies then return false end
-
-    for _, itemID in ipairs(goodies) do
-        if IsItemCollected(itemID) then
-            return true
-        end
-    end
-
-    return false
-end
-
-local isCollected = IsBossCollected(boss.id)
-
-
-if isCollected then
-    nameFS:SetTextColor(0.2, 1, 0.2)
-else
-    nameFS:SetTextColor(1,1,1)
-end
-
-    local waypoint = CreateFrame("Button", nil, line, "UIPanelButtonTemplate")
-    waypoint:SetSize(80, 16)
-    waypoint:SetPoint("CENTER", line, "CENTER", 0, 0)
-    waypoint:SetText("Waypoint")
-
-    waypoint:SetScript("OnClick", function()
-        if hasTomTom then
-            TomTom:AddWaypoint(
-                boss.mapID,
-                boss.x / 100,
-                boss.y / 100,
-                {
-                    title = boss.title,
-                    persistent = false,
-                    minimap = true,
-                    world = true,
-                }
-            )
-        end
-
-        local vec = CreateVector2D(boss.x/100, boss.y/100)
-        local mapPoint = UiMapPoint.CreateFromVector2D(boss.mapID, vec)
-        C_Map.SetUserWaypoint(mapPoint)
-        C_SuperTrack.SetSuperTrackedUserWaypoint(true)
-    end)
-
-    local zoneFS = line:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    zoneFS:SetPoint("RIGHT", -8, 0)
-    zoneFS:SetText(boss.zone or "")
-
-line:SetScript("OnEnter", function()
-    SetCursor("INSPECT_CURSOR")
-
-    GameTooltip:SetOwner(line, "ANCHOR_RIGHT")
-    GameTooltip:AddLine(boss.title)
-    GameTooltip:AddLine(boss.zone, 1,1,1)
-    GameTooltip:AddLine("\n|cff00ff00Left-Click|r View Catalogue",1,1,1)
-	GameTooltip:AddLine("\n|cff00ff00Green Name|r Means Collected",1,1,1)
-    GameTooltip:Show()
-
-    local goodies = dv.vendorGoodies[boss.id]
-end)
-
-line:SetScript("OnLeave", function()
-    ResetCursor()
-    GameTooltip:Hide()
-    
-
-    if dv.previewFrame then
-        dv.previewFrame:Hide()
-    end
-end)
-
-line:SetScript("OnClick", function(_, button)
-
-    local goodies = dv.vendorGoodies[boss.id]
-    if not goodies or not goodies[1] then return end
-
-    local itemID = goodies[1]   -- First item this boss drops
-
-    if button == "LeftButton" then
-
-        -- Preferred modern function
-        if C_HousingCatalog.OpenToItem then
-            C_HousingCatalog.OpenToItem(itemID)
-            return
-        end
-
-        -- Fallback for older clients
-        if C_HousingCatalog.OpenToItemID then
-            C_HousingCatalog.OpenToItemID(itemID)
-            return
-        end
-
-        -- FINAL fallback: dress-room preview
-        DressUpItemLink("item:" .. itemID)
-        return
-    end
-
-end)
-
-    table.insert(activeWidgets, line)
-    return y - 28
-end]]
-
-local function CreateBossDropLine(parent, boss, y)
-    local pad = TAB_LEFT_PADDING[dv.currentTab] or 10
-
-    local line = CreateFrame("Button", nil, parent)
-    line:SetPoint("TOPLEFT", pad, y)
-    line:SetSize(560, 22)
-    line:RegisterForClicks("AnyUp")
-
-    -------------------------------------------------
-    -- TEXT
-    -------------------------------------------------
-    local nameFS = line:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-    nameFS:SetPoint("LEFT", 0, 0)
-
-nameFS:SetText("Loading...")
-
-local item = Item:CreateFromItemID(boss.id)
-item:ContinueOnItemLoad(function()
-    local itemName = item:GetItemName()
-    if itemName and nameFS then
-        nameFS:SetText(itemName)
-    end
-end)
-
-
-    -------------------------------------------------
-    -- COLLECTED CHECK
-    -------------------------------------------------
-    local isCollected = IsItemCollected(boss.id)
-
-    if isCollected then
-        nameFS:SetTextColor(0.2, 1, 0.2) -- green
-    else
-        nameFS:SetTextColor(1, 1, 1)
-    end
-
-    -------------------------------------------------
-    -- SOURCE TEXT (RIGHT SIDE)
-    -------------------------------------------------
-    local sourceFS = line:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
-    sourceFS:SetPoint("RIGHT", -8, 0)
-
-    if boss.bossencounter then
-        local encounterName = EJ_GetEncounterInfo(boss.bossencounter)
-        sourceFS:SetText(encounterName or "Unknown Boss")
-    elseif boss.bossevent then
-        sourceFS:SetText(boss.bossevent)
-    else
-        sourceFS:SetText("Unknown Source")
-    end
-
-    -------------------------------------------------
-    -- TOOLTIP
-    -------------------------------------------------
-    line:SetScript("OnEnter", function()
-        SetCursor("INSPECT_CURSOR")
-
-        GameTooltip:SetOwner(line, "ANCHOR_RIGHT")
-        GameTooltip:SetItemByID(boss.id)
-
-        if boss.bossencounter then
-            GameTooltip:AddLine("\nDrops from:", 1, 0.82, 0)
-            local name = EJ_GetEncounterInfo(boss.bossencounter)
-            GameTooltip:AddLine(name or "Unknown Boss", 1, 1, 1)
-            GameTooltip:AddLine("\n|cff00ff00Left-Click|r View Decor", 1, 1, 1)
-            GameTooltip:AddLine("|cff00ff00Right-Click|r View Dungeon Map", 1, 1, 1)
-        elseif boss.bossevent then
-            GameTooltip:AddLine("\nSource:", 1, 0.82, 0)
-            GameTooltip:AddLine(boss.bossevent, 1, 1, 1)
-            GameTooltip:AddLine("\n|cff00ff00Left-Click|r View Decor", 1, 1, 1)
-            GameTooltip:AddLine("|cff00ff00Right-Click|r View Map", 1, 1, 1)
-        end
-
-        if isCollected then
-            GameTooltip:AddLine("\n|cff00ff00Collected|r", 0.2, 1, 0.2)
-        end
-
-        GameTooltip:Show()
-    end)
-
-    line:SetScript("OnLeave", function()
-        ResetCursor()
-        GameTooltip:Hide()
-
-        if dv.previewFrame then
-            dv.previewFrame:Hide()
-        end
-    end)
-
-    -------------------------------------------------
-    -- CLICK HANDLING
-    -------------------------------------------------
-    line:SetScript("OnClick", function(_, button)
-        -------------------------------------------------
-        -- LEFT CLICK → OPEN HOUSING CATALOG
-        -------------------------------------------------
-        if button == "LeftButton" then
-            if C_HousingCatalog.OpenToItem then
-                C_HousingCatalog.OpenToItem(boss.id)
-                return
-            end
-
-            if C_HousingCatalog.OpenToItemID then
-                C_HousingCatalog.OpenToItemID(boss.id)
-                return
-            end
-
-            DressUpItemLink("item:" .. boss.id)
-            return
-        end
-
-        -------------------------------------------------
-        -- RIGHT CLICK → OPEN MAP (SAFE FOR ALL SOURCES)
-        -------------------------------------------------
-        if button == "RightButton" then
-            if InCombatLockdown() then return end
-            if boss.mapID then
-                C_Map.OpenWorldMap(boss.mapID)
-            end
-        end
-    end)
-
-    table.insert(activeWidgets, line)
-    return y - 24
-end
-
-
+-- Goodie, Achievement and Boss Lines
 
 local function HasAnySelection(tbl)
     if not tbl then return false end
@@ -2473,308 +1462,7 @@ local function HasAnySelection(tbl)
     return false
 end
 
-function dv.BuildVendorFilters()
-    local parent = dv.sidebarFilters
-
-    -- wipe old
-    for _, child in ipairs({ parent:GetChildren() }) do
-        child:Hide()
-        child:SetParent(nil)
-    end
-
-    local y = -6
-    local HEADER_X = 12
-    local CHECKBOX_X = 20
-    local SPACING = 20
-
-    local function Header(text)
-        local fs = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        fs:SetPoint("TOPLEFT", HEADER_X, y)
-        fs:SetTextColor(1, 0.82, 0)
-        fs:SetText(text)
-        y = y - 20
-    end
-
-    local function Checkbox(label, tbl, key)
-        tbl[key] = tbl[key] or false
-        local cb = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
-        cb:SetPoint("TOPLEFT", CHECKBOX_X, y)
-        cb.Text:SetText(label)
-        cb:SetChecked(tbl[key])
-        cb:SetScript("OnClick", function(self)
-            tbl[key] = self:GetChecked()
-			dv.filtersJustChanged = true
-            BuildVendorUI()
-        end)
-        y = y - SPACING
-    end
-
-    -- EXPANSIONS
-    Header("Expansions")
-    selectedExpansions = selectedExpansions or {}
-    local seen = {}
-
-    for _, npc in ipairs(dv.npcs or {}) do
-        local exp = npc.expansion
-        if exp and not seen[exp] then
-            seen[exp] = true
-            Checkbox(exp, selectedExpansions, exp)
-        end
-    end
-
-    y = y - 10
-
-    -- FACTION
-    Header("Faction")
-    selectedFactions = selectedFactions or {}
-
-    for _, f in ipairs({ "alliance", "horde", "neutral" }) do
-        Checkbox(f, selectedFactions, f)
-    end
-end
-
-function dv.BuildQuestFilters()
-    local parent = dv.sidebarFilters
-
-    for _, child in ipairs({ parent:GetChildren() }) do
-        child:Hide()
-        child:SetParent(nil)
-    end
-
-    local y = -6
-    local HEADER_X = 12
-    local CHECKBOX_X = 20
-    local SPACING = 20
-
-    local function Header(text)
-        local fs = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        fs:SetPoint("TOPLEFT", HEADER_X, y)
-        fs:SetTextColor(1, 0.82, 0)
-        fs:SetText(text)
-        y = y - 20
-    end
-
-    local function Checkbox(label, tbl, key)
-        tbl[key] = tbl[key] or false
-        local cb = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
-        cb:SetPoint("TOPLEFT", CHECKBOX_X, y)
-        cb.Text:SetText(label)
-        cb:SetChecked(tbl[key])
-        cb:SetScript("OnClick", function(self)
-            tbl[key] = self:GetChecked()
-			dv.filtersJustChanged = true
-            BuildVendorUI()
-        end)
-        y = y - SPACING
-    end
-
-    -- CATEGORIES
-    Header("Categories")
-    selectedQuests = selectedQuests or {}
-
-    for _, group in ipairs(dv.quests or {}) do
-        Checkbox(group.name, selectedQuests, group.name)
-    end
-
-    y = y - 10
-
-    -- FACTIONS USED IN QUESTS
-    Header("Faction")
-    selectedFactionz = selectedFactionz or {}
-    local found = {}
-
-for _, group in ipairs(dv.quests or {}) do
-    for _, quest in ipairs(group.quests or {}) do
-        if quest.faction then
-            found[string.lower(quest.faction)] = true
-        end
-    end
-end
-
-
-    for f,_ in pairs(found) do
-        Checkbox(f, selectedFactionz, f)
-    end
-end
-
-function dv.BuildProfessionFilters()
-    local parent = dv.sidebarFilters
-
-    for _, child in ipairs({ parent:GetChildren() }) do
-        child:Hide()
-        child:SetParent(nil)
-    end
-
-    local y = -6
-    local HEADER_X = 12
-    local CHECKBOX_X = 20
-    local SPACING = 20
-
-    local function Header(text)
-        local fs = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        fs:SetPoint("TOPLEFT", HEADER_X, y)
-        fs:SetTextColor(1, 0.82, 0)
-        fs:SetText(text)
-        y = y - 20
-    end
-
-    local function Checkbox(label, tbl, key)
-        tbl[key] = tbl[key] or false
-        local cb = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
-        cb:SetPoint("TOPLEFT", CHECKBOX_X, y)
-        cb.Text:SetText(label)
-        cb:SetChecked(tbl[key])
-        cb:SetScript("OnClick", function(self)
-            tbl[key] = self:GetChecked()
-			dv.filtersJustChanged = true
-            BuildVendorUI()
-        end)
-        y = y - SPACING
-    end
-
-    -- CATEGORIES
-    Header("Categories")
-    selectedProfessions = selectedProfessions or {}
-
-    for _, group in ipairs(dv.professions or {}) do
-        Checkbox(group.name, selectedProfessions, group.name)
-    end
-
-    y = y - 10
-end
-
-function dv.BuildAchievementFilters()
-    local parent = dv.sidebarFilters
-
-    for _, child in ipairs({ parent:GetChildren() }) do
-        child:Hide()
-        child:SetParent(nil)
-    end
-
-    local y = -6
-    local HEADER_X = 12
-    local CHECKBOX_X = 20
-    local SPACING = 20
-
-    local function Header(text)
-        local fs = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        fs:SetPoint("TOPLEFT", HEADER_X, y)
-        fs:SetTextColor(1, 0.82, 0)
-        fs:SetText(text)
-        y = y - 20
-    end
-
-    local function Checkbox(label, tbl, key)
-        tbl[key] = tbl[key] or false
-        local cb = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
-        cb:SetPoint("TOPLEFT", CHECKBOX_X, y)
-        cb.Text:SetText(label)
-        cb:SetChecked(tbl[key])
-        cb:SetScript("OnClick", function(self)
-            tbl[key] = self:GetChecked()
-			dv.filtersJustChanged = true
-            BuildVendorUI()
-        end)
-        y = y - SPACING
-    end
-
-    -- CATEGORIES
-    Header("Categories")
-    selectedAchievements = selectedAchievements or {}
-
-    for _, group in ipairs(dv.achievements or {}) do
-        Checkbox(group.name, selectedAchievements, group.name)
-    end
-
-    y = y - 10
-
-    -- FACTION
-    Header("Faction")
-    selectedFactionz = selectedFactionz or {}
-    local found = {}
-
-for _, group in ipairs(dv.achievements or {}) do
-    for _, achieve in ipairs(group.achievements or {}) do
-        if achieve.faction then
-            found[string.lower(achieve.faction)] = true
-        end
-    end
-end
-
-
-    for f,_ in pairs(found) do
-        Checkbox(f, selectedFactionz, f)
-    end
-end
-
-function dv.BuildBossDropFilters()
-    local parent = dv.sidebarFilters
-
-    -- wipe sidebar
-    for _, child in ipairs({ parent:GetChildren() }) do
-        child:Hide()
-        child:SetParent(nil)
-    end
-
-    local y = -6
-
-    -- Header builder
-    local function Header(text)
-        local fs = parent:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-        fs:SetPoint("TOPLEFT", 12, y)
-        fs:SetTextColor(1, 0.82, 0)
-        fs:SetText(text)
-        y = y - 20
-    end
-
-    -- Checkbox builder
-    local function Checkbox(label, tbl, key)
-        tbl[key] = tbl[key] or false
-        local cb = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
-        cb:SetPoint("TOPLEFT", 20, y)
-        cb.Text:SetText(label)
-        cb:SetChecked(tbl[key])
-
-        cb:SetScript("OnClick", function(self)
-            tbl[key] = self:GetChecked()
-            dv.filtersJustChanged = true
-            BuildVendorUI() -- refresh
-        end)
-
-        y = y - 20
-    end
-
-    ---------------------------------------------------------
-    -- EXPANSIONS (ONLY FILTER WE USE)
-    ---------------------------------------------------------
-    Header("Expansions")
-    selectedBossExpansions = selectedBossExpansions or {}
-
-    local seenExp = {}
-    for _, g in ipairs(dv.bossdrops) do
-        seenExp[g.expansion] = true
-    end
-
-    -- alphabetical order is nice!
-    local list = {}
-    for exp in pairs(seenExp) do table.insert(list, exp) end
-    table.sort(list)
-
-    for _, exp in ipairs(list) do
-        Checkbox(exp, selectedBossExpansions, exp)
-    end
-end
-
-function dv.ResetSidebarFilters()
-    if dv.sidebarFilters then
-        dv.sidebarFilters:Hide()
-        dv.sidebarFilters:SetParent(nil)
-    end
-
-    -- Create a brand-new container
-    dv.sidebarFilters = CreateFrame("Frame", nil, dv.sidebar)
-    dv.sidebarFilters:SetAllPoints()
-end
+-- Filters Original Spot
 
 function UpdateSidebarForTab()
     dv.sidebar:Show()
@@ -2884,7 +1572,7 @@ end
                 -- Create header WITH progress
                 ------------------------------------------------
                 local collapsed, newY =
-                    CreateProfessionHeader(scrollChild, profession, y, completedCount, total)
+                    dv.CreateProfessionHeader(scrollChild, profession, y, completedCount, total)
                 y = newY
 
                 ------------------------------------------------
@@ -2892,7 +1580,7 @@ end
                 ------------------------------------------------
                 if not collapsed then
                     for _, item in ipairs(visible) do
-                        y = CreateProfessionLine(scrollChild, item, y)
+                        y = dv.CreateProfessionLine(scrollChild, item, y)
                     end
                     y = y - 10
                 end
@@ -2909,7 +1597,7 @@ end
         msg:SetPoint("TOP", 0, -50)
         msg:SetText("No profession data available.")
         msg:SetTextColor(0.7, 0.7, 0.7)
-        table.insert(activeWidgets, msg)
+        table.insert(dv.activeWidgets, msg)
     end
 
     scrollChild:SetHeight(math.abs(y) + 40)
@@ -2918,24 +1606,23 @@ end
 function BuildQuestList()
     dv.ClearWidgets()
 
-    -- Prepare filters
-    selectedQuests = selectedQuests or {}
-    selectedFactionz   = selectedFactionz   or {}
+    selectedQuests   = selectedQuests   or {}
+    selectedFactionz = selectedFactionz or {}
 
     local catSel = selectedQuests
     local facSel = selectedFactionz
 
     local hasCategoryFilter = HasAnySelection(catSel)
     local hasFactionFilter  = HasAnySelection(facSel)
-	
+
     local y = -6
 
     --------------------------------------------------------
-    -- 1) Copy and sort quest groups
+    -- Copy & sort quest groups
     --------------------------------------------------------
     local questGroups = {}
     for _, g in ipairs(dv.quests or {}) do
-        questGroups[#questGroups + 1] = g
+        table.insert(questGroups, g)
     end
 
     table.sort(questGroups, function(a, b)
@@ -2943,88 +1630,80 @@ function BuildQuestList()
     end)
 
     --------------------------------------------------------
-    -- 2) Loop through category groups
+    -- Loop groups
     --------------------------------------------------------
     for _, group in ipairs(questGroups) do
 
-        ----------------------------------------------------
-        -- CATEGORY FILTER: skip group if not selected
-        ----------------------------------------------------
-        if hasCategoryFilter and not catSel[group.name] then
-            -- skip entire category group
-        else
+        -- CATEGORY FILTER
+        if not hasCategoryFilter or catSel[group.name] then
 
             ------------------------------------------------
-            -- Build list of visible quests
+            -- Build visible list
             ------------------------------------------------
             local visible = {}
 
             for _, quest in ipairs(group.quests or {}) do
-                local include = true
-local isCompleted = C_QuestLog.IsQuestFlaggedCompleted(quest.id)
+                if quest then
+                    local include = true
+                    local isCompleted = dv.IsQuestEffectivelyCompleted(quest)
 
--- Only hide if Hide Completed ON and Mark Completed OFF
-if isCompleted and vendorSettings.hideCompleted and not vendorSettings.markCompleted then
-    include = false
-end
-
--- Pass completion state forward for visuals
-quest.__isCompleted = isCompleted
-
-                -- FACTION FILTER
-                if hasFactionFilter then
-                    local f = quest.faction and string.lower(quest.faction)
-                    if not facSel[f] then
+                    -- Hide completed
+                    if isCompleted and vendorSettings.hideCompleted and not vendorSettings.markCompleted then
                         include = false
                     end
-                end
 
-                if include then
-                    table.insert(visible, quest)
+                    -- Faction filter
+                    if include and hasFactionFilter then
+                        local f = quest.faction and string.lower(quest.faction)
+                        if f and not facSel[f] then
+                            include = false
+                        end
+                    end
+
+                    if include then
+                        table.insert(visible, quest)
+                    end
                 end
             end
 
+            ------------------------------------------------
+            -- Skip empty groups
+            ------------------------------------------------
+            if #visible > 0 then
 
-------------------------------------------------
--- Skip category if no matching quests
-------------------------------------------------
-if #visible > 0 then
+                ------------------------------------------------
+                -- Header counts (MATCH line logic)
+                ------------------------------------------------
+                local total, completed = 0, 0
+                for _, quest in ipairs(visible) do
+                    total = total + 1
+                    if dv.IsQuestEffectivelyCompleted(quest) then
+                        completed = completed + 1
+                    end
+                end
 
-    --------------------------------------------
-    -- COUNT QUEST COMPLETION (⬅️ THIS IS NEW)
-    --------------------------------------------
-    local total, completed = 0, 0
+                ------------------------------------------------
+                -- Header
+                ------------------------------------------------
+                local collapsed, newY = dv.CreateQuestHeader(
+                    scrollChild,
+                    group,
+                    y,
+                    completed,
+                    total
+                )
+                y = newY
 
-    for _, quest in ipairs(visible) do
-        total = total + 1
-        if C_QuestLog.IsQuestFlaggedCompleted(quest.id) then
-            completed = completed + 1
-        end
-    end
-
-    --------------------------------------------
-    -- Create header WITH COUNTS
-    --------------------------------------------
-    local collapsed, newY = CreateQuestHeader(
-        scrollChild,
-        group.name,
-        y,
-        completed,
-        total
-    )
-    y = newY
-
-    --------------------------------------------
-    -- Draw quests only if header is expanded
-    --------------------------------------------
-    if not collapsed then
-        for _, quest in ipairs(visible) do
-            y = CreateGoodieLine(scrollChild, quest, y)
-        end
-        y = y - 10
-    end
-end
-
+                ------------------------------------------------
+                -- Lines
+                ------------------------------------------------
+                if not collapsed then
+                    for _, quest in ipairs(visible) do
+                        y = dv.CreateGoodieLine(scrollChild, quest, y)
+                    end
+                    y = y - 10
+                end
+            end
         end
     end
 
@@ -3125,7 +1804,7 @@ if #visible > 0 then
     --------------------------------------------
     -- Create header WITH COUNTS
     --------------------------------------------
-    local collapsed, newY = CreateAchievementHeader(
+    local collapsed, newY = dv.CreateAchievementHeader(
         scrollChild,
         group.name,
         y,
@@ -3139,7 +1818,7 @@ if #visible > 0 then
     --------------------------------------------
     if not collapsed then
         for _, achieve in ipairs(visible) do
-            y = CreateGoodieLine(scrollChild, achieve, y)
+            y = dv.CreateGoodieLine(scrollChild, achieve, y)
         end
         y = y - 10
     end
@@ -3209,7 +1888,7 @@ for _, group in ipairs(groups) do
         -- HEADER
         -----------------------------------------
         local collapsed, newY =
-            CreateBossDropHeader(scrollChild, group, collected, total, y)
+            dv.CreateBossDropHeader(scrollChild, group, collected, total, y)
 
         y = newY
 
@@ -3218,7 +1897,7 @@ for _, group in ipairs(groups) do
         -----------------------------------------
         if not collapsed then
             for _, boss in ipairs(group.items or {}) do
-                y = CreateBossDropLine(scrollChild, boss, y)
+                y = dv.CreateBossDropLine(scrollChild, boss, y)
             end
             y = y - 10
         end
@@ -3230,7 +1909,7 @@ end
         local msg = scrollChild:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
         msg:SetPoint("TOP", 0, -40)
         msg:SetText("No boss drop data available.")
-        table.insert(activeWidgets, msg)
+        table.insert(dv.activeWidgets, msg)
     end
 
     scrollChild:SetHeight(math.abs(y) + 40)
@@ -3356,12 +2035,12 @@ end
                 end
 
                 local _, collapsed, newY =
-                    CreateVendorHeader(scrollChild, group, y, completed, total)
+                    dv.CreateVendorHeader(scrollChild, group, y, completed, total)
                 y = newY
 
                 if not collapsed then
                     for _, vendor in ipairs(visibleVendors) do
-                        y = CreateVendorLine(scrollChild, vendor, y)
+                        y = dv.CreateVendorLine(scrollChild, vendor, y)
                     end
                     y = y - 10
                 end
@@ -3378,7 +2057,7 @@ end
         msg:SetPoint("TOP", 0, -50)
         msg:SetText("No vendors match these filters.")
         msg:SetTextColor(0.7, 0.7, 0.7)
-        table.insert(activeWidgets, msg)
+        table.insert(dv.activeWidgets, msg)
     end
 
     scrollChild:SetHeight(math.abs(y) + 20)
@@ -3396,7 +2075,7 @@ local function BuildAboutScreen()
     title:SetPoint("TOP", frame, "TOP", 0, -80)
     title:SetTextColor(1, 0.82, 0)
     title:SetText("DecorVendor Addon")
-    table.insert(activeWidgets, title)
+    table.insert(dv.activeWidgets, title)
 
     ----------------------------------------
     -- DESCRIPTION
@@ -3406,7 +2085,7 @@ local function BuildAboutScreen()
     desc:SetPoint("TOP", title, "BOTTOM", 0, -20)
     desc:SetJustifyH("CENTER")
     desc:SetText("Created by MidniteDestiny\n\nThank you for using DecorVendor!\nThis addon provides vendors, quests, achievements,\npreviews, tracking tools, and more.")
-    table.insert(activeWidgets, desc)
+    table.insert(dv.activeWidgets, desc)
 
     ----------------------------------------
     -- IMAGE
@@ -3416,7 +2095,7 @@ local function BuildAboutScreen()
     art:SetPoint("TOP", desc, "BOTTOM", 0, -30)
     art:SetTexture("Interface\\AddOns\\DecorVendor\\Assets\\cutie") 
     -- (Do NOT include .png extension)
-    table.insert(activeWidgets, art)
+    table.insert(dv.activeWidgets, art)
 
     ----------------------------------------
     -- FOOTER (single centered line)
@@ -3426,7 +2105,7 @@ local function BuildAboutScreen()
     footer:SetJustifyH("CENTER")
     footer:SetWidth(300)  -- ensures no word wrapping
     footer:SetText("|cffffdd00Decor Vendor|r • developed by |cff00aaffMidniteDestiny|r • First to introduce vendor tracking")
-    table.insert(activeWidgets, footer)
+    table.insert(dv.activeWidgets, footer)
 
     ----------------------------------------
     -- Update scroll area
@@ -3477,11 +2156,11 @@ local function AddSupportLink(parent, labelText, url, y)
     btn:SetSize(180, 26)
     btn:SetPoint("TOPLEFT", 20, y)
     btn:SetText(labelText)
-    table.insert(activeWidgets, btn)
+    table.insert(dv.activeWidgets, btn)
 
     -- URL box (initially visible, but passive)
     local box = CreateURLBox(parent, btn, url)
-    table.insert(activeWidgets, box)
+    table.insert(dv.activeWidgets, box)
 
     -- Clicking button highlights URL
     btn:SetScript("OnClick", function()
@@ -3501,9 +2180,8 @@ local function BuildSupportPage()
     -- Title
     local title = parent:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
     title:SetPoint("TOP", parent, "TOP", 10, y)
-	--title:SetPoint("TOP", frame, "TOP", 0, -80)
     title:SetText("Support Decor Vendor")
-    table.insert(activeWidgets, title)
+    table.insert(dv.activeWidgets, title)
     y = y - 20
 
     local function AddText(text, spacing)
@@ -3514,7 +2192,7 @@ local function BuildSupportPage()
         fs:SetJustifyV("TOP")
         fs:SetText(text)
 
-        table.insert(activeWidgets, fs)
+        table.insert(dv.activeWidgets, fs)
         y = y - (fs:GetStringHeight() + (spacing or 20))
     end
 
@@ -3544,9 +2222,8 @@ local function BuildSupportPage()
 	)
 
 
-    AddText("|cffFFD200Other Ways to Support|r", 10)
-    y = AddSupportLink(parent, "Ko-fi", "https://ko-fi.com/midnitedestiny", y)
-    y = AddSupportLink(parent, "Buy Me a Coffee", "https://www.buymeacoffee.com/midnitedestiny", y)
+    AddText("|cffFFD200Thank You|r", 10)
+	AddText("Thank you to those who have supported me", 15)
 	
 	AddText("|cffFFD200Contact Me|r", 10)
 
@@ -3578,9 +2255,8 @@ local function BuildTipsPage()
     -- Title
 local title = parent:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 title:SetPoint("TOP", parent, "TOP", 10, y)
---title:SetPoint("TOP", frame, "TOP", 0, -80)
 title:SetText("Tips & Helpful Info")
-table.insert(activeWidgets, title)
+table.insert(dv.activeWidgets, title)
 y = y - 20
 
 
@@ -3593,24 +2269,22 @@ local function AddText(text, spacing)
     fs:SetJustifyV("TOP")
     fs:SetText(text)
 
-    table.insert(activeWidgets, fs) -- 🔥 THIS IS THE FIX
+    table.insert(dv.activeWidgets, fs) -- 🔥 THIS IS THE FIX
 
     y = y - (fs:GetStringHeight() + (spacing or 20))
 end
-
 
     -- Sections
     AddText("|cffFFD200Items not showing or dropping|r", 10)
     AddText(
         "Most of these were on 12.0 PTR and Beta  give it time and they will show up if there not out by first week in Midnight launch I will remove them\n")
 
-    AddText("|cffFFD200Professions and Quests|r", 10)
+    AddText("|cffFFD200Housing Endeavor Vendors|r", 10)
     AddText(
-        "Profession decor comes from various recipes and trainers and is still being worked on.")
+        "The vendors are based on three possibilities: Public Neighboorhoods is server side chosen, Guild neighborhoods are Guild rank permission picked and finaly priority endeauvers are pushed first based on in game events like expansion related or possibly holiday")
 
     AddText("|cffFFD200Achievements|r", 10)
     AddText(
-        "Left-click opens the achievement in-game.\n"..
 		"Do not open opposite faction achievements as it will not show you anything in the achievement frame.\n"..
 		"Drum Circle from Legion is a hidden achievement Hint: if its not showing go to base of Thunder Totem at the bottom in Highmountain and jump for roughly 2 minutes at the same pace and you will be awarded it. Same Beat not fast or slow just steady for roughly 2 minutes.")
 	
@@ -3628,6 +2302,34 @@ AddText("|cffFFD200Line Color Indicator|r  |cff9d9d9dGrey|r = Found Vendor, Comp
 
 
 
+end
+
+-- Event Line Original Spot
+
+function BuildEventList()
+    dv.ClearWidgets()
+    local y = -6
+
+    for _, group in ipairs(dv.events or {}) do
+        local total = #group.items
+        local completed = 0
+
+        for _, event in ipairs(group.items) do
+            if dv.IsItemCollected(event.itemID) then
+                completed = completed + 1
+            end
+        end
+
+
+    for _, event in ipairs(group.items or {}) do
+        y = dv.CreateEventItemLine(scrollChild, event, y)
+    end
+    y = y - 10
+
+
+    end
+
+    scrollChild:SetHeight(math.abs(y) + 40)
 end
 
 function BuildVendorUI()
@@ -3654,6 +2356,9 @@ function BuildVendorUI()
 	
 	elseif dv.currentTab == "tips" then
         BuildTipsPage()
+		
+	elseif dv.currentTab == "events" then
+		BuildEventList()	
 end
 
    -- 🔥 RESET FILTER CHANGE FLAG AFTER BUILD
@@ -3796,13 +2501,39 @@ end
 
 SLASH_DECORVENDOROPTIONS1 = "/dvoptions"
 SLASH_DECORVENDOROPTIONS2 = "/decoroptions"
-
 SlashCmdList["DECORVENDOROPTIONS"] = function()
     if Settings and Settings.OpenToCategory and dv_optionsCategory then
         Settings.OpenToCategory(dv_optionsCategory:GetID())
     end
 end
 
+function DecorVendor_OnAddonCompartmentClick(addonName, button)
+    if button == "LeftButton" then
+        if frame:IsShown() then
+            frame:Hide()
+        else
+            frame:Show()
+        end
+    elseif button == "RightButton" then
+        if Settings and dv_optionsCategory then
+            Settings.OpenToCategory(dv_optionsCategory:GetID())
+        end
+    end
+end
+
+function DecorVendor_OnAddonCompartmentEnter(addonName, button)
+    GameTooltip:SetOwner(button, "ANCHOR_LEFT")
+    GameTooltip:SetText("Decor Vendor", 1, 0.82, 0)
+
+    GameTooltip:AddLine("Left-click: Open Decor Vendor", 1, 1, 1)
+    GameTooltip:AddLine("Right-click: Open Settings", 1, 1, 1)
+
+    GameTooltip:Show()
+end
+
+function DecorVendor_OnAddonCompartmentLeave(addonName, button)
+    GameTooltip:Hide()
+end
 
 
 
