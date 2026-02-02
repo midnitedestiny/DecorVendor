@@ -789,7 +789,7 @@ dv.vendorGoodies = {
 [235314] = {260582},
 [235252] = {247751, 258885, 258668, 258667, 258669, 258666, 258835, 258766, 258836, 258767, 258320, 258306},
 [218202] = {246866},
---Twilight Ascencision
+--Twilight Ascension
 [249196] = {245284, 245330, 251997},
 --Midnight
 [252605] = {262664, 263048, 263043, 263045, 263046, 262884, 263044, 263047, 262665, 262666, 262667, 262907},
@@ -2795,8 +2795,8 @@ dv.npcs = {
     }
   },
     {
-    name = "Twlight Highlands",
-	expansion = "Twilight Ascencision",
+    name = "Twilight Highlands",
+	expansion = "Twilight Ascension",
       vendors = {
         { zone = "Near Crushblow", faction = "neutral", id = 249196, model3D = 136463, title = "Materialist Ophinell", x = 49.6, y = 81.2, mapID = 241 },
     }
@@ -3480,7 +3480,7 @@ dv.events = {
                 note = "must watch 4 hours to claim the item",
             },
 			{
-                id = "Twilight Ascencision",
+                id = "Twilight Ascension",
                 title = "Silvermoon Wooden Chair",
                 description = "Kill rares and do dailies to get currency for these items",
                 --decorID = 714,
@@ -3490,7 +3490,7 @@ dv.events = {
                 note = "50 Twilight Blade Insignias",
             },
 			{
-                id = "Twilight Ascencision",
+                id = "Twilight Ascension",
                 title = "Enchanted Blood Elven Candelabra",
                 description = "Kill rares and do dailies to get currency for these items",
                 --decorID = 1236,
@@ -3500,7 +3500,7 @@ dv.events = {
                 note = "50 Twilight Blade Insignias",
             },
 			{
-                id = "Twilight Ascencision",
+                id = "Twilight Ascension",
                 title = "Sin'dorei Winged Chaise",
                 description = "Kill rares and do dailies to get currency for these items",
                 --decorID = 1227,
