@@ -37,18 +37,27 @@ function dv.BuildVendorFilters()
         y = y - SPACING
     end
 
-    -- EXPANSIONS
-    Header("Expansions")
-    selectedExpansions = selectedExpansions or {}
-    local seen = {}
+-- EXPANSIONS
+Header("Expansions")
+selectedExpansions = selectedExpansions or {}
 
-    for _, npc in ipairs(dv.npcs or {}) do
-        local exp = npc.expansion
-        if exp and not seen[exp] then
-            seen[exp] = true
-            Checkbox(exp, selectedExpansions, exp)
-        end
+local seen = {}
+
+-- discover which expansions are actually used
+for _, vendor in ipairs(dv.npcs or {}) do
+    local exp = vendor.expansion
+    if exp then
+        seen[exp] = true
     end
+end
+
+-- render in defined expansion order
+for _, exp in ipairs(dv.EXPANSION_ORDER) do
+    if seen[exp] then
+        Checkbox(exp, selectedExpansions, exp)
+    end
+end
+
 
     y = y - 10
 
@@ -275,22 +284,25 @@ function dv.BuildBossDropFilters()
     ---------------------------------------------------------
     -- EXPANSIONS (ONLY FILTER WE USE)
     ---------------------------------------------------------
-    Header("Expansions")
-    selectedBossExpansions = selectedBossExpansions or {}
+Header("Expansions")
+selectedBossExpansions = selectedBossExpansions or {}
 
-    local seenExp = {}
-    for _, g in ipairs(dv.bossdrops) do
-        seenExp[g.expansion] = true
+local seenExp = {}
+
+-- discover which expansions are used by boss drops
+for _, group in ipairs(dv.bossdrops or {}) do
+    if group.expansion then
+        seenExp[group.expansion] = true
     end
+end
 
-    -- alphabetical order is nice!
-    local list = {}
-    for exp in pairs(seenExp) do table.insert(list, exp) end
-    table.sort(list)
-
-    for _, exp in ipairs(list) do
+-- render in defined expansion order
+for _, exp in ipairs(dv.EXPANSION_ORDER or {}) do
+    if seenExp[exp] then
         Checkbox(exp, selectedBossExpansions, exp)
     end
+end
+
 end
 
 function dv.ResetSidebarFilters()

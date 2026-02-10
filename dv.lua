@@ -1,5 +1,14 @@
 local addonName, dv = ...
+dv.decorItem = dv.decorItem or {}
 dv.expansions = dv.expansions or {}
+dv.bossdrops = dv.drops
+
+--reminder of where things come from
+--[[local data = dv.decorItem[itemID]
+if data then
+    local decorID = data.decorID
+end]]
+
 
 dv.modelPositions = {
 --Twitch event
@@ -574,7 +583,11 @@ dv.modelPositions = {
   [7385423] = { model_x = 0.00, model_z = 1.40, camera_y = 5.44, zoom = 7.6 },
   [304416] = { model_x = 0.00, model_z = 0.78, camera_y = 8.40, zoom = 22.0 },
   [1597478] = { model_x = 0.00, model_z = 0.04, camera_y = 1.84, zoom = 5.2 }, 
-  [7262874] = { model_x = 0.00, model_z = 0.04, camera_y = 1.54, zoom = 8.8 },  
+  [7262874] = { model_x = 0.00, model_z = 0.12, camera_y = 5.74, zoom = 9.2 },
+  [6699745] = { model_x = 0.00, model_z = 2.44, camera_y = 6.38, zoom = 9.8 },
+  [1361710] = { model_x = 0.00, model_z = 0.00, camera_y = 2.94, zoom = 7.4 },
+  [4290181] = { model_x = 0.00, model_z = -0.74, camera_y = 1.68, zoom = 9.2 },
+  [6840500] = { model_x = 0.00, model_z = 0.28, camera_y = 5.12, zoom = 12.4 },
   --legion remix related
   [7216249] = { model_x = 0.00, model_z = 1.16, camera_y = 7.20, zoom = 14.0 },
   [1349995] = { model_x = 0.00, model_z = 0.38, camera_y = 1.68, zoom = 2.8 },
@@ -608,7 +621,7 @@ dv.vendorGoodies = {
 [68363] = {263026, 259071, 255840},
 [1247] = {256330},
 [44114] = {256905, 245624},
-[23995] = {244852, 245382, 245386, 243290},
+[23995] = {244852},
 [45417] = {248796},
 [253235] = {256425, 245426, 246426, 256333, 252010, 245427, 246491, 246490},
 [50309] = {256333, 246426, 246491, 246490, 252010},
@@ -617,6 +630,7 @@ dv.vendorGoodies = {
 [254606] = {247763, 247756, 247769, 247750, 253170, 247760, 247768, 247765, 247759, 247745, 247727, 247741, 247740, 247770, 247762, 247766, 256896, 247761, 247747},
 [50488] = {253168},
 [256119] = {239177, 246848, 246847, 246860, 246845, 239179},
+[261262] = {260785},
 [14624] = {246409, 245333},
 [144129] = {245291},
 [2140] = {257412},
@@ -625,6 +639,7 @@ dv.vendorGoodies = {
 [49877] = {248617, 256673, 248620, 248797, 248938, 248618, 248621, 248798, 248665, 248794, 248795, 248333, 248336, 248939, 248801, 253168, 248619, 248662},
 [256071] = {239177, 246848, 246847, 246860, 246845, 239179},
 [254603] = {247757, 247744, 247763, 247756, 247769, 247750, 253170, 247758, 247768, 247765, 247741, 247740, 247770, 247762, 247766, 247746, 256896, 247761},
+[261231] = {260785},
 [2483] = {248808},
 [50483] = {243335},
 [50304] = {245504, 245505},
@@ -669,8 +684,8 @@ dv.vendorGoodies = {
 [85427] = {245424, 251544},
 [88220] = {239162},
 [81133] = {257349},
-[87775] = {258749, 258745, 258740, 258741},
-[85950] = {251640, 251477, 251654, 251548, 251653, 251330, 251549, 245425},
+[87775] = {258749, 258745, 258740, 258741, 258748},
+[85950] = {251640, 251477, 251654, 251548, 251653, 251330, 251549, 245425, 251478},
 [85932] = {251483, 251479, 251481, 251476, 251493, 251484, 251551, 245423},
 --Legion 
 [256826] = {258222}, 
@@ -798,28 +813,28 @@ dv.vendorGoodies = {
 [248525] = {254400, 254413, 254408, 254402, 254412, 254405, 254410, 254401, 254403, 254409, 254407, 254766, 254404, 254411, 254415, 254416, 254406},
 [253596] = {262453},
 [257897] = {264923, 264918, 264924, 264915, 264925, 264922, 264921, 264917, 264919, 264916, 264920, 265032, 265541}, 
-[255228] = {263025, 245382, 245374, 245386, 246742, 245366, 246104, 245372, 246880, 246107, 244667, 235523, 246588, 244532, 245379, 245551, 245662, 245365, 245357, 246102, 245359, 246220, 246109, 243334},
-[255230] = {248630, 248634, 248642, 255644, 245371, 248640, 248641, 258658, 248648, 248631, 248650, 248636, 245327, 248633, 258659, 248639, 248629, 245328, 248637, 248645, 248643, 248635, 248628, 248649}, 
-[255222] = {246687, 246243, 252659, 246263, 245356, 244533, 252657, 236654, 236653, 244665, 245335, 246248, 244531, 245383, 252417, 251975, 250093, 245353, 235677, 246259, 246261, 245548, 236655, 245355},
-[255325] = {246687, 246243, 252659, 246263, 245356, 244533, 252657, 236654, 236653, 244665, 245335, 246248, 244531, 245383, 252417, 251975, 250093, 245353, 235677, 246259, 246261, 245548, 236655, 245355},
-[255326] = {263025, 245382, 245374, 245386, 246742, 245366, 246104, 245372, 246880, 246107, 244667, 235523, 246588, 244532, 245379, 245551, 245662, 245365, 245357, 246102, 245359, 246220, 246109, 243334},
-[255319] = {248630, 248634, 248642, 255644, 245371, 248640, 248641, 258658, 248648, 248631, 248650, 248636, 245327, 248633, 258659, 248639, 248629, 245328, 248637, 248645, 248643, 248635, 248628, 248649},
-[255203] = {246248, 245335, 244665, 246247, 252417, 244666, 245383, 258670, 245352, 245354, 235633, 246243, 246245, 245353, 246246, 239075, 245267, 236675, 244531, 244530, 253593, 246502, 245268, 253592},
+[255230] = {266238, 266237, 266236, 248630, 248634, 266235, 248642, 255644, 245371, 266234, 266241, 248640, 248641, 258658, 248648, 248631, 266244, 248650, 248636, 245327, 248633, 258659, 248639, 248629, 245328, 248637, 266245, 248645, 248643, 248635, 266242, 248628, 248649, 248338, 248632, 260702, 255646, 266443, 248644, 266444, 248339, 248626, 248625, 248627, 260701, 245329, 245661, 248647, 245369, 266239, 257388, 248638, 245659, 245660, 248802, 248803, 248811, 248646, 257359, 266243, 257390, 266240, 245658, 257392, 248337}, 
+[255222] = {246223, 250094, 251973, 245398, 246687, 246243, 246263, 244533, 252657, 236654, 236653, 244665, 245335, 246248, 244531, 245383, 252417, 251975, 250093, 246259, 246261, 236655, 244662, 245680, 246260, 246262, 246879, 246036, 245555, 244661, 236666, 250920, 256050, 236667, 245265, 244663, 251974, 246610, 258148, 245532, 257389, 246609, 254316, 245545, 244534, 246607,  246608,  251639, 246869, 247221, 245266, 246038, 254560, 246225, 245264, 246224,  246614, 246613, 248246, 246037, 246587, 250913, 251976},--ren alliance side
+[255325] = { 246243, 252659, 245356, 244665, 245335, 246248, 244531, 245383, 252417, 245353, 235677, 245548, 245355, 245556, 245395, 246247, 244666, 253592, 244778, 245354, 244530, 245336, 245358, 246246, 245392, 245393, 245394, 236678, 236676, 258670, 239075, 245352, 246245, 244664, 242255, 253593, 245334, 245547, 246103, 245268, 246502, 235633, 246101, 236675, 236677, 253589, 245267, 245384, 245370, 235675, 246106, 245376, 245375},--ren horde side
+[255326] = {263025, 245382, 245374, 245386, 246742, 245366, 246104, 245372, 246107, 244667, 235523, 246588, 245379, 245551, 245662, 245365, 245357, 246102, 245359, 246109, 243334, 245657, 245380, 246219, 245368, 245360, 245385, 253590, 245378, 246105, 246106, 242951 }, -- Len Horde Side
+[255228] = { 246880, 244532, 246220, 251637, 245546, 246218, 251638, 246884, 246241, 246883, 256357, 245533, 246616, 246615, 257099, 246611, 246217, 255708, 249550, 246612, 246882, 254893, 251545, 246881, 244535, 245377, 245367, 245656, 246868}, -- Len Alliance Side
+[255319] = {266238, 266237, 266236, 248630, 248634, 266235, 248642, 255644, 245371, 266234, 266241, 248640, 248641, 258658, 248648, 248631, 266244, 248650, 248636, 245327, 248633, 258659, 248639, 248629, 245328, 248637, 266245, 248645, 248643, 248635, 266242, 248628, 248649, 248338, 248632, 260702, 255646, 266443, 248644, 266444, 248339, 248626, 248625, 248627, 260701, 245329, 245661, 248647, 245369, 266239, 257388, 248638, 245659, 245660, 248802, 248803, 248811, 248646, 257359, 266243, 257390, 266240, 245658, 257392, 248337},
 [255221] = {248641, 258658, 245371, 248640, 248643, 255644, 248802, 248803, 248811, 248635, 245328, 248642, 258659, 248639, 248649, 245327, 248645, 248647, 248646, 248644, 245329, 255646, 248338, 248339},
 [256750] = {245400, 245403, 245404, 245402, 245401},
-[255213] = {245656, 246105, 245357, 245359, 245367, 263025, 245386, 245374, 246588, 245377, 246219, 245360, 245657, 243334, 246107, 245380, 245378, 245368, 242951, 245385, 245366, 245365, 245382, 246106},
+[255213] = {245656, 253590, 246109, 246102, 245662, 245551, 245379, 235523, 244667, 245372, 246742, 246104, 246105, 245357, 245359, 245367, 263025, 245386, 245374, 246588, 245377, 246219, 245360, 245657, 243334, 246107, 245380, 245378, 245368, 242951, 245385, 245366, 245365, 245382, 246106}, --The Builder
+[255297] = {246880, 246241, 246868, 246883, 245546, 246218, 246884, 251637, 246881, 246615, 244532, 245533, 256357, 246616, 246217, 251545, 257099, 246611, 251638, 246220, 246882, 255708, 254893, 244535, 249550, 246612}, -- Shonja
+[255203] = {246248, 246106, 245335, 244665, 246247, 252417, 244666, 245383, 258670, 245352, 245354, 235633, 246243, 246245, 245353, 246246, 239075, 245267, 236675, 244531, 244530, 253593, 246502, 245268, 245393, 253592, 245394, 245395}, --xiao
 [255216] = {246252, 246251, 245579, 251981, 244781, 235994, 246249, 246254, 246255, 255650, 264169, 241621, 246257, 247501, 246711, 246250, 246253, 246258, 243242, 253479, 245575, 253180, 246431, 241620},
 [255218] = {257692, 243088, 244782, 244118, 244169, 248658, 244780, 253437, 257691, 247502, 253495, 253439},
-[255297] = {246880, 246241, 246868, 246883, 245546, 246218, 246884, 251637, 246881, 246615, 244532, 245533, 256357, 246616, 246217, 251545, 257099, 246611, 251638, 246220, 246882, 255708, 254893, 249550},
 [240465] = {245400, 245403, 245404, 245402, 245401},
 [255301] = {248638, 248634, 248636, 248625, 248337, 248631, 248630, 260702, 248338, 248633, 248632, 248339, 248626, 248650, 248627, 260701, 257390, 257392, 248628, 257359, 248637, 248629, 257388},
-[255278] = {244662, 246223, 246607, 250094, 251639, 251973, 246036, 250920, 244533, 244534, 246037, 257389, 245266, 246224, 244663, 246613, 246608, 246263, 258148, 246259, 245680, 245532, 236654, 236653},
+  [255278] = {244662, 246223, 246607, 250094, 251639, 251973, 246036, 250920, 244533, 244534, 246037, 257389, 245266, 246224, 244663, 246613, 246608, 246263, 258148, 246259, 245680, 245532, 236654, 236653, 236655, 246261, 245545, 246609, 236666, 246260, 246262, 236667, 245555, 245394, 245395, 245393, 246614, 256050, 246610, 248246, 246869, 245264, 246587, 246225, 247221, 254316, 250913, 254560, 246038, 245265, 244661, 252657, 246687, 251974, 245398, 246879, 251975, 250093, 251976},--Gronthul
 [255298] = {251981, 244781, 253181, 245575, 235994, 246254, 245578, 246431, 246249, 247501, 253441, 253479, 255650, 246252, 241621, 245576, 253490, 246711, 241620, 245583, 253493, 253180, 241617, 246691},
 [255299] = {253439, 253437, 248658, 244118, 244780, 244169, 257692, 253495, 244782, 257691, 243088, 247502},
---12.0 Midnight Vendors Below
---[[[256828] = {244668, 245939, 246414, 248809, 252666, 252667, 252668, 252669, 263301},
-[252915] = { 253603, 253604, 253605, 253607, 253608, 253614, 253615, 253616, 253617, 253618, 253619, 253620,},
 [252916] = {253606, 253609, 253610, 253611, 253612, 253613, 253704, 253705, 244656},
+--12.0 Midnight Vendors Below
+[256828] = {244668, 245939, 246414, 248809, 252666, 252667, 252668, 252669, 263301},
+[252915] = { 253603, 253604, 253605, 253607, 253608, 253614, 253615, 253616, 253617, 253618, 253619, 253620,},
 [242398] = {250770, 246779},
 [242399] = {263994, 263995, 263996, 264007, 264008, 264170, 264175},  --Delve Vendor
 [251259] = {264243, 264245},  
@@ -836,9 +851,9 @@ dv.vendorGoodies = {
 [240838] = {249559, 245941, 245985, 256040, 257421, 257422, 263205, 263206, 263223, 263228, 263229, 263232, 263234, 264264, 264265},  
 [242723] = {263224, 263225}, 
 [259864] = {}, 
-[240279] = {}, 
+[240279] = {264333, 256934, 258549, 264350, 260514, 260516, 260515, 260202, 263318, 263320, 256924, 256926, 256927, 256933, 258290}, 
 [254944] = {},
-[25480] = {}, ]]
+[258540] = {264172}, 
 }
 
 dv.professions = {
@@ -1143,7 +1158,7 @@ dv.professions = {
   }
 }
 
-dv.professionItem = {
+dv.decorItem = {
 --twilight ascension
   [251997] = {decorID = 1227}, 
   [245330] = {decorID = 1236},
@@ -1298,7 +1313,8 @@ dv.professionItem = {
   [251330] = {decorID = 8177},
   [251549] = {decorID = 8240},
   [241043] = {decorID = 925},
-  [245425] = {decorID = 928},  
+  [245425] = {decorID = 928}, 
+[251478] = {decorID = 8187},  
   [251483] = {decorID = 8192},
   [251479] = {decorID = 8188},
   [251481] = {decorID = 8190},
@@ -1729,6 +1745,55 @@ dv.professionItem = {
   [260582] = {decorID = 14359},
   [258268] = {decorID = 11934},   
 --Midnight
+[242255] = {decorID = 1044},
+  [245334] = {decorID = 1123},
+[245336] = {decorID = 495},
+[245394] = {decorID = 535},
+[247221] = {decorID = 2592},
+[245398] = {decorID = 81},
+[236678] = {decorID = 530},
+[245384] = {decorID = 374},
+[248246] = {decorID = 4386},
+[245556] = {decorID = 1745},
+[245358] = {decorID = 379},
+[236676] = {decorID = 528},
+[246609] = {decorID = 2441},
+[245376] = {decorID = 390},
+[254316] = {decorID = 10324},
+[245395] = {decorID = 536},
+[245265] = {decorID = 1699},
+[246101] = {decorID = 1991},
+[246038] = {decorID = 1979},
+[246587] = {decorID = 2384},
+[250913] = {decorID = 7836},
+[254560] = {decorID = 10367},
+[245545] = {decorID = 1736},
+[245555] = {decorID = 1744},
+[244661] = {decorID = 1451},
+[236677] = {decorID = 529},
+[246225] = {decorID = 2094},
+[245375] = {decorID = 373},
+[246260] = {decorID = 2115},
+[236666] = {decorID = 525},
+[245264] = {decorID = 1698},
+[244778] = {decorID = 1482},
+ [245392] = {decorID = 533},
+ [251974] = {decorID = 8910},
+ [246262] = {decorID = 2117},
+ [251976] = {decorID = 8912},
+ [246879] = {decorID = 2545},
+ [256050] = {decorID = 10952},
+ [244664] = {decorID = 1454},
+ [245547] = {decorID = 1738},
+ [253589] = {decorID = 9471},
+ [235675] = {decorID = 377},
+ [236667] = {decorID = 526},
+ [246610] = {decorID = 2442},
+ [246614] = {decorID = 2446},
+ [246869] = {decorID = 2535},
+ [246103] = {decorID = 1993},
+ [245393] = {decorID = 534},
+  [245370] = {decorID = 1083},
   [245939] = {decorID = 1894},
   [252668] = {decorID = 9151},
   [248809] = {decorID = 4843},
@@ -2220,6 +2285,10 @@ dv.professionItem = {
   [260359] = {decorID = 14330},
   [256428] = {decorID = 11163},
   [245560] = {decorID = 1749},
+  [258264] = {decorID = 11931},
+  [258262] = {decorID = 11930},
+  [258265] = {decorID = 11932},
+  [258267] = {decorID = 11933},
   [245938] = {decorID = 1893},  
   [245294] = {decorID = 764},   
   [245320] = {decorID = 1261},  
@@ -2305,7 +2374,7 @@ dv.npcs = {
     name = "Dun Morogh",
 	expansion = "Classic",
       vendors = {
-      { zone = "Kharanos", id = 1247, model3D = 3434, title = "Innkeeper Belm", x = 54.4, y = 50.8, mapID = 27 , faction = "alliance"  },
+      { zone = "Kharanos-Must be Gnome or Dwarf", id = 1247, model3D = 3434, title = "Innkeeper Belm", x = 54.4, y = 50.8, mapID = 27 , faction = "alliance"  },
     }
   },
   {
@@ -2343,6 +2412,7 @@ dv.npcs = {
       { zone = "Hall of Legends", faction = "horde" , id = 254606, model3D = 138276, title = "Joruh", x = 38.8, y = 71.93, mapID = 85 },
       { zone = "Orgrimmar", id = 50488, model3D = 37020, title = "Stone Guard Nargol", x = 50.2, y = 58.4, mapID = 85 , faction = "horde" },
       { zone = "The Drag", faction = "horde" , id = 256119, model3D = 139508, title = "Lonalo", x = 58.4, y = 50.6, mapID = 85 },
+	  { zone = "Near Trading Post", faction = "horde" , id = 261262, model3D = 34566, title = "Gabbi", x = 48.4, y = 81.0, mapID = 85 },
     }
   },
   {
@@ -2362,7 +2432,7 @@ dv.npcs = {
   },
   {
     name = "Gilneas",
-	expansion = "Classic",
+	expansion = "Cataclysm",
       vendors = {
       { zone = "Stormglen Village", id = 211065, model3D = 30289, title = "Marie Allen", x = 60.4, y = 92.4, mapID = 217 , faction = "alliance"  },
       { zone = "Stormglen Village", id = 216888, model3D = 30289, title = "Samantha Buckley", x = 65.39, y = 47.20, mapID = 218, mapIDWaypoint = 217 , faction = "alliance"  },
@@ -2375,6 +2445,7 @@ dv.npcs = {
       { zone = "Stormwind", id = 49877, model3D = 36758, title = "Captain Lancy Revshon", x = 67.79, y = 73.05, mapID = 84 , faction = "alliance" },
       { zone = "Mage Quarter", faction = "alliance" ,id = 256071, model3D = 139467, title = "Solelo", x = 49.0, y = 80.0, mapID = 84 },
       { zone = "Old Town", id = 254603, model3D = 138274, title = "Riica", x = 77.8, y = 65.8, mapID = 84 , faction = "alliance" },
+	  { zone = "Near Trading Post", id = 261231, model3D = 17507, title = "Tuuran", x = 48.6, y = 68.8, mapID = 84 , faction = "alliance"},
     }
   },
   {
@@ -2527,7 +2598,7 @@ dv.npcs = {
         { zone = "Embaari Village", id = 81133, model3D = 56229, title = "Artificer Kallaes", x = 46.2, y = 39.3, mapID = 539 , faction = "alliance" },
     }
   },
-    {
+  {
     name = "Spires of Arak",
 	expansion = "Warlords of Draenor",
       vendors = {
@@ -2544,7 +2615,7 @@ dv.npcs = {
 		 { zone = "Warspear Hold", id = 86037, model3D = 61112, title = "Ravenspeaker Skeega", faction = "horde", mapID = 624, x = 53.30, y = 59.96 },
     }
   },
-    {
+  {
     name = "Talador",
 	expansion = "Warlords of Draenor",
       vendors = {
@@ -2626,20 +2697,6 @@ dv.npcs = {
     }
   },
   {
-    name = "Covenants",
-	expansion = "Shadowlands",
-      vendors = {
-        { zone = "Revendreth - Sinfall - Venthyr Only", id = 174710, model3D = 99162, title = "Chachi the Artiste", x = 54.0, y = 24.8, mapID = 1699, faction = "neutral" },
-    }
-  },
-  {
-    name = "The Maw",
-	expansion = "Shadowlands",
-      vendors = {
-        { zone = "Ve'nari's Refuge", id = 162804, model3D = 95004, title = "Ve'nari", x = 46.8, y = 41.6, mapID = 1543, faction = "neutral" },
-    }
-  },
-  {
     name = "Silithus",
 	expansion = "Battle for Azeroth",
       vendors = {
@@ -2689,6 +2746,20 @@ dv.npcs = {
     }
   },
   {
+    name = "Covenants",
+	expansion = "Shadowlands",
+      vendors = {
+        { zone = "Revendreth - Sinfall - Venthyr Only", id = 174710, model3D = 99162, title = "Chachi the Artiste", x = 54.0, y = 24.8, mapID = 1699, faction = "neutral" },
+    }
+  },
+  {
+    name = "The Maw",
+	expansion = "Shadowlands",
+      vendors = {
+        { zone = "Ve'nari's Refuge", id = 162804, model3D = 95004, title = "Ve'nari", x = 46.8, y = 41.6, mapID = 1543, faction = "neutral" },
+    }
+  },
+  {
     name = "The Forbidden Reach",
 	expansion = "Dragonflight",
       vendors = {
@@ -2714,7 +2785,7 @@ dv.npcs = {
       vendors = {
 		{ zone = "Dragonscale Basecamp", id = 189226, model3D = 106843, title = "Cataloger Jakes", x = 47.0, y = 82.6, mapID = 2022, faction = "neutral" },
 		{ zone = "Dragonscale Basecamp", id = 188265, model3D = 106418, title = "Rae'ana", x = 47.8, y = 82.2, mapID = 2022, faction = "neutral" },
-		{ zone = "Ruby Lifeshrine", id = 191025, model3D = 102721, title = "Lifecaller Tzadrak", x = 62.0, y = 73.8, mapID = 2022, faction = "neutral" },
+		{ zone = "Ruby Lifeshrine", id = 191025, model3D = 102721, title = "Lifecaller Tzadrak", x = 62.0, y = 73.8, mapID = 2022, faction = "neutral" },	
     }
   },
   {
@@ -2794,62 +2865,16 @@ dv.npcs = {
 		{ zone = "City of Threads",  faction = "neutral", id = 218202, model3D = 114528, title = "Thripps", x = 50.0, y = 31.6, mapID = 2213 },
     }
   },
-    {
+  {
     name = "Twlight Highlands",
 	expansion = "Twilight Ascencision",
       vendors = {
         { zone = "Near Crushblow", faction = "neutral", id = 249196, model3D = 136463, title = "Materialist Ophinell", x = 49.6, y = 81.2, mapID = 241 },
     }
   },
-  --[[{
-    name = "Silvermoon City",
-	expansion = "Midnight",
-      vendors = {
-		{ zone = "The Bazaar", id = 252915, title = "Corlen Hordralin", faction = "neutral", mapID = 2393, x = 44.16, y = 62.72 },
-        { zone = "The Bazaar", id = 252916, title = "Hesta Forlath", faction = "neutral", mapID = 2393, x = 44.16, y = 62.72 },
-        { zone = "The Bazaar", id = 242398, title = "Naleidea Rivergleam", faction = "neutral", mapID = 2393, x = 52.67, y = 77.96 },
-        { zone = "Murder Row", id = 256828, title = "Dennia Silvertongue", faction = "neutral", mapID = 2393, x = 51.16, y = 56.47 },
-        { zone = "Astalor's Sanctum", id = 258181, title = "Construct Ali'a", faction = "neutral", mapID = 2393, x = 55.81, y = 66.04 },
-        { zone = "The Bazaar", id = 242399, title = "Telemancer Astrandis", faction = "neutral", mapID = 2393, x = 52.44, y = 78.87 },
-    }
-  },
-  {
-    name = "Harandar",
-	expansion = "Midnight",
-      vendors = {
-        { zone = "The Den", id = 255114, title = "Maku", faction = "neutral", mapID = 2413, x = 53.12, y = 50.93 },
-        { zone = "The Den", id = 240407, title = "Naynar", faction = "neutral", mapID = 2413, x = 50.95, y = 50.74 },
-		{ zone = "The Den", id = 25480, title = "Hawli", faction = "neutral", mapID = 2413, x = 52.60, y = 50.60 },
-    }
-  },
-    {
-    name = "Arcantina",
-	expansion = "Midnight",
-      vendors = {
-        { zone = "Arcantina", id = 252873, title = "Morta Gage", faction = "neutral", mapID = 2541, x = 42.00, y = 50.00 },
-    }
-  },
-      {
-    name = "Slayers Rise",
-	expansion = "Midnight",
-      vendors = {
-        { zone = "Masters Perch", id = 258328, title = "Thraxadar", faction = "neutral", mapID = 2444, x = 39.40, y = 81.0 },
-    }
-  },
-  {
-    name = "Eversong Woods",
-	expansion = "Midnight",
-      vendors = {
-		{ zone = "Eversong Woods", id = 242726, title = "Neriv", faction = "neutral", mapID = 2395, x = 43.49, y = 47.64 },
-        { zone = "Eversong Woods", id = 242724, title = "Ranger Allorn", faction = "neutral", mapID = 2395, x = 43.46, y = 47.55 },
-        { zone = "Eversong Woods", id = 242725, title = "Armorer Goldcrest", faction = "neutral", mapID = 2395, x = 43.53, y = 47.5 },
-        { zone = "Eversong Woods", id = 240838, title = "Caeris Fairdawn", faction = "neutral", mapID = 2395, x = 43.47, y = 47.44 },
-        { zone = "Eversong Woods", id = 242723, title = "Apprentice Diell", faction = "neutral", mapID = 2395, x = 43.53, y = 47.5 },
-    }
-  },]]
   {
     name = "Founders Point",
-	expansion = "Midnight",
+	expansion = "The Neighborhoods",
       vendors = {		
 	    { zone = "Founders Point", id = 255228, model3D = 138698, title = "\"Len\" Splinthoof", x = 62.4, y = 80.0, mapID = 2352 , faction = "alliance" },
         { zone = "Founders Point", id = 255222, model3D = 138691, title = "\"High Tides\" Ren", x = 62.4, y = 80.2, mapID = 2352 , faction = "alliance" },
@@ -2864,7 +2889,7 @@ dv.npcs = {
   },
   {
     name = "Razorwind Shores",
-	expansion = "Midnight",
+	expansion = "The Neighborhoods",
       vendors = {
         { zone = "Razorwind Shores", id = 255325, model3D = 138691, title = "\"High Tides\" Ren", faction = "horde", mapID = 2351, x = 039.90, y = 72.78 },
 		{ zone = "Razorwind Shores", id = 255319, model3D = 138699, title = "\"Yen\" Malone", x = 40.3, y = 73.0, mapID = 2351 , faction = "horde"  },
@@ -2879,7 +2904,7 @@ dv.npcs = {
   },
   {
     name = "Housing Endeavor Vendors(community events)",
-	expansion = "Midnight",
+	expansion = "The Neighborhoods",
       vendors = {
 	    { zone = "Depends on Neighborhood", id = 252916, model3D = 137667, title = "Hesta Forlath", faction = "neutral" },
         { zone = "Depends on Neighborhood", id = 257897, model3D = 106374, title = "Harlowe Marl", faction = "neutral" },       
@@ -2890,13 +2915,59 @@ dv.npcs = {
         { zone = "Depends on Neighborhood", id = 253596, model3D = 136070, title = "The Last Architect", faction = "neutral" }, 
     }
   },
- --[[ {
-    name = "Zul'Aman",
-	expansion = "Midnight",
+   {
+    name = "Silvermoon City",
+	expansion = "Midnight Launch",
       vendors = {
-		{ zone = "Amani'Zar Village", id = 240279, title = "Magovu", faction = "neutral", mapID = 2437, x = 46.0, y = 65.9 }
+		{ zone = "The Bazaar", id = 252915, model3D = 137524, title = "Corlen Hordralin", faction = "neutral", mapID = 2393, x = 44.16, y = 62.72 },
+        { zone = "The Bazaar", id = 252916, model3D = 137667, title = "Hesta Forlath", faction = "neutral", mapID = 2393, x = 44.16, y = 62.72 },
+        { zone = "The Bazaar", id = 242398, model3D = 105169, title = "Naleidea Rivergleam", faction = "neutral", mapID = 2393, x = 52.67, y = 77.96 },
+        { zone = "Murder Row", id = 256828, model3D = 139843, title = "Dennia Silvertongue", faction = "neutral", mapID = 2393, x = 51.16, y = 56.47 },
+        { zone = "Astalor's Sanctum", id = 258181, model3D = 140647, title = "Construct Ali'a", faction = "neutral", mapID = 2393, x = 55.81, y = 66.04 },
+        { zone = "The Bazaar", id = 242399, model3D = 107574, title = "Telemancer Astrandis", faction = "neutral", mapID = 2393, x = 52.44, y = 78.87 },
     }
-  } ]] 
+  },
+  {
+    name = "Harandar",
+	expansion = "Midnight Launch",
+      vendors = {
+        { zone = "The Den", id = 255114, model3D = 138651, title = "Maku", faction = "neutral", mapID = 2413, x = 53.12, y = 50.93 },
+        { zone = "The Den", id = 240407, model3D = 137949, title = "Naynar", faction = "neutral", mapID = 2413, x = 50.95, y = 50.74 },
+		{ zone = "The Den", id = 258540, model3D = 140815, title = "Hawli", faction = "neutral", mapID = 2413, x = 52.60, y = 50.60 },
+    }
+  },
+  {
+    name = "Arcantina",
+	expansion = "Midnight Launch",
+      vendors = {
+        { zone = "Arcantina", id = 252873, model3D = 130151, title = "Morta Gage", faction = "neutral", mapID = 2541, x = 42.00, y = 50.00 },
+    }
+  },
+  {
+    name = "Slayers Rise",
+	expansion = "Midnight Launch",
+      vendors = {
+        { zone = "Masters Perch", id = 258328, model3D = 140891, title = "Thraxadar", faction = "neutral", mapID = 2444, x = 39.40, y = 81.0 },
+    }
+  },
+  {
+    name = "Eversong Woods",
+	expansion = "Midnight Launch",
+      vendors = {
+		{ zone = "Eversong Woods", id = 242726, model3D = 137811, title = "Neriv", faction = "neutral", mapID = 2395, x = 43.49, y = 47.64 },
+        { zone = "Eversong Woods", id = 242724, model3D = 137806, title = "Ranger Allorn", faction = "neutral", mapID = 2395, x = 43.46, y = 47.55 },
+        { zone = "Eversong Woods", id = 242725, model3D = 137809, title = "Armorer Goldcrest", faction = "neutral", mapID = 2395, x = 43.53, y = 47.5 },
+        { zone = "Eversong Woods", id = 240838, model3D = 137812, title = "Caeris Fairdawn", faction = "neutral", mapID = 2395, x = 43.47, y = 47.44 },
+        { zone = "Eversong Woods", id = 242723, model3D = 137808, title = "Apprentice Diell", faction = "neutral", mapID = 2395, x = 43.53, y = 47.5 },
+    }
+  }, 
+  {
+    name = "Zul'Aman",
+	expansion = "Midnight Launch",
+      vendors = {
+		{ zone = "Amani'Zar Village", id = 240279, model3D = 141039, title = "Magovu", faction = "neutral", mapID = 2437, x = 46.0, y = 65.9 }
+    }
+  } 
 }
 
 dv.achievements = {
@@ -3470,48 +3541,36 @@ dv.events = {
         name = "Limited-Time Events",
         items = {
             {
-                id = "Twitch Drop Event",
-                title = "Cuddly Green Grrgle",
+                id = "twitch_drop",
+                title = "Twitch Drop Event",
                 description = "Watch Twitch to earn this cutie",
-                decorID = 15151,
-                itemID = 263301,
-                endTime = 1771351200,
-				model3D = 7493973,
-                note = "must watch 4 hours to claim the item",
+                note = "Must watch 4 hours to claim the item",
+                endTime = 1771351200, -- Feb 17, 2026
+                rewards = {
+                    { decorID = 15151 },
+                },
             },
-			{
-                id = "Twilight Ascencision",
-                title = "Silvermoon Wooden Chair",
-                description = "Kill rares and do dailies to get currency for these items",
-                --decorID = 714,
-                itemID = 245284,
-                endTime = 1772463600,
-				model3D = 4235683,
-                note = "50 Twilight Blade Insignias",
-            },
-			{
-                id = "Twilight Ascencision",
-                title = "Enchanted Blood Elven Candelabra",
-                description = "Kill rares and do dailies to get currency for these items",
-                --decorID = 1236,
-                itemID = 245330,
-                endTime = 1772463600,
-				model3D = 6431404,
-                note = "50 Twilight Blade Insignias",
-            },
-			{
-                id = "Twilight Ascencision",
-                title = "Sin'dorei Winged Chaise",
-                description = "Kill rares and do dailies to get currency for these items",
-                --decorID = 1227,
-                itemID = 251997,
-                endTime = 1772463600,
-				model3D = 6025947,
-                note = "75 Twilight Blade Insignias",
+            {
+                id = "twilight_ascension",
+                title = "Twilight Ascension",
+                description = "Kill rares and do dailies to earn event currency",
+                note = "175 Twilight Blade Insignias needed for all rewards",
+                endTime = 1772463600, -- March 2, 2026
+                rewards = {
+                    { decorID = 714 },
+                    { decorID = 1236 },
+                    { decorID = 1227 },
+                },
             },
         },
-    }
+    },
 }
+
+
+
+
+
+
 
 --[[dv.removed = {
   	   {zone = "Deeprun Tram", id = 151941, title = "Dershway the Triggered", x = 54.25, y = 25.13, mapID = 500 , faction = "alliance" },

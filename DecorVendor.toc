@@ -2,8 +2,8 @@
 ## Title: Decor Vendors
 ## Notes: Tracks vendors that sell housing decor!
 ## Author: Midnitedestiny
-## Version: 1.58
-## IconTexture: 1530229 
+## Version: 1.65
+## IconTexture: 7549289 
 ## Category-enUS: Decor Vendors
 ## SavedVariables: vendorSettings, dbDV
 ## AddonCompartmentFunc: DecorVendor_OnAddonCompartmentClick
@@ -22,6 +22,4 @@ Libs\LibDBIcon-1.0.lua
 # Core files
 dv.lua
 filters.lua
-headers.lua
-lines.lua
 DecorVendor.lua
