@@ -2,7 +2,11 @@ local addonName, dv = ...
 
 
 function dv.BuildVendorFilters()
-    local parent = dv.sidebarFilters
+  local parent = dv.sidebarFilters
+  local filters = dv.filters.vendors
+	local selectedExpansions = filters.expansions
+	local selectedFactions   = filters.factions
+
 
     -- wipe old
     for _, child in ipairs({ parent:GetChildren() }) do
@@ -26,6 +30,7 @@ function dv.BuildVendorFilters()
     local function Checkbox(label, tbl, key)
         tbl[key] = tbl[key] or false
         local cb = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
+		cb.text:SetFont(STANDARD_TEXT_FONT, 13, "OUTLINE")
         cb:SetPoint("TOPLEFT", CHECKBOX_X, y)
         cb.Text:SetText(label)
         cb:SetChecked(tbl[key])
@@ -39,8 +44,6 @@ function dv.BuildVendorFilters()
 
 -- EXPANSIONS
 Header("Expansions")
-selectedExpansions = selectedExpansions or {}
-
 local seen = {}
 
 -- discover which expansions are actually used
@@ -63,7 +66,6 @@ end
 
     -- FACTION
     Header("Faction")
-    selectedFactions = selectedFactions or {}
 
     for _, f in ipairs({ "alliance", "horde", "neutral" }) do
         Checkbox(f, selectedFactions, f)
@@ -71,7 +73,13 @@ end
 end
 
 function dv.BuildQuestFilters()
+
+
     local parent = dv.sidebarFilters
+	local filters = dv.filters.quests
+	local selectedExpansionz = filters.expansions
+	local selectedFactionz   = filters.factions
+
 
     for _, child in ipairs({ parent:GetChildren() }) do
         child:Hide()
@@ -94,6 +102,7 @@ function dv.BuildQuestFilters()
     local function Checkbox(label, tbl, key)
         tbl[key] = tbl[key] or false
         local cb = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
+		cb.text:SetFont(STANDARD_TEXT_FONT, 13, "OUTLINE")
         cb:SetPoint("TOPLEFT", CHECKBOX_X, y)
         cb.Text:SetText(label)
         cb:SetChecked(tbl[key])
@@ -104,14 +113,25 @@ function dv.BuildQuestFilters()
         end)
         y = y - SPACING
     end
+	
+-- EXPANSIONS
+Header("Expansions")
+local seen = {}
 
-    -- CATEGORIES
-    Header("Categories")
-    selectedQuests = selectedQuests or {}
-
-    for _, group in ipairs(dv.quests or {}) do
-        Checkbox(group.name, selectedQuests, group.name)
+-- discover which expansions are actually used
+for _, group in ipairs(dv.quests or {}) do
+    if group.expansion then
+        seen[group.expansion] = true
     end
+end
+
+-- render in defined expansion order
+for _, exp in ipairs(dv.EXPANSION_ORDER or {}) do
+    if seen[exp] then
+        Checkbox(exp, selectedExpansionz, exp)
+    end
+end
+	
 
     y = y - 10
 
@@ -136,6 +156,9 @@ end
 
 function dv.BuildProfessionFilters()
     local parent = dv.sidebarFilters
+	local filters = dv.filters.professions
+	local selectedProfessions = filters.professions
+
 
     for _, child in ipairs({ parent:GetChildren() }) do
         child:Hide()
@@ -158,6 +181,7 @@ function dv.BuildProfessionFilters()
     local function Checkbox(label, tbl, key)
         tbl[key] = tbl[key] or false
         local cb = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
+		cb.text:SetFont(STANDARD_TEXT_FONT, 13, "OUTLINE")
         cb:SetPoint("TOPLEFT", CHECKBOX_X, y)
         cb.Text:SetText(label)
         cb:SetChecked(tbl[key])
@@ -171,7 +195,6 @@ function dv.BuildProfessionFilters()
 
     -- CATEGORIES
     Header("Categories")
-    selectedProfessions = selectedProfessions or {}
 
     for _, group in ipairs(dv.professions or {}) do
         Checkbox(group.name, selectedProfessions, group.name)
@@ -182,6 +205,11 @@ end
 
 function dv.BuildAchievementFilters()
     local parent = dv.sidebarFilters
+	local filters = dv.filters.achievements
+	local selectedAchievements = filters.groups
+	local selectedFactionz   = filters.factions
+
+
 
     for _, child in ipairs({ parent:GetChildren() }) do
         child:Hide()
@@ -204,6 +232,7 @@ function dv.BuildAchievementFilters()
     local function Checkbox(label, tbl, key)
         tbl[key] = tbl[key] or false
         local cb = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
+		cb.text:SetFont(STANDARD_TEXT_FONT, 13, "OUTLINE")		
         cb:SetPoint("TOPLEFT", CHECKBOX_X, y)
         cb.Text:SetText(label)
         cb:SetChecked(tbl[key])
@@ -217,7 +246,6 @@ function dv.BuildAchievementFilters()
 
     -- CATEGORIES
     Header("Categories")
-    selectedAchievements = selectedAchievements or {}
 
     for _, group in ipairs(dv.achievements or {}) do
         Checkbox(group.name, selectedAchievements, group.name)
@@ -227,7 +255,6 @@ function dv.BuildAchievementFilters()
 
     -- FACTION
     Header("Faction")
-    selectedFactionz = selectedFactionz or {}
     local found = {}
 
 for _, group in ipairs(dv.achievements or {}) do
@@ -246,6 +273,9 @@ end
 
 function dv.BuildBossDropFilters()
     local parent = dv.sidebarFilters
+	local filters = dv.filters.bossdrops
+	local selectedBossExpansions = filters.expansions
+
 
     -- wipe sidebar
     for _, child in ipairs({ parent:GetChildren() }) do
@@ -268,6 +298,7 @@ function dv.BuildBossDropFilters()
     local function Checkbox(label, tbl, key)
         tbl[key] = tbl[key] or false
         local cb = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
+		cb.text:SetFont(STANDARD_TEXT_FONT, 13, "OUTLINE")
         cb:SetPoint("TOPLEFT", 20, y)
         cb.Text:SetText(label)
         cb:SetChecked(tbl[key])
@@ -285,7 +316,6 @@ function dv.BuildBossDropFilters()
     -- EXPANSIONS (ONLY FILTER WE USE)
     ---------------------------------------------------------
 Header("Expansions")
-selectedBossExpansions = selectedBossExpansions or {}
 
 local seenExp = {}
 
