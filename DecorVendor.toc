@@ -2,7 +2,7 @@
 ## Title: Decor Vendors
 ## Notes: Tracks vendors that sell housing decor!
 ## Author: Midnitedestiny
-## Version: 1.75
+## Version: 1.77
 ## IconTexture: 7449447 
 ## Category-enUS: Housing
 ## SavedVariables: vendorSettings, dbDV

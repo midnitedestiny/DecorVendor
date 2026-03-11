@@ -585,14 +585,13 @@ dv.npcs = {
         { zone = "Razorwind Shores", id = 255298, model3D = 138752, title = "Jehzar Starfall", x = 53.56, y = 58.49, mapID = 2351 , faction = "horde"  },
         {  zone = "Razorwind Shores", id = 255299, model3D = 138753, title = "Lefton Farrer", x = 53.4, y = 58.4, mapID = 2351,  faction = "horde"  },
 		{ zone = "Rank 6 House to buy", id = 253596, model3D = 136070, title = "The Last Architect", x = 53.8, y = 57.4, mapID = 2351 , faction = "horde" }, 
-		{ zone = "Razorwind Shores", id = 252917, model3D = 137667, title = "Hesta Forlath", x = 54.36, y = 55.97, mapID = 2351, faction = "horde" },
     }
   },
   {
     name = "Housing Endeavor Vendors(community events)",
 	expansion = "The Neighborhoods",
       vendors = {
-	   -- { zone = "Depends on Neighborhood", id = 252917, model3D = 137667, title = "Hesta Forlath",  faction = "neutral" },
+	    { zone = "Depends on Neighborhood", id = 252917, model3D = 137667, title = "Hesta Forlath",  faction = "neutral" },
         { zone = "Depends on Neighborhood", id = 257897, model3D = 106374, title = "Harlowe Marl", faction = "neutral" },       
 		{ zone = "Depends on Neighborhood", id = 252605, model3D = 140447, title = "Aeeshna", faction = "neutral" }, 
         { zone = "Depends on Neighborhood", id = 249684, model3D = 40842, title = "Brother Dovetail", faction = "neutral" }, 

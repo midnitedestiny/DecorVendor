@@ -317,7 +317,7 @@ function UpdateEscBehavior()
     end
 end
 
-local function NormalizeNPCName(name)
+--[[local function NormalizeNPCName(name)
     if not name then return nil end
 
     -- Remove NPC titles like <Reagents and Repairs>
@@ -327,6 +327,27 @@ local function NormalizeNPCName(name)
     name = name:gsub("’", "'")
     name = name:trim()
     name = name:lower()
+
+    return name
+end]]
+
+local function NormalizeNPCName(name)
+    if not name then return nil end
+
+    -- Convert secret string to normal Lua string
+    name = string.format("%s", name)
+
+    -- Remove titles like <Reagents and Repairs>
+    name = string.gsub(name, "%s*<.-%>", "")
+
+    -- Normalize apostrophes
+    name = string.gsub(name, "’", "'")
+
+    -- Trim spaces
+    name = strtrim(name)
+
+    -- Lowercase
+    name = string.lower(name)
 
     return name
 end
@@ -513,7 +534,7 @@ infoIcon:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highligh
 infoIcon:SetScript("OnEnter", function(self)
   GameTooltip:SetOwner(self, "ANCHOR_BOTTOMLEFT")
   GameTooltip:AddLine("Decor Vendor Notice", 1, 0.82, 0)
-  GameTooltip:AddLine("Current Working Version 1.75", 1, 1, 1, true)
+  GameTooltip:AddLine("Current Working Version 1.77", 1, 1, 1, true)
   GameTooltip:Show()
 end)
  infoIcon:SetScript("OnLeave", function(self)
@@ -686,46 +707,34 @@ end
 ------------------------------------------------
 local eventFrame = CreateFrame("Frame")
 eventFrame:RegisterEvent("MERCHANT_SHOW")
+
 eventFrame:SetScript("OnEvent", function()
+
     if not dv.npcs then return end
 
-    local targetName = NormalizeNPCName(UnitName("target"))
-    if not targetName then return end
+    local guid = UnitGUID("target")
+    if not guid then return end
 
-    local currentMapID = C_Map.GetBestMapForUnit("player")
+    local npcID = select(6, strsplit("-", guid))
+    npcID = tonumber(npcID)
+    if not npcID then return end
+
     vendorSettings.visited = vendorSettings.visited or {}
 
     for _, group in ipairs(dv.npcs) do
         for _, vendor in ipairs(group.vendors or {}) do
 
-            local vendorName = NormalizeNPCName(vendor.title)
+            if vendor.id == npcID then
 
-            if vendorName == targetName then
+                if not vendorSettings.visited[vendor.id] then
+                    vendorSettings.visited[vendor.id] = true
 
-                -- ✅ If vendor has mapID → require match
-                if vendor.mapID then
-                    if vendor.mapID ~= currentMapID then
-                        -- wrong map, skip
-                    else
-                        if not vendorSettings.visited[vendor.id] then
-                            vendorSettings.visited[vendor.id] = true
-                            if vendorSettings.hideCompletedThings or vendorSettings.markFoundVendors then
-                                BuildVendorUI()
-                            end
-                        end
-                        return
+                    if vendorSettings.hideCompletedThings or vendorSettings.markFoundVendors then
+                        BuildVendorUI()
                     end
-
-                -- ✅ If vendor has NO mapID → allow match anywhere (Endeavors)
-                else
-                    if not vendorSettings.visited[vendor.id] then
-                        vendorSettings.visited[vendor.id] = true
-                        if vendorSettings.hideCompletedThings or vendorSettings.markFoundVendors then
-                            BuildVendorUI()
-                        end
-                    end
-                    return
                 end
+
+                return
             end
         end
     end
@@ -4355,7 +4364,7 @@ AddHeader("Vendor Decor")
 AddBody("Left Click opens vendor Preview with items below the vendor. Left clicking each item will open the catalogue.")
 
 AddHeader("Midnight Expansion Related")
-AddBody("Vendors are loaded under Midnight Launch expansion — not all have items loaded for viewing.")
+AddBody("Vendors are loaded under Midnight  — not all have items loaded for viewing.")
 
 AddHeader("Faction Color Indicators|r  |cffff2020Red|r = Horde • |cff4faaffBlue|r = Alliance • |cff00ff00Green|r = Neutral")
 AddBody("|cffFFD200Line Color Indicator|r  |cff9d9d9dGrey|r = Found Vendor, Completed Quest, and Achievements", 10)
@@ -4654,13 +4663,15 @@ end
 -------------------------------------------------
 local function HookMerchantFrame()
 	hooksecurefunc("MerchantFrame_Update", function()
-		if not vendorSettings.showMerchantCheckmarks then return end
+	if not vendorSettings.showMerchantCheckmarks then return end
 
-		local guid = UnitGUID("npc")
-		if not guid then return end
-		local vendorID = select(6, strsplit("-", guid))
-		vendorID = tonumber(vendorID)
+    --if IsInInstance() then return end
 
+    local guid = UnitGUID("target")
+    if not guid then return end
+
+    local vendorID = select(6, strsplit("-", guid))
+    vendorID = tonumber(vendorID)
 		if not vendorID or not dv.vendorGoodies[vendorID] then
 			HideMerchantCheckmarks()
 			return
@@ -4823,61 +4834,6 @@ init:SetScript("OnEvent", function(self, event, loadedAddon, ...)
         --BuildVendorUI()
         return
     end
-
- --[[ if event == "PLAYER_ENTERING_WORLD" then
-    local tries = 0
-
-    C_Timer.NewTicker(0.5, function(ticker)
-        tries = tries + 1
-
-        -- 🔥 Find ANY decorID from your dataset
-local testDecorID = 80 -- use a decorID you KNOW works
-        if dv.decorItem then
-            for _, data in pairs(dv.decorItem) do
-                if data.decorID then
-                    testDecorID = data.decorID
-                    break
-                end
-            end
-        end
-
-        if not testDecorID then
-            print("DV: No decorID available to test")
-            ticker:Cancel()
-            return
-        end
-
-        local info = C_HousingCatalog.GetCatalogEntryInfoByRecordID(1, testDecorID, true)
-
-        if info ~= nil then
-            --print("DV: Housing catalog ready")
-
-            dv.catalogReady = true
-
-            -- build lookup AFTER catalog is valid
-            dv.decorIdToItemId = {}
-            for itemID, data in pairs(dv.decorItem or {}) do
-                dv.decorIdToItemId[data.decorID] = itemID
-            end
-
-            wipe(vendorSessionCache)
-            dv.collectionCache = {}
-			
-            BuildVendorUI()
-			HookMerchantFrame()
-            ticker:Cancel()
-            init:UnregisterEvent("PLAYER_ENTERING_WORLD")
-            return
-        end
-
-        if tries > 20 then
-            print("DV: Housing catalog never became usable (timed out)")
-            ticker:Cancel()
-        end
-    end)
-
-    return
-end]]
 
 if event == "PLAYER_ENTERING_WORLD" then
     dv.catalogReady = false
