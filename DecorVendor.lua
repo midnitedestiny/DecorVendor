@@ -513,7 +513,7 @@ frame.titleBg = titleBg
 local title = frame:CreateFontString(nil, "OVERLAY")
 title:SetFont(STANDARD_TEXT_FONT, 20, "OUTLINE")
 title:SetPoint("TOP", 0, -14)
-title:SetText("The Original Decor Vendors")
+title:SetText("Cheap Home Bound Copy")
 title:SetTextColor(1, 0.82, 0)
 
 local subtitle = frame:CreateFontString(nil, "OVERLAY")
