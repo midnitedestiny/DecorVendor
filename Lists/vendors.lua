@@ -675,13 +675,6 @@ dv.npcs = {
         { zone = "Eversong Woods", id = 242723, model3D = 137808, title = "Apprentice Diell", faction = "neutral", mapID = 2395, x = 43.53, y = 47.5 },
     }
   }, 
-  --[[{
-   name  = "Murder Row (DUNGEON)", 
-   expansion = "Midnight",
-     vendors = {
-	    { zone = "Murder Row", id = 236861, model3D = 138982, title = "Cravitz Lorent", faction = "neutral", mapID = 2434},
-	 }
-  },]]
   {
     name = "Zul'Aman",
 	expansion = "Midnight",

@@ -1,6 +1,33 @@
 local addonName, dv = ...
+-------------------------------------------------
+-- 🔹 Helpers
+-------------------------------------------------
 
+function dv.ItemPassesRequirements(itemID)
+    local data = dv.decorItem and dv.decorItem[itemID]
+    if not data then return true end
 
+    if selectedExpansions and next(selectedExpansions) then
+        if data.expansion and not selectedExpansions[data.expansion] then
+            return false
+        end
+    end
+    if selectedExpansionz and next(selectedExpansionz) then
+        if data.expansion and not selectedExpansionz[data.expansion] then
+            return false
+        end
+    end
+    if selectedFactions and next(selectedFactions) then
+        if data.faction and not selectedFactions[data.faction] then
+            return false
+        end
+    end
+
+    return true
+end
+-------------------------------------------------
+-- 🔹 Filters
+-------------------------------------------------
 function dv.BuildVendorFilters()
   local parent = dv.sidebarFilters
   local filters = dv.filters.vendors
@@ -342,6 +369,7 @@ function dv.ResetSidebarFilters()
     end
 
     -- Create a brand-new container
-    dv.sidebarFilters = CreateFrame("Frame", nil, dv.sidebar)
-    dv.sidebarFilters:SetAllPoints()
+    dv.sidebarFilters = CreateFrame("Frame", "DV_sidebarFilters", dv.sidebar)
+    dv.sidebarFilters:SetPoint("TOPLEFT", dv.sidebar, "TOPLEFT", 0, 0)
+	dv.sidebarFilters:SetPoint("BOTTOMRIGHT", dv.sidebar, "BOTTOMRIGHT", 0, 40)
 end
