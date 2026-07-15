@@ -1,30 +1,33 @@
 Copyright (c) 2025–2026 MidniteDestiny
 All Rights Reserved
 
-Project Name : DecorVendor
+Project Name : Decor Vendor
 CurseForge   : https://www.curseforge.com/wow/addons/decor-vendor
 Author       : MidniteDestiny
 Created      : October 2025
 
-This license applies to the World of Warcraft addon **"DecorVendor"** and all files contained within this project.
+This license applies to the World of Warcraft addon project "Decor Vendor" and all files, folders, data, code, artwork, UI layouts, source records, vendor records, item records, gallery records, and supporting assets included within the project.
 
-Permission is **not granted** to use, copy, modify, merge, publish, distribute, sublicense, sell, or create derivative works of this addon, in whole or in part, without **explicit written permission from the author**.
+Decor Vendor is a single unified addon project. Any internal folders, files, data systems, gallery features, source lists, constants, bridges, utilities, or supporting components are part of the Decor Vendor project and are not separate standalone addons, databases, or redistributable modules.
 
-The following actions are **strictly prohibited** without prior written authorization:
+Permission is not granted to use, copy, modify, merge, publish, distribute, sublicense, sell, extract, scrape, repackage, mirror, rehost, or create derivative works of this project, in whole or in part, without explicit written permission from the author.
 
-• Redistribution of this addon on other websites, repositories, or distribution platforms
-• Modification or repackaging of the addon for redistribution
-• Inclusion of this addon or its source code in other addons or software projects
-• Distribution of modified or derivative versions of the addon
-• Uploading mirrors or rehosts of this project outside of its official distribution channels
+The following actions are strictly prohibited without prior written authorization:
 
-The addon may only be downloaded and distributed through its **official CurseForge project page** unless otherwise permitted by the author.
+• Redistribution of this addon or any included files on other websites, repositories, addon managers, distribution platforms, or file mirrors
+• Modification, repackaging, or redistribution of this addon under another name or project
+• Extraction, scraping, copying, or reuse of its data, source details, vendor details, item records, gallery records, UI structure, artwork, assets, or source code in other addons, databases, tools, websites, or software projects
+• Distribution of modified, forked, cloned, or derivative versions of this addon
+• Uploading mirrors, backups, rehosts, or alternate downloads of this project outside of its official distribution channels
+• Reusing any internal folder, file, data table, gallery system, source list, or included component as a standalone addon, external database, addon dependency, or separate project
+• Using this project or its contents to train, generate, populate, or maintain competing addon databases or derivative tools without written permission
 
-This license file must remain **present, intact, and unmodified** in all authorized copies of the project.
+This addon may only be downloaded and distributed through its official CurseForge project page unless otherwise permitted in writing by the author.
 
-Unauthorized use, redistribution, or modification of this project may result in **copyright enforcement or takedown actions**.
+This license file must remain present, intact, and unmodified in all authorized copies of the project.
+
+Unauthorized use, redistribution, extraction, scraping, modification, rehosting, or derivative use of this project may result in copyright enforcement, DMCA takedown requests, or other appropriate action.
 
 For permissions or licensing inquiries, please contact the author.
 
 Author: MidniteDestiny
-
