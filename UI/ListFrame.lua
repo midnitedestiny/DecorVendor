@@ -25,12 +25,8 @@ local addonName, DVD = ...
 
 local C = DVD.CONSTANTS or DVD.C
 local COLORS = C.COLORS or {}
-
-if not DVD.contentArea then
-    print("|cffff4040DecorVendor ListFrame:|r DVD.contentArea is missing. Make sure UI\\MainFrame.lua loads first.")
-    return
-end
-
+local Sizing = C.ListFrameSizing
+local PreviewSizing = C.PreviewPanelSizing
 local function Color(name, fallback)
     return COLORS[name] or fallback
 end
@@ -44,6 +40,26 @@ local LIST_BACKDROP = {
     insets = { left = 2, right = 2, top = 2, bottom = 2 }
 }
 
+if not C then
+    print("|cffff4040DecorVendor ListFrame:|r constants are missing.")
+    return
+end
+
+if not Sizing then
+    print("|cffff4040DecorVendor ListFrame:|r ListFrameSizing is missing.")
+    return
+end
+
+if not PreviewSizing then
+    print("|cffff4040DecorVendor ListFrame:|r PreviewPanelSizing is missing.")
+    return
+end
+
+if not DVD.contentArea then
+    print("|cffff4040DecorVendor ListFrame:|r DVD.contentArea is missing. Make sure UI\\MainFrame.lua loads first.")
+    return
+end
+
 -------------------------------------------------
 -- List Panel
 -------------------------------------------------
@@ -51,35 +67,24 @@ local LIST_BACKDROP = {
 local listPanel = CreateFrame("Frame", "DV_ListPanel", DVD.contentArea, "BackdropTemplate")
 DVD.listPanel = listPanel
 
-listPanel:SetPoint("TOPLEFT", DVD.contentArea, "TOPLEFT", 4, -4)
-listPanel:SetPoint("BOTTOMLEFT", DVD.contentArea, "BOTTOMLEFT", 4, 4)
+listPanel:SetPoint("TOPLEFT", DVD.contentArea, "TOPLEFT", Sizing.PanelInset, -Sizing.PanelInset)
+listPanel:SetPoint("BOTTOMLEFT", DVD.contentArea, "BOTTOMLEFT", Sizing.PanelInset, Sizing.PanelInset)
 
 if DVD.previewPanel then
-    listPanel:SetPoint("RIGHT", DVD.previewPanel, "LEFT", -12, 0)
-else
-    listPanel:SetPoint("RIGHT", DVD.contentArea, "RIGHT", -346, 0)
+    listPanel:SetPoint("RIGHT", DVD.previewPanel, "LEFT", -Sizing.PreviewGap, 0)
+else 
+local previewReserve = PreviewSizing.Width + Sizing.PreviewGap + Sizing.PanelInset
+    listPanel:SetPoint("RIGHT", DVD.contentArea, "RIGHT", -previewReserve, 0)
 end
 
 listPanel:SetBackdrop(LIST_BACKDROP)
 listPanel:SetBackdropColor(0.035, 0.025, 0.06, 0.92)
-listPanel:SetBackdropBorderColor(0.38, 0.28, 0.56, 0.9)
+listPanel:SetBackdropBorderColor(0, 0, 0, 0)
 
 local listBg = listPanel:CreateTexture(nil, "BACKGROUND")
-listBg:SetPoint("TOPLEFT", listPanel, "TOPLEFT", 3, -3)
-listBg:SetPoint("BOTTOMRIGHT", listPanel, "BOTTOMRIGHT", -3, 3)
+listBg:SetPoint("TOPLEFT", listPanel, "TOPLEFT", Sizing.BackgroundInset, -Sizing.BackgroundInset)
+listBg:SetPoint("BOTTOMRIGHT", listPanel, "BOTTOMRIGHT", -Sizing.BackgroundInset, Sizing.BackgroundInset)
 listBg:SetColorTexture(0.025, 0.018, 0.045, 0.86)
-
-local topAccent = listPanel:CreateTexture(nil, "ARTWORK")
-topAccent:SetPoint("TOPLEFT", listPanel, "TOPLEFT", 8, -5)
-topAccent:SetPoint("TOPRIGHT", listPanel, "TOPRIGHT", -8, -5)
-topAccent:SetHeight(1)
-topAccent:SetColorTexture(1, 0.78, 0.28, 0.40)
-
-local bottomAccent = listPanel:CreateTexture(nil, "ARTWORK")
-bottomAccent:SetPoint("BOTTOMLEFT", listPanel, "BOTTOMLEFT", 8, 5)
-bottomAccent:SetPoint("BOTTOMRIGHT", listPanel, "BOTTOMRIGHT", -8, 5)
-bottomAccent:SetHeight(1)
-bottomAccent:SetColorTexture(0.55, 0.28, 0.95, 0.40)
 
 -------------------------------------------------
 -- Scroll Frame
@@ -88,8 +93,8 @@ bottomAccent:SetColorTexture(0.55, 0.28, 0.95, 0.40)
 local scrollFrame = CreateFrame("ScrollFrame", "DV_ScrollFrame", listPanel, "ScrollFrameTemplate")
 DVD.scrollFrame = scrollFrame
 
-scrollFrame:SetPoint("TOPLEFT", listPanel, "TOPLEFT", 8, -8)
-scrollFrame:SetPoint("BOTTOMRIGHT", listPanel, "BOTTOMRIGHT", -8, 8)
+scrollFrame:SetPoint("TOPLEFT", listPanel, "TOPLEFT", Sizing.ScrollInset, -Sizing.ScrollInset)
+scrollFrame:SetPoint("BOTTOMRIGHT", listPanel, "BOTTOMRIGHT", -Sizing.ScrollInset, Sizing.ScrollInset)
 
 if scrollFrame.ScrollBar then
     scrollFrame.ScrollBar:Hide()
@@ -104,7 +109,17 @@ local function UpdateScrollChildWidth()
     local width = scrollFrame:GetWidth()
 
     if not width or width <= 1 then
-        width = (DVD.listPanel and DVD.listPanel:GetWidth() - 20) or 340
+        local panelWidth =
+            DVD.listPanel
+            and DVD.listPanel:GetWidth()
+
+        if panelWidth and panelWidth > 1 then
+            width =
+                panelWidth
+                - Sizing.ScrollWidthPadding
+        else
+            width = Sizing.FallbackScrollChildWidth
+        end
     end
 
     scrollChild:SetWidth(width)
@@ -121,7 +136,7 @@ scrollChild:SetHeight(1)
 scrollFrame:SetScript("OnMouseWheel", function(self, delta)
     local current = self:GetVerticalScroll()
     local maxScroll = self:GetVerticalScrollRange()
-    local step = 45
+    local step = Sizing.MouseWheelStep
 
     if delta < 0 then
         self:SetVerticalScroll(math.min(current + step, maxScroll))

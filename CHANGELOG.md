@@ -1,5 +1,151 @@
 # Decor Vendor Changelog
 
+## Version 2.14
+
+### Blizzcon Updates
+* **BlizzCon 2026 Rewards:**  Updated some of the codes from the Blizzcon decor that came out 
+
+### PTR & Upcoming Patch Updates
+* **Ptr Prep:**  Preparions for the upcoming 12.1.5 Patch as well as Holiday Preparations
+
+## Version 2.13
+
+### New Features & Expansions
+* **World of Warcraft: Forever:** Added data mapping and source tracking for the exclusive housing decor items included with the *World of Warcraft: Forever* pre-purchase and collector's editions.
+* **BlizzCon 2026 Rewards:** Added full dataset support and achievement tracking for the new BlizzCon 2026 doormat  decor.
+
+### PTR & Upcoming Patch Updates
+* **Faction-Split Quest Grouping:** Overhauled quest tracking logic (`DVD.IsQuestEffectivelyCompleted`) to support multi-ID tables, allowing faction-split dailies and questlines (such as *Cheese for Glowergold*) to share a single unified grid card while accurately reflecting completion status for both Alliance and Horde characters.
+* **Uncached Data Handling:** Added robust fallback parsing for raw data IDs and upcoming PTR content to ensure smooth grid loading even when items are unreleased or unindexed by external databases.
+* **Diagnostic & Debug Tooling:** Enhanced in-game achievement scanning commands and table structures to easily extract and verify upcoming patch IDs directly from the client UI.
+
+## Version 2.12
+
+### UI & Navigation
+* **Unified Gallery Integration:** Removed the standalone "Shop Decor" tab, migrating all premium shop, pre-purchase, and promotional items directly into the main Gallery Browser with dedicated source tags.
+* **Default Expansion View:** Updated the Vendors tab expansion filter to default to **Midnight** on startup, reducing initial scroll fatigue.
+* **Clean Previews:** Removed the "Open Achievement Frame" button from the Achievement preview panel to streamline the layout.
+
+### Filters & Sources
+* **New Source Labels:** Added support for **"Past Charity"**, **"Lush Garden Pack"**, and **"Spring Blossom Pack"** filter options in the Gallery sidebar.
+* **Expanded Aliases:** Updated source alias and priority mappings to ensure accurate categorization across vendor, quest, achievement, and shop datasets.
+
+### Visual Styling & Colors
+* **Color Palette Refresh:** Overhauled source label colors to strictly avoid blue, green, red, yellow, gold, purple, and white hues, implementing a polished set of orange, coral, and pink tones optimized for dark UI backgrounds.
+
+### Data & Currencies
+* **Brewfest Token Support:** Added currency icon mapping for Brewfest Prize Tokens (`37829`).
+
+### Codebase Architecture
+* **Modular Constants:** Split the monolithic constants file into separate, maintainable files (`Constants_Core.lua`, `Constants_Colors.lua`, and `Constants_Filters.lua`).
+* **Global Debugging:** Exposed the `DVD` namespace globally (`_G.DVD`) to allow direct in-game chat testing and diagnostic commands.
+
+## Version 2.12
+
+### UI & Navigation
+* **Unified Gallery Integration:** Removed the standalone "Shop Decor" tab since it was all in the Gallery Browser  part of the addon already
+* **Default Expansion View:** Updated the Vendors, professions, quests and drops tabs expansion filter to default to **Midnight** on startup, reducing initial scroll fatigue.
+* **Clean Previews:** Removed the "Open Achievement Frame" button from the Achievement preview panel to streamline the layout. As it would  randomly vanish anyways.
+
+### Filters & Sources
+* **New Source Labels:** Added support for **"Roofus Pack"**, **"Lush Garden Pack"**, **"Spring Blossom Pack"**, **"Holiday Decor"** and **"Pre Purchase"** filter options in the Gallery sidebar.
+* **Expanded Aliases:** Updated source alias and priority mappings to ensure accurate categorization across vendor, quest, achievement, and shop datasets.
+
+### Visual Styling & Colors
+* **Color Palette testing:** Overhauled source label colors to strictly avoid blue, green, red, yellow, gold, purple, and white hues, implementing a polished set of orange, coral, and pink tones optimized for dark UI backgrounds. In the browser only!
+
+### Data & Currencies
+* **Brewfest Token Support:** Added currency icon mapping for Brewfest Prize Tokens (`37829`). For the Upcoming Brewfest items
+* **12.1.5:** Currently adding Patch 12.1.5 decor in the backend ready to be intiated when it goes live.
+* ** New Vendors Added:** The Holiday Hub vendors are added to the vendor list as well as the upcoming Brewfest Vendors for the neighborhoods the locations are all currently set to the Holiday Hub for each location.
+
+### Codebase Architecture
+* **Modular Constants:** Split the monolithic constants file into separate, maintainable files (`Constants.lua`, `Constants_Colors.lua`, and `Constants_Filters.lua`).
+* **Global Debugging:** Exposed the `DVD` namespace globally (`_G.DVD`) to allow direct in-game chat testing and diagnostic commands.
+
+## Version 2.11
+
+* **Code Cleanup**: Streamlined backend data files, optimized active item tables, and cleaned up legacy debugging utility blocks. As well as condensed a bunch of the files.
+* **New Additions**: Integrated upcoming Twitch drop decoration item and corresponding source metadata.
+* **UI Updates**: Refreshed sidebar filter category colors for improved visual clarity and consistency.
+
+**Currently  working on the favorite tab/ new UI design**
+
+## Version 2.10
+
+### NEW & UPDATED
+
+• Updated more pricing info
+• Hid certain decor that is currently not live yet.
+• Ypdated some of the decor when it comes to filters and stuff
+• Added the weekly housing  Quest item by The Last Architect I listed those particular decor items to his list and informing you of the requirements of needing a level 10 house to do the quest.
+•  Using Waypoint UI works again with DecorVendor as  it relies on his code to be updated in order to correctly work.
+
+### Looking into
+
+• Adding a Blueprint and a favorites section.
+
+## Version 2.09
+
+### NEW & UPDATED
+
+• Fixed map coords for the new Coiled Delves decor.
+• Updated minimap icon.
+• Currently updating prices of some vendor items
+
+### Looking into
+
+• WaypointUI is currently causing a bug when hitting the waypoint button please use TomTom until its sorted out
+
+## Version 2.08
+
+### NEW & UPDATED
+• Added a brand-new **Shop Decor** section to the Home dashboard. You can now easily browse premium decor items.
+• Added the 12.1 Decor in the Galler Browser you can view all of the new decor with the Patch 12.1 filter.
+• Added dedicated sidebar filters for the new Shop section, allowing you to easily toggle between  In-Game Shop items, and Charity items some of them are currently not  avaiable due to being limited time.
+• Upgraded the "Vendors" card on the Home dashboard to simultaneously display both the total number of NPCs *and* the total amount of decor they sell (e.g., "238 NPCs | 1,450 decor").
+• Integrated Waypoint navigation buttons directly into the Quest preview panels. If a quest reward is tied to a specific vendor location, you can now drop a map pin straight from the quest tab.
+• Reorganized the UI layout so Wowhead links, item notes, and waypoint buttons stack chronologically for a much cleaner top-to-bottom reading flow.
+• All sections now show up as Cards  example in vendors  youll see the normal Headers for the zones but now underneath is bigger cards feautring the vendors. Same goes for Quests, Achievements, Drops, Professions and shop. The Gallery Browser is  a  good source if you want to know the actual prices for any of the vendor items consider it the backup browser.
+
+### BUG FIXES & SYSTEM STREAMLINING
+• **Routing File Cleanup:** Centralized all tab-switching and frame-routing logic into a dedicated `BottomTabs.lua` file, removing duplicate code from the main frame and improving the addon's load reliability.
+• **TOC Architecture:** Fixed a missing file registration in the addon's `.toc` manifest that was causing some tab routing updates to be ignored by the game client.
+
+### NOTES
+Version 2.08 focuses heavily on UI stability and QoL improvements. The addition of the Shop Decor dashboard card balances out the main menu beautifully while giving Trading Post and Premium items the dedicated tracking space they deserve.
+
+## Version 2.07
+
+### NEW & UPDATED
+• Added the Blizzcon Decor 
+• Added support for Neighborhood Endeavor vendors.
+• Endeavor vendors now update dynamically based on the neighborhood or plot currently selected in the Housing Dashboard.
+• Active Endeavor vendors display their correct neighborhood location and support waypoint navigation Remember be on that zone for right click and waypoint to route you correctly.
+• Inactive Endeavor vendors are clearly marked amd will not show a waypoint button and right click will say the vendor is currently inactive.
+• Added persistent neighborhood-location tracking so previously visited plots remain recognized after reloading or logging back in.
+
+### GALLERY BROWSER
+• Improved Gallery Browser navigation for vendors with rotating or neighborhood-specific locations.
+• Shop-sourced decorations are now identified without attempting to automatically open the protected in-game shop interface. Basically prints a message telling you  to open it manually.
+• Updated the shop action with instructions for opening Blizzard’s Shop button manually.
+• Improved first-session Housing Catalog loading behavior and related messaging.
+
+### OPTIONS & HELP
+• Updated the Helpful Information page with instructions for Neighborhood Endeavor vendors.
+• Improved Tips panel text wrapping and spacing.
+• Added scrolling support so all help sections remain readable at smaller Settings window sizes.
+• Removed Stats Panel for now will be back in a future Update
+• Looking into adding a wishlist or Favorite section but not sure
+
+### DATA & COMPATIBILITY
+• Added data and framework support for the upcoming Patch 12.1 decorations.
+• Patch 12.1 items are currently hidden until they become available on live servers.
+• Improved filtering so unreleased items do not appear in vendor lists, searches, previews, or collection results except showing the current number of estimated Patch 12.1  decor in the Gallery Filter section.
+
+### BUG FIXES
+• Additional cleanup and stability improvements throughout the main addon and Gallery Browser.
+
 ## Version 2.06
 
 ### Collection Detection Fixes

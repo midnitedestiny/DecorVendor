@@ -1,65 +1,108 @@
 -- ============================================================
--- Decor Vendor Gallery — Graphical Layout UI Utilities
+-- Decor Vendor Gallery
+-- GalleryUtilities.lua
+-- Shared graphical UI utilities
 -- ============================================================
-local addonName, dv = ...
 
--- Automatically retrieve or initialize the local Gallery sub-namespace
-local Gallery = dv.Gallery or _G.DecorVendorGallery or _G.DecorVendor_Gallery or {}
-dv.Gallery = Gallery
+local addonName, DVD = ...
 
-local DVD = _G.DecorVendorData or _G.DecorVendor_Data
-Gallery.ActiveItems = DVD and DVD.ActiveItems or dv.ActiveItems or {}
+local Gallery = DVD.Gallery
 
-function Gallery.SafeSetBackdrop(frame, bgColor, borderColor)
-    if not frame then return end
-
-    frame:SetBackdrop({
-        bgFile = "Interface\\Buttons\\WHITE8x8",
-        edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-        edgeSize = 12,
-        insets = { left = 2, right = 2, top = 2, bottom = 2 },
-    })
-
-    frame:SetBackdropColor(unpack(bgColor))
-    frame:SetBackdropBorderColor(unpack(borderColor))
+if not Gallery then
+    print("|cffff4040DecorVendor Gallery Utilities:|r DVD.Gallery is missing.")
+    return
 end
 
-function Gallery.ClearCards()
-    if not Gallery.cards then return end
+local C =
+    DVD.CONSTANTS
+    or DVD.C
 
-    for _, card in ipairs(Gallery.cards) do
-        card:Hide()
-        card:SetParent(nil)
+if not C then
+    print("|cffff4040DecorVendor Gallery Utilities:|r constants are missing.")
+    return
+end
+
+local UtilityStyle =
+    C.GalleryUtilityStyle
+
+if not UtilityStyle
+or not UtilityStyle.Backdrop then
+    print("|cffff4040DecorVendor Gallery Utilities:|r GalleryUtilityStyle.Backdrop is missing.")
+    return
+end
+
+local BackdropStyle =
+    UtilityStyle.Backdrop
+
+-------------------------------------------------
+-- Backdrop helper
+-------------------------------------------------
+
+function Gallery.SafeSetBackdrop(
+    frame,
+    backgroundColor,
+    borderColor
+)
+    if not frame
+    or type(frame.SetBackdrop) ~= "function" then
+        return false
+    end
+
+    frame:SetBackdrop({
+        bgFile =
+            BackdropStyle.BackgroundFile,
+
+        edgeFile =
+            BackdropStyle.BorderFile,
+
+        edgeSize =
+            BackdropStyle.EdgeSize,
+
+        insets =
+            BackdropStyle.Insets,
+    })
+
+    if type(backgroundColor) == "table" then
+        frame:SetBackdropColor(
+            backgroundColor[1] or 0,
+            backgroundColor[2] or 0,
+            backgroundColor[3] or 0,
+            backgroundColor[4] or 1
+        )
+    end
+
+    if type(borderColor) == "table" then
+        frame:SetBackdropBorderColor(
+            borderColor[1] or 1,
+            borderColor[2] or 1,
+            borderColor[3] or 1,
+            borderColor[4] or 1
+        )
+    end
+
+    return true
+end
+
+-------------------------------------------------
+-- Gallery card cleanup
+-------------------------------------------------
+
+function Gallery.ClearCards()
+    Gallery.cards =
+        Gallery.cards
+        or {}
+
+    for _, card in pairs(Gallery.cards) do
+        if card then
+            if card.Hide then
+                card:Hide()
+            end
+
+            if card.SetParent then
+                card:SetParent(nil)
+            end
+        end
     end
 
     wipe(Gallery.cards)
-end
-
-function Gallery.CleanSortName(name)
-    name = tostring(name or "")
-    name = name:gsub("|c%x%x%x%x%x%x%x%x", "")
-    name = name:gsub("|r", "")
-    name = name:gsub("^%s+", "")
-    name = name:gsub("%s+$", "")
-    name = name:gsub('"', "")
-    name = name:gsub('"$', "")
-    return string.lower(name)
-end
-
-function Gallery.LuaString(value)
-    value = tostring(value or "")
-    value = value:gsub("\\", "\\\\")
-    value = value:gsub('"', '\\"')
-    return '"' .. value .. '"'
-end
-
-function Gallery.ShortText(text, maxLen)
-    text = tostring(text or "")
-    maxLen = maxLen or 26
-
-    if string.len(text) <= maxLen then
-        return text
-    end
-
-    return string.sub(text, 1, maxLen - 3) .. "..."
 end

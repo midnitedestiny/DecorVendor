@@ -7,22 +7,162 @@ Decor Vendor Addon — Filters Module
 
 local addonName, DVD = ...
 
+local C = DVD.CONSTANTS or DVD.C
+local Gallery = DVD.Gallery
+local Sizing = C.MainFiltersSizing
+local MainFrameSizing = C.MainFrameSizing
+local COLORS = C.COLORS or {}
+local LabelColors = C.LabelColors or {}
+local ExpansionColors = C.ExpansionColors or {}
+local ExpansionOrder = C.EXPANSION_ORDER or {}
+local ProfessionOrder = C.PROFESSION_ORDER or {}
 
+if not C then
+    print("|cffff4040DecorVendor Filters:|r constants are missing.")
+    return
+end
+
+if not Sizing then
+    print("|cffff4040DecorVendor Filters:|r MainFiltersSizing is missing.")
+    return
+end
+
+if not MainFrameSizing then
+    print("|cffff4040DecorVendor Filters:|r MainFrameSizing is missing.")
+    return
+end
+local function AnySelected(tbl)
+    if not tbl then return false end
+    for _, selected in pairs(tbl) do
+        if selected then return true end
+    end
+    return false
+end
 
 DVD.filters = DVD.filters or {}
 DVD.collapsedFilters = DVD.collapsedFilters or {}
 DVD.collapsedFilterSections = DVD.collapsedFilterSections or {}
+-------------------------------------------------
+-- Filter table normalization
+-------------------------------------------------
+local function EnsureTable(parent, key)
+    local value = parent[key]
 
--- Establish local aliases mapping straight to the database tables
-local masterActiveItems = DVD and DVD.ActiveItems or DVD.ActiveItems or {}
-local masterNpcs = DVD and DVD.npcs or DVD.npcs or {}
+    if type(value) ~= "table" then
+        value = {}
+        parent[key] = value
+    end
 
+    return value
+end
+
+local function EnsureDefault(tbl, key, defaultValue)
+    if tbl[key] == nil then
+        tbl[key] = defaultValue
+    end
+end
+-------------------------------------------------
+-- Vendor filters
+-------------------------------------------------
+local vendorFilters =
+EnsureTable(DVD.filters, "vendors")
+local vendorExpansions = EnsureTable(vendorFilters, "expansions")
+EnsureTable(vendorFilters, "factions")
+EnsureTable(vendorFilters, "recipes")
+
+-- If the user hasn't selected any expansions yet (or on first load), default to Midnight
+if not AnySelected(vendorExpansions) then
+    vendorExpansions["Midnight"] = true
+end
+
+local vendorCategories =
+EnsureTable(vendorFilters, "categories")
+
+for _, key in ipairs({
+    "none",
+    "reputation",
+    "renown",
+    "subfaction",
+    "friendship",
+    "race",
+    "neighborhood",
+    "Promo",
+}) do
+    EnsureDefault(
+        vendorCategories,
+        key,
+        false
+    )
+end
+-------------------------------------------------
+-- Quest filters
+-------------------------------------------------
+local questFilters =
+EnsureTable(DVD.filters, "quests")
+local questExpansions = EnsureTable(questFilters, "expansions")
+EnsureTable(questFilters, "categories")
+EnsureTable(questFilters, "factions")
+
+-- If the user hasn't selected any expansions yet (or on first load), default to Midnight
+if not AnySelected(questExpansions) then
+    questExpansions["Midnight"] = true
+end
+-------------------------------------------------
+-- Boss-drop filters
+-------------------------------------------------
+local bossDropFilters =
+EnsureTable(DVD.filters, "bossdrops")
+local bossExpansions = EnsureTable(bossDropFilters, "expansions")
+EnsureTable(bossDropFilters, "categories")
+
+-- If the user hasn't selected any expansions yet (or on first load), default to Midnight
+if not AnySelected(bossExpansions) then
+    bossExpansions["Midnight"] = true
+end
+-------------------------------------------------
+-- Profession filters
+-------------------------------------------------
+local professionFilters =
+EnsureTable(DVD.filters, "professions")
+EnsureTable(professionFilters, "professions")
+local professionExpansions = EnsureTable(professionFilters, "expansions")
+
+-- If the user hasn't selected any expansions yet (or on first load), default to Midnight
+if not AnySelected(professionExpansions) then
+    professionExpansions["Midnight"] = true
+end-------------------------------------------------
+-- Achievement filters
+-------------------------------------------------
+local achievementFilters =
+EnsureTable(DVD.filters, "achievements")
+EnsureTable(achievementFilters, "groups")
+EnsureTable(achievementFilters, "factions")
+-------------------------------------------------
+-- General requirement filters
+-------------------------------------------------
+local requirementFilters =
+EnsureTable(DVD.filters, "requirements")
+EnsureTable(requirementFilters, "types")
+
+EnsureDefault(
+    requirementFilters,
+    "showLocked",
+    true
+)
+
+EnsureDefault(
+    requirementFilters,
+    "showUnlocked",
+    true
+)
 -------------------------------------------------
 -- Filter Defaults (Normalized to avoid table drops)
 -------------------------------------------------
 
 DVD.filters.vendors = DVD.filters.vendors or {
-    expansions = {},
+    expansions = {
+	["Midnight"] = true,
+	},
     factions = {},
     recipes = {},
     categories = {
@@ -31,7 +171,6 @@ DVD.filters.vendors = DVD.filters.vendors or {
         renown = false,
         subfaction = false,
         friendship = false,
-        recipe = false,
         race = false,
         neighborhood = false,
         Promo = false,
@@ -46,6 +185,10 @@ DVD.filters.quests = DVD.filters.quests or {
 
 DVD.filters.bossdrops = DVD.filters.bossdrops or {
     expansions = {},
+    categories = {},
+}
+
+DVD.filters.shop = DVD.filters.shop or {
     categories = {},
 }
 
@@ -69,14 +212,8 @@ DVD.filters.requirements = DVD.filters.requirements or {
 -- Shared Helpers
 -------------------------------------------------
 
-local function GetCatalogSizing()
-    local C = DVD.C or {}
-    return C.CatalogSizing or {}
-end
-
 local function GetSidebarWidth()
-    local CatSizing = GetCatalogSizing()
-    return CatSizing.SidebarWidth or 200
+    return MainFrameSizing.SidebarWidth
 end
 
 local function RefreshFromSidebar()
@@ -86,11 +223,13 @@ local function RefreshFromSidebar()
         DVD.scrollFrame:SetVerticalScroll(0)
     end
 
-    if BuildVendorUI then
-        BuildVendorUI()
-    elseif DVD.BuildVendorUI then
-        DVD.BuildVendorUI()
-    end
+if DVD.BuildVendorUI then
+    DVD.BuildVendorUI()
+
+elseif type(BuildVendorUI) == "function" then
+    -- Temporary legacy fallback.
+    BuildVendorUI()
+end
 end
 
 local function ClearFrameChildren(frame)
@@ -101,13 +240,6 @@ local function ClearFrameChildren(frame)
     end
 end
 
-local function AnySelected(tbl)
-    if not tbl then return false end
-    for _, selected in pairs(tbl) do
-        if selected then return true end
-    end
-    return false
-end
 
 local function SortedKeys(tbl)
     local keys = {}
@@ -136,11 +268,21 @@ local function OrderedFactionList(seen)
 end
 
 local function GetFactionColor(faction)
-    faction = faction and string.lower(faction)
-    if faction == "alliance" then return { 0.35, 0.65, 1.0, 1 }
-    elseif faction == "horde" then return { 1.0, 0.25, 0.25, 1 }
-    elseif faction == "neutral" then return { 0.20, 1.0, 0.35, 1 }
+    faction =
+        string.lower(
+            tostring(faction or "neutral")
+        )
+
+    if faction == "alliance" then
+        return COLORS.ALLIANCE
+
+    elseif faction == "horde" then
+        return COLORS.HORDE
+
+    elseif faction == "neutral" then
+        return COLORS.NEUTRAL
     end
+
     return nil
 end
 
@@ -156,9 +298,20 @@ local function ColorLabel(label, colorTable, key)
 end
 
 local function ColorizeExpansionName(expansionName)
-    expansionName = expansionName or "Unknown"
-    local hex = DVD.ExpansionColors and (DVD.ExpansionColors[expansionName] or DVD.ExpansionColors.Unknown) or "888888"
-    return "|cff" .. hex .. tostring(expansionName) .. "|r"
+    expansionName =
+        expansionName
+        or "Unknown"
+
+    local hex =
+        ExpansionColors[expansionName]
+        or ExpansionColors.Unknown
+        or "888888"
+
+    return
+        "|cff"
+        .. tostring(hex)
+        .. tostring(expansionName)
+        .. "|r"
 end
 
 -------------------------------------------------
@@ -166,7 +319,16 @@ end
 -------------------------------------------------
 
 function DVD.ItemPassesRequirements(itemID)
-    local data = masterActiveItems[itemID] or (DVD.decorItem and DVD.decorItem[itemID])
+local activeItems =
+    DVD.ActiveItems
+    or {}
+
+local data =
+    activeItems[itemID]
+    or (
+        DVD.decorItem
+        and DVD.decorItem[itemID]
+    )
     if not data then return true end
 
     local tab = DVD.currentTab or "vendors"
@@ -198,6 +360,7 @@ function DVD.ResetSidebarFilters()
 
     local sidebarWidth = GetSidebarWidth()
 
+    -- Ensure sidebarFilters exists
     DVD.sidebarFilters = DVD.sidebarFilters or sidebar.filtersContainer or sidebar.filterContent
     if not DVD.sidebarFilters then
         DVD.sidebarFilters = CreateFrame("Frame", "DV_SidebarFilters", sidebar)
@@ -207,18 +370,45 @@ function DVD.ResetSidebarFilters()
 
     ClearFrameChildren(DVD.sidebarFilters)
 
-    DVD.sidebarFilters:ClearAllPoints()
-    DVD.sidebarFilters:SetPoint("TOPLEFT", sidebar, "TOPLEFT", 8, -8)
-    DVD.sidebarFilters:SetPoint("TOPRIGHT", sidebar, "TOPRIGHT", -6, -8)
-    DVD.sidebarFilters:SetPoint("BOTTOMRIGHT", sidebar, "BOTTOMRIGHT", -6, 12)
-    DVD.sidebarFilters:SetWidth(sidebarWidth - 14)
+    -- 🛡️ SAFETY CHECK: Only anchor if it's a separate child frame, not the sidebar itself!
+    if DVD.sidebarFilters ~= sidebar then
+        DVD.sidebarFilters:ClearAllPoints()
+        DVD.sidebarFilters:SetPoint(
+            "TOPLEFT",
+            sidebar,
+            "TOPLEFT",
+            Sizing.ContentTopInset,
+            -Sizing.ContentTopInset
+        )
 
-    if DVD.sidebarFilters.SetClipsChildren then
-        DVD.sidebarFilters:SetClipsChildren(true)
+        DVD.sidebarFilters:SetPoint(
+            "TOPRIGHT",
+            sidebar,
+            "TOPRIGHT",
+            -Sizing.ContentRightInset,
+            -Sizing.ContentTopInset
+        )
+
+        DVD.sidebarFilters:SetPoint(
+            "BOTTOMRIGHT",
+            sidebar,
+            "BOTTOMRIGHT",
+            -Sizing.ContentRightInset,
+            Sizing.ContentBottomInset
+        )
+
+        DVD.sidebarFilters:SetWidth(
+            sidebarWidth
+            - Sizing.ContentWidthPadding
+        )
+
+        if DVD.sidebarFilters.SetClipsChildren then
+            DVD.sidebarFilters:SetClipsChildren(true)
+        end
     end
+
     DVD.sidebarFilters:Show()
 end
-
 -------------------------------------------------
 -- Gallery-style Sidebar Widgets
 -------------------------------------------------
@@ -235,8 +425,17 @@ local function CreateSectionHeader(parent, sectionKey, title, yOffset, defaultCo
 
     local header = CreateFrame("Button", nil, parent)
     header:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, yOffset)
-    header:SetPoint("TOPRIGHT", parent, "TOPRIGHT", -2, yOffset)
-    header:SetHeight(20)
+header:SetPoint(
+    "TOPRIGHT",
+    parent,
+    "TOPRIGHT",
+    -Sizing.SectionRightInset,
+    yOffset
+)
+
+header:SetHeight(
+    Sizing.SectionHeight
+)
 
     header.bg = header:CreateTexture(nil, "BACKGROUND")
     header.bg:SetAllPoints()
@@ -244,19 +443,49 @@ local function CreateSectionHeader(parent, sectionKey, title, yOffset, defaultCo
 
     header.text = header:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
     header.text:SetPoint("LEFT", header, "LEFT", 0, 0)
-    header.text:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE")
+header.text:SetFont(
+    STANDARD_TEXT_FONT,
+    Sizing.SectionFontSize,
+    "OUTLINE"
+)
     header.text:SetText("|cffffd100" .. title .. "|r")
 
     header.arrow = header:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    header.arrow:SetPoint("RIGHT", header, "RIGHT", -2, 0)
-    header.arrow:SetFont(STANDARD_TEXT_FONT, 12, "OUTLINE")
+header.arrow:SetPoint(
+    "RIGHT",
+    header,
+    "RIGHT",
+    -Sizing.SectionArrowRightInset,
+    0
+)
+header.arrow:SetFont(
+    STANDARD_TEXT_FONT,
+    Sizing.SectionFontSize,
+    "OUTLINE"
+)
     header.arrow:SetText(collapsed and "|cffffd100+|r" or "|cffffd100-|r")
 
     header.line = header:CreateTexture(nil, "ARTWORK")
     header.line:SetColorTexture(1, 0.82, 0, 0.45)
-    header.line:SetHeight(1)
-    header.line:SetPoint("BOTTOMLEFT", header, "BOTTOMLEFT", 0, -2)
-    header.line:SetPoint("BOTTOMRIGHT", header, "BOTTOMRIGHT", 0, -2)
+header.line:SetHeight(
+    Sizing.SectionDividerHeight
+)
+
+header.line:SetPoint(
+    "BOTTOMLEFT",
+    header,
+    "BOTTOMLEFT",
+    0,
+    -Sizing.SectionDividerBottomOffset
+)
+
+header.line:SetPoint(
+    "BOTTOMRIGHT",
+    header,
+    "BOTTOMRIGHT",
+    0,
+    -Sizing.SectionDividerBottomOffset
+)
 
     header:SetScript("OnEnter", function(self)
         self.bg:SetColorTexture(1, 0.82, 0, 0.08)
@@ -274,23 +503,68 @@ local function CreateSectionHeader(parent, sectionKey, title, yOffset, defaultCo
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
     end)
 
-    return yOffset - 26, collapsed
+    return yOffset - Sizing.SectionAdvance, collapsed
 end
 
 local function CreateSidebarCheckbox(parent, yOffset, labelText, checked, onClick, color)
     local check = CreateFrame("CheckButton", nil, parent, "UICheckButtonTemplate")
-    check:SetSize(20, 20)
-    check:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, yOffset + 4)
+    check:SetSize(
+        Sizing.CheckboxSize,
+        Sizing.CheckboxSize
+    )
+
+    check:SetPoint(
+        "TOPLEFT",
+        parent,
+        "TOPLEFT",
+        0,
+        yOffset
+            + Sizing.CheckboxTopAdjustment
+    )
     check:SetChecked(checked and true or false)
+
+    -- Safely clear default textures without causing an argument error
+    if check:GetNormalTexture() then check:GetNormalTexture():SetTexture("") end
+    if check:GetPushedTexture() then check:GetPushedTexture():SetTexture("") end
+    if check:GetHighlightTexture() then check:GetHighlightTexture():SetTexture("") end
+
+    -- Drop in a clean custom backdrop box for the checkbox so it pops out
+    if not check.customBg then
+        local bg = CreateFrame("Frame", nil, check, "BackdropTemplate")
+        bg:SetAllPoints(check)
+bg:SetBackdrop({
+            bgFile = "Interface\\Buttons\\WHITE8X8",
+            edgeFile = "Interface\\Buttons\\WHITE8X8",
+            edgeSize = 1,
+        })
+        bg:SetBackdropColor(0, 0, 0, 0.3)             -- Semi-transparent dark tint (lets the background breathe)
+        bg:SetBackdropBorderColor(0.25, 0.52, 0.88, 1) -- Crisp steel-blue border outline
+        bg:SetFrameLevel(check:GetFrameLevel() - 1)
+        check.customBg = bg
+    end
 
     if check.Text then check.Text:SetText("") end
     if check.text then check.text:SetText("") end
 
     check.label = check:CreateFontString(nil, "OVERLAY", "GameFontNormalSmall")
-    check.label:SetPoint("LEFT", check, "RIGHT", 2, 0)
-    check.label:SetWidth(GetSidebarWidth() - 42)
+    check.label:SetPoint(
+        "LEFT",
+        check,
+        "RIGHT",
+        Sizing.CheckboxLabelGap,
+        0
+    )
+
+    check.label:SetWidth(
+        GetSidebarWidth()
+        - Sizing.CheckboxLabelWidthPadding
+    )
     check.label:SetJustifyH("LEFT")
-    check.label:SetFont(STANDARD_TEXT_FONT, 11, "OUTLINE")
+    check.label:SetFont(
+        STANDARD_TEXT_FONT,
+        Sizing.CheckboxLabelFontSize,
+        "OUTLINE"
+    )
     check.label:SetText(labelText)
 
     if color then check.label:SetTextColor(color[1], color[2], color[3], color[4] or 1)
@@ -301,7 +575,7 @@ local function CreateSidebarCheckbox(parent, yOffset, labelText, checked, onClic
         PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
     end)
 
-    return yOffset - 18, check
+    return yOffset - Sizing.CheckboxAdvance, check
 end
 
 local function AddSection(parent, contextKey, sectionKey, title, yOffset, options, selectedTable, defaultCollapsed)
@@ -309,7 +583,10 @@ local function AddSection(parent, contextKey, sectionKey, title, yOffset, option
     local collapsed
     yOffset, collapsed = CreateSectionHeader(parent, fullKey, title, yOffset, defaultCollapsed)
 
-    if collapsed then return yOffset - 4 end
+if collapsed then
+    return yOffset
+        - Sizing.CollapsedSectionGap
+end
     selectedTable = selectedTable or {}
 
     for _, option in ipairs(options or {}) do
@@ -322,88 +599,278 @@ local function AddSection(parent, contextKey, sectionKey, title, yOffset, option
         end, option.color)
     end
 
-    return yOffset - 8
+return yOffset
+    - Sizing.ExpandedSectionGap
 end
 
 -------------------------------------------------
--- Option Builders
+-- Faction Builders
 -------------------------------------------------
+local function GetQuestFactionOptions()
+    local counts = { alliance = 0, horde = 0, neutral = 0 }
 
--- 🌟 LOCALIZED MASTER BUILDER (Guards against global scope crashes)
-local function GetExpansionOptionsFromSeen(seen)
+    -- Safely loop through nested quest groups and tally the factions
+    for _, group in ipairs(DVD.quests or {}) do
+        if type(group.quests) == "table" then
+            for _, quest in ipairs(group.quests) do
+                if quest.faction then
+                    local f = string.lower(quest.faction)
+                    if counts[f] ~= nil then
+                        counts[f] = counts[f] + 1
+                    end
+                end
+            end
+        end
+    end
+
+    local factionDefs = {
+        { key = "alliance", label = "Alliance" },
+        { key = "horde",    label = "Horde" },
+        { key = "neutral",  label = "Neutral" },
+    }
+
+    local factionOptions = {}
+    for _, def in ipairs(factionDefs) do
+        local count = counts[def.key] or 0
+        local rawLabel = string.format("%s (%d)", def.label, count)
+
+        table.insert(factionOptions, {
+            key = def.key,
+            label = ColorLabel(rawLabel, LabelColors and LabelColors.Factions, def.key),
+        })
+    end
+
+    return factionOptions
+end
+
+local function GetAchievementFactionOptions()
+    local counts = { alliance = 0, horde = 0, neutral = 0 }
+
+    -- Loop through achievement groups and tally the factions
+    for _, group in ipairs(DVD.achievements or {}) do
+        if type(group.achievements) == "table" then
+            for _, achievement in ipairs(group.achievements) do
+                if achievement.faction then
+                    local f = string.lower(achievement.faction)
+                    if counts[f] ~= nil then
+                        counts[f] = counts[f] + 1
+                    end
+                end
+            end
+        end
+    end
+
+    local factionDefs = {
+        { key = "alliance", label = "Alliance" },
+        { key = "horde",    label = "Horde" },
+        { key = "neutral",  label = "Neutral" },
+    }
+
+    local factionOptions = {}
+    for _, def in ipairs(factionDefs) do
+        local count = counts[def.key] or 0
+        local rawLabel = string.format("%s (%d)", def.label, count)
+
+        table.insert(factionOptions, {
+            key = def.key,
+            label = ColorLabel(rawLabel, LabelColors and LabelColors.Factions, def.key),
+        })
+    end
+
+    return factionOptions
+end
+
+local function GetVendorFactionOptions()
+    local counts = { alliance = 0, horde = 0, neutral = 0 }
+
+    -- Dynamically tally vendor counts from DVD.npcs
+    for _, npc in pairs(DVD.npcs or {}) do
+        if npc.faction then
+            local f = string.lower(npc.faction)
+            if counts[f] ~= nil then
+                counts[f] = counts[f] + 1
+            end
+        end
+    end
+
+    local factionDefs = {
+        { key = "alliance", label = "Alliance" },
+        { key = "horde",    label = "Horde" },
+        { key = "neutral",  label = "Neutral" },
+    }
+
+    local factionOptions = {}
+    for _, def in ipairs(factionDefs) do
+        local count = counts[def.key] or 0
+        local rawLabel = string.format("%s (%d)", def.label, count)
+
+        table.insert(factionOptions, {
+            key = def.key,
+            label = ColorLabel(rawLabel, LabelColors and LabelColors.Factions, def.key),
+        })
+    end
+
+    return factionOptions
+end
+
+-------------------------------------------------
+-- Expansion Builders
+-------------------------------------------------
+local function GetExpansionOptionsFromCounts(counts)
     local options = {}
-    for _, expansion in ipairs(DVD.EXPANSION_ORDER or {}) do
-        if seen[expansion] then
-            table.insert(options, { key = expansion, label = ColorizeExpansionName(expansion) })
+    
+    -- Grab your expansion colors table safely
+    local expansionColors = C.ExpansionColors or {}
+    
+    -- First, add expansions in the strict order defined by C.EXPANSION_ORDER
+    for _, expansion in ipairs(C.EXPANSION_ORDER or {}) do
+        if counts[expansion] and counts[expansion] > 0 then
+            local count = counts[expansion]
+            local rawLabel = string.format("%s (%d)", expansion, count)
+            
+            -- Colorize using the exact expansion name as the key in C.ExpansionColors
+            local hexColor = expansionColors[expansion]
+            local label = hexColor and string.format("|cff%s%s|r", hexColor, rawLabel) or rawLabel
+            
+            table.insert(options, { 
+                key = expansion, 
+                label = label 
+            })
+            counts[expansion] = nil -- Mark as processed
         end
     end
-    for _, expansion in ipairs(SortedKeys(seen)) do
-        local alreadyAdded = false
-        for _, option in ipairs(options) do
-            if option.key == expansion then alreadyAdded = true; break end
-        end
-        if not alreadyAdded then
-            table.insert(options, { key = expansion, label = ColorizeExpansionName(expansion) })
+    
+    -- Next, catch any remaining expansions not in C.EXPANSION_ORDER
+    for expansion, count in pairs(counts) do
+        if count > 0 then
+            local rawLabel = string.format("%s (%d)", expansion, count)
+            
+            local hexColor = expansionColors[expansion]
+            local label = hexColor and string.format("|cff%s%s|r", hexColor, rawLabel) or rawLabel
+            
+            table.insert(options, { 
+                key = expansion, 
+                label = label 
+            })
         end
     end
+    
     return options
 end
 
-local function GetExpansionOptionsFromGroups(groups)
-    local seen = {}
-    for _, group in ipairs(groups or {}) do
-        if group.expansion then seen[group.expansion] = true end
-    end
-    return GetExpansionOptionsFromSeen(seen)
-end
-
-local function GetQuestExpansionOptions()
-    local seen = {}
-    for _, group in ipairs(DVD.quests or {}) do
-        for _, quest in ipairs(group.quests or {}) do
-            if quest.expansion then seen[quest.expansion] = true end
-        end
-    end
-    return GetExpansionOptionsFromSeen(seen)
-end
-
--- 🌟 FIXED FLAT VENDORS MAPPER: Reads directly from master data engine rows!
+-- 1. Vendors (Flat DVD.npcs table)
 local function GetExpansionOptionsFromFlatVendors()
-    local seen = {}
-    for _, vendor in pairs(masterNpcs) do
+    local counts = {}
+    for _, vendor in pairs(DVD.npcs or {}) do
         if type(vendor) == "table" and vendor.expansion then
-            seen[vendor.expansion] = true
+            local exp = vendor.expansion
+            counts[exp] = (counts[exp] or 0) + 1
         end
     end
-    return GetExpansionOptionsFromSeen(seen)
+    return GetExpansionOptionsFromCounts(counts)
 end
 
+-- 2. Quests (Nested groups structure)
+local function GetQuestExpansionOptions()
+    local counts = {}
+    for _, group in ipairs(DVD.quests or {}) do
+        if type(group.quests) == "table" then
+            for _, quest in ipairs(group.quests) do
+                if quest.expansion then
+                    local exp = quest.expansion
+                    counts[exp] = (counts[exp] or 0) + 1
+                end
+            end
+        end
+    end
+    return GetExpansionOptionsFromCounts(counts)
+end
+
+-- 3. Professions / Drops / Grouped items (Handles items nested inside group.items)
 local function GetProfessionExpansionOptions()
-    local seen = {}
+    local counts = {}
     for _, group in ipairs(DVD.professions or {}) do
-        for _, item in ipairs(group.items or {}) do
-            if item.expansion then seen[item.expansion] = true end
+        if type(group.items) == "table" then
+            for _, item in ipairs(group.items) do
+                if item.expansion then
+                    local exp = item.expansion
+                    counts[exp] = (counts[exp] or 0) + 1
+                end
+            end
         end
     end
-    return GetExpansionOptionsFromSeen(seen)
+    return GetExpansionOptionsFromCounts(counts)
 end
 
+-- 4. Achievements / Boss Drops (Handles group.achievements or direct group expansion properties, with item-level overrides)
+local function GetGroupExpansionOptions(groups)
+    local counts = {}
+    for _, group in ipairs(groups or {}) do
+        -- Check if it contains inner items arrays (like bossdrops/professions groups)
+        if type(group.items) == "table" then
+            for _, item in ipairs(group.items) do
+                -- Prioritize item-level expansion override, then fallback to group-level expansion
+                local exp = item.expansion or group.expansion
+                if exp then
+                    counts[exp] = (counts[exp] or 0) + 1
+                end
+            end
+        -- Check if it contains inner achievements arrays
+        elseif type(group.achievements) == "table" then
+            for _, item in ipairs(group.achievements) do
+                local exp = item.expansion or group.expansion
+                if exp then
+                    counts[exp] = (counts[exp] or 0) + 1
+                end
+            end
+        -- Fallback to group itself having an expansion property
+        elseif group.expansion then
+            local exp = group.expansion
+            counts[exp] = (counts[exp] or 0) + 1
+        end
+    end
+    return GetExpansionOptionsFromCounts(counts)
+end
+-------------------------------------------------
+-- Option Builders
+-------------------------------------------------
 local function GetProfessionCategoryOptions()
+    -- 1. Count items per profession category accurately
+    local counts = {}
+    for _, group in ipairs(DVD.professions or {}) do
+        local profName = group.name
+        if profName then
+            local count = 0
+            for _, item in ipairs(group.items or {}) do
+                count = count + 1
+            end
+            counts[profName] = count
+        end
+    end
+
     local seen = {}
     for _, group in ipairs(DVD.professions or {}) do
+        if group.name then
+            seen[group.name] = true
+        end
         for _, item in ipairs(group.items or {}) do
-            if item.category then seen[item.category] = true end
+            if item.category then 
+                seen[item.category] = true 
+            end
         end
     end
 
     local options = {}
     local used = {}
 
-    for _, professionName in ipairs(DVD.Profession_Order or {}) do
+    for _, professionName in ipairs(ProfessionOrder) do
         if seen[professionName] then
+            local count = counts[professionName] or 0
+            local rawLabel = string.format("%s (%d)", professionName, count)
+            
             table.insert(options, {
                 key = professionName,
-                label = ColorLabel(professionName, DVD.LabelColors and DVD.LabelColors.Professions, professionName),
+                label = ColorLabel(rawLabel, LabelColors and LabelColors.Professions, professionName),
             })
             used[professionName] = true
         end
@@ -411,66 +878,186 @@ local function GetProfessionCategoryOptions()
 
     for _, professionName in ipairs(SortedKeys(seen)) do
         if not used[professionName] then
+            local count = counts[professionName] or 0
+            local rawLabel = string.format("%s (%d)", professionName, count)
+
             table.insert(options, {
                 key = professionName,
-                label = ColorLabel(professionName, DVD.LabelColors and DVD.LabelColors.Professions, professionName),
+                label = ColorLabel(rawLabel, LabelColors and LabelColors.Professions, professionName),
             })
         end
     end
     return options
 end
 
-local function GetQuestFactionOptions()
-    local seen = {}
+local function GetQuestCategoryOptions()
+    -- Count quests per category across all quest groups
+    local counts = {}
+
     for _, group in ipairs(DVD.quests or {}) do
         for _, quest in ipairs(group.quests or {}) do
-            if quest.faction then seen[string.lower(quest.faction)] = true end
+            local cat = quest.category or group.name
+            if cat then
+                counts[cat] = (counts[cat] or 0) + 1
+            end
         end
     end
 
-    local options = {}
-    for _, faction in ipairs(OrderedFactionList(seen)) do
-        table.insert(options, {
-            key = faction,
-            label = FormatFactionLabel(faction),
-            color = GetFactionColor(faction),
-        })
-    end
-    return options
-end
-
-local function GetAchievementFactionOptions()
-    local seen = {}
-    for _, group in ipairs(DVD.achievements or {}) do
-        for _, achievement in ipairs(group.achievements or {}) do
-            if achievement.faction then seen[string.lower(achievement.faction)] = true end
-        end
-    end
+    local categoryDefs = {
+        { key = "race", label = "Race Locked" },
+        { key = "spec", label = "Spec Locked" },
+    }
 
     local options = {}
-    for _, faction in ipairs(OrderedFactionList(seen)) do
+    for _, def in ipairs(categoryDefs) do
+        local count = counts[def.key] or 0
+        local rawLabel = string.format("%s (%d)", def.label, count)
+
         table.insert(options, {
-            key = faction,
-            label = FormatFactionLabel(faction),
-            color = GetFactionColor(faction),
+            key = def.key,
+			label = ColorLabel(rawLabel, LabelColors and LabelColors.QuestCategories, def.key),
         })
     end
+
     return options
 end
 
 local function GetAchievementGroupOptions()
+    -- Count achievements per group
+    local counts = {}
+
+    for _, group in ipairs(DVD.achievements or {}) do
+        local count = 0
+        for _, achievement in ipairs(group.achievements or {}) do
+            count = count + 1
+        end
+        if group.name then
+            counts[group.name] = count
+        end
+    end
+
     local options = {}
     for _, group in ipairs(DVD.achievements or {}) do
         if group.name then
+            local count = counts[group.name] or 0
+            local rawLabel = string.format("%s (%d)", group.name, count)
+
             table.insert(options, {
                 key = group.name,
-                label = ColorLabel(group.name, DVD.LabelColors and DVD.LabelColors.AchievementCategories, group.name),
+                label = ColorLabel(rawLabel, LabelColors and LabelColors.AchievementCategories, group.name),
             })
         end
     end
     return options
 end
 
+local function GetBossDropCategoryOptions()
+    -- Count items per category across all boss drop groups
+    local counts = {}
+
+    for _, group in ipairs(DVD.bossdrops or {}) do
+        for _, boss in ipairs(group.items or {}) do
+            local cat = boss.category or group.name
+            if cat then
+                counts[cat] = (counts[cat] or 0) + 1
+            end
+        end
+    end
+
+    local categoryDefs = {
+        { key = "daily",    label = "Dailies" },
+        { key = "decor",    label = "Decor Specialties" },	
+        { key = "delve",    label = "Delves" },
+        { key = "dungeon",  label = "Dungeons" },
+        { key = "event",    label = "Events" },
+        { key = "raid",     label = "Raids" },
+        { key = "rare",     label = "Rares" },
+        { key = "renown",   label = "Renown" },
+    }
+
+    local options = {}
+    for _, def in ipairs(categoryDefs) do
+        local count = counts[def.key] or 0
+        local rawLabel = string.format("%s (%d)", def.label, count)
+
+        table.insert(options, {
+            key = def.key,
+            label = ColorLabel(rawLabel, LabelColors and LabelColors.BossCategories, def.key),
+        })
+    end
+
+    return options
+end
+
+local function GetVendorCategoryOptions()
+    -- Count vendors per category across the flat npc table
+    local counts = {}
+
+    for _, vendor in pairs(DVD.npcs or {}) do
+        if type(vendor) == "table" then
+            local cat = vendor.category or "none"
+            counts[cat] = (counts[cat] or 0) + 1
+        end
+    end
+
+    local categoryDefs = {
+        { key = "none",         label = "No Requirement" },
+	
+        { key = "friendship",   label = "Friendship" },
+        { key = "neighborhood", label = "Neighborhood" },	
+        { key = "Promo",        label = "Promo" },	
+        { key = "race",         label = "Race Locked" },
+        { key = "renown",       label = "Renown" },
+        { key = "reputation",   label = "Reputation" },
+        { key = "subfaction",   label = "Subfaction" },
+    }
+
+    local options = {}
+    for _, def in ipairs(categoryDefs) do
+        local count = counts[def.key] or 0
+        local rawLabel = string.format("%s (%d)", def.label, count)
+
+        table.insert(options, {
+            key = def.key,
+            label = ColorLabel(rawLabel, LabelColors and LabelColors.VendorCategories, def.key),
+        })
+    end
+
+    return options
+end
+
+local function GetShopCategoryOptions()
+    -- Count shop items per source across Gallery.ItemDetails
+    local counts = {}
+
+    for itemID, details in pairs(Gallery.ItemDetails or {}) do
+        if type(itemID) == "number"
+        and type(details) == "table"
+        and (details.source == "shop" or details.source == "soon" or details.source == "charity")
+        then
+            counts[details.source] = (counts[details.source] or 0) + 1
+        end
+    end
+
+    local categoryDefs = {
+        { key = "shop",    label = "In-Game Shop" },
+        { key = "charity", label = "Charity" },
+		--{ key = "soon", label = "Coming Soon" },
+    }
+
+    local options = {}
+    for _, def in ipairs(categoryDefs) do
+        local count = counts[def.key] or 0
+        local rawLabel = string.format("%s (%d)", def.label, count)
+
+        table.insert(options, {
+            key = def.key,
+            label = ColorLabel(rawLabel, LabelColors and LabelColors.ShopCategories, def.key),
+        })
+    end
+
+    return options
+end
 -------------------------------------------------
 -- Sidebar UI Layout Builders
 -------------------------------------------------
@@ -480,27 +1067,16 @@ function DVD.BuildVendorFilters()
 
     local parent = DVD.sidebarFilters
     local filters = DVD.filters.vendors
-    local y = -4
+    local y = Sizing.ContentStartY
 
     y = AddSection(parent, "vendors", "expansions", "Expansions", y, GetExpansionOptionsFromFlatVendors(), filters.expansions, false)
-    y = AddSection(parent, "vendors", "faction", "Faction", y, {
-        {key = "alliance", label = "Alliance", color = GetFactionColor("alliance")},
-        {key = "horde", label = "Horde", color = GetFactionColor("horde")},
-        {key = "neutral", label = "Neutral", color = GetFactionColor("neutral")}
-    }, filters.factions, false)
+    y = AddSection(parent, "vendors", "requirements", "Unlocks", y, GetVendorCategoryOptions(), filters.categories, false)	
+	y = AddSection(parent, "quests", "faction", "Faction", y, GetVendorFactionOptions(), filters.factions, false)
 
-    y = AddSection(parent, "vendors", "requirements", "Unlocks", y, {
-        {key = "none", label = "No Requirement"},
-        {key = "reputation", label = "Reputation"},
-        {key = "renown", label = "Renown"},
-        {key = "subfaction", label = "Subfaction"},
-        {key = "friendship", label = "Friendship"},
-        {key = "race", label = "Race Locked"},
-        {key = "neighborhood", label = "Neighborhood / Housing"},
-        {key = "Promo", label = "Promo"}
-    }, filters.categories, false)
-
-    parent:SetHeight(math.abs(y) + 20)
+    parent:SetHeight(
+    math.abs(y)
+    + Sizing.ContentBottomPadding
+)
 end
 
 function DVD.BuildQuestFilters()
@@ -508,16 +1084,16 @@ function DVD.BuildQuestFilters()
 
     local parent = DVD.sidebarFilters
     local filters = DVD.filters.quests
-    local y = -4
+    local y = Sizing.ContentStartY
 
     y = AddSection(parent, "quests", "expansions", "Expansions", y, GetQuestExpansionOptions(), filters.expansions, false)
     y = AddSection(parent, "quests", "faction", "Faction", y, GetQuestFactionOptions(), filters.factions, false)
-    y = AddSection(parent, "quests", "categories", "Unlocks", y, {
-        { key = "race", label = "Race Locked" },
-        { key = "spec", label = "Spec Locked" },
-    }, filters.categories, false)
+    y = AddSection(parent, "quests", "categories", "Unlocks", y, GetQuestCategoryOptions(), filters.categories, false)
 
-    parent:SetHeight(math.abs(y) + 20)
+   parent:SetHeight(
+    math.abs(y)
+    + Sizing.ContentBottomPadding
+)
 end
 
 function DVD.BuildProfessionFilters()
@@ -525,12 +1101,15 @@ function DVD.BuildProfessionFilters()
 
     local parent = DVD.sidebarFilters
     local filters = DVD.filters.professions
-    local y = -4
+    local y = Sizing.ContentStartY
 
     y = AddSection(parent, "professions", "expansions", "Expansions", y, GetProfessionExpansionOptions(), filters.expansions, false)
     y = AddSection(parent, "professions", "professions", "Professions", y, GetProfessionCategoryOptions(), filters.professions, false)
 
-    parent:SetHeight(math.abs(y) + 20)
+    parent:SetHeight(
+    math.abs(y)
+    + Sizing.ContentBottomPadding
+)
 end
 
 function DVD.BuildAchievementFilters()
@@ -538,12 +1117,15 @@ function DVD.BuildAchievementFilters()
 
     local parent = DVD.sidebarFilters
     local filters = DVD.filters.achievements
-    local y = -4
+    local y = Sizing.ContentStartY
 
     y = AddSection(parent, "achievements", "categories", "Categories", y, GetAchievementGroupOptions(), filters.groups, false)
     y = AddSection(parent, "achievements", "faction", "Faction", y, GetAchievementFactionOptions(), filters.factions, false)
 
-    parent:SetHeight(math.abs(y) + 20)
+    parent:SetHeight(
+    math.abs(y)
+    + Sizing.ContentBottomPadding
+)
 end
 
 function DVD.BuildBossDropFilters()
@@ -551,23 +1133,31 @@ function DVD.BuildBossDropFilters()
 
     local parent = DVD.sidebarFilters
     local filters = DVD.filters.bossdrops
-    local y = -4
+    local y = Sizing.ContentStartY
 
-    y = AddSection(parent, "bossdrops", "expansions", "Expansions", y, GetExpansionOptionsFromGroups(DVD.bossdrops), filters.expansions, false)
-    y = AddSection(parent, "bossdrops", "categories", "Categories", y, {
-        { key = "rare", label = ColorLabel("Rares", DVD.LabelColors and DVD.LabelColors.BossCategories, "rare") },
-        { key = "dungeon", label = ColorLabel("Dungeons", DVD.LabelColors and DVD.LabelColors.BossCategories, "dungeon") },
-        { key = "delve", label = ColorLabel("Delves", DVD.LabelColors and DVD.LabelColors.BossCategories, "delve") },
-        { key = "renown", label = ColorLabel("Renown", DVD.LabelColors and DVD.LabelColors.BossCategories, "renown") },
-        { key = "event", label = ColorLabel("Events", DVD.LabelColors and DVD.LabelColors.BossCategories, "event") },
-        { key = "raid", label = ColorLabel("Raids", DVD.LabelColors and DVD.LabelColors.BossCategories, "raid") },
-        { key = "daily", label = ColorLabel("Dailies", DVD.LabelColors and DVD.LabelColors.BossCategories, "daily") },
-        { key = "decor", label = ColorLabel("Decor Specialties", DVD.LabelColors and DVD.LabelColors.BossCategories, "decor") },
-    }, filters.categories, false)
+    y = AddSection(parent, "bossdrops", "expansions", "Expansions", y, GetGroupExpansionOptions(DVD.bossdrops), filters.expansions, false)
+    y = AddSection(parent, "bossdrops", "categories", "Categories", y, GetBossDropCategoryOptions(), filters.categories, false)
 
-    parent:SetHeight(math.abs(y) + 20)
+    parent:SetHeight(
+    math.abs(y)
+    + Sizing.ContentBottomPadding
+)
 end
 
+function DVD.BuildShopFilters()
+    DVD.ResetSidebarFilters()
+
+    local parent = DVD.sidebarFilters
+    local filters = DVD.filters.shop
+    local y = Sizing.ContentStartY
+
+    y = AddSection(parent, "shop", "categories", "Categories", y, GetShopCategoryOptions(), filters.categories, false)
+
+    parent:SetHeight(
+        math.abs(y)
+        + Sizing.ContentBottomPadding
+    )
+end
 -------------------------------------------------
 -- Current Tab Router
 -------------------------------------------------
@@ -583,5 +1173,8 @@ function DVD.BuildCurrentSidebarFilters()
         DVD.BuildAchievementFilters()
     elseif DVD.currentTab == "bossdrops" and DVD.BuildBossDropFilters then
         DVD.BuildBossDropFilters()
+    -- 🚀 Add the new Shop router here!
+    elseif DVD.currentTab == "shop" and DVD.BuildShopFilters then
+        DVD.BuildShopFilters()
     end
 end

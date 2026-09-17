@@ -8,11 +8,15 @@ local addonName, DVD = ...
 
 DVD.CatalogDumper = DVD.CatalogDumper or {}
 local Dumper = DVD.CatalogDumper
+-------------------------------------------------
+-- Persistent dump storage
+-------------------------------------------------
 
+DV_DumpLog = DV_DumpLog or {}
 -------------------------------------------------------------------------------
 -- Configuration
 -------------------------------------------------------------------------------
-local MAX_DECOR_ID         = 60000  -- Upper bound of decorID range to scan
+local MAX_DECOR_ID         = 100000  -- Upper bound of decorID range to scan
 local BATCH_SIZE           = 200    -- IDs to process per tick (catalog dump)
 local TICK_INTERVAL        = 0.01   -- Seconds between batches (catalog dump)
 local PROGRESS_EVERY       = 1000   -- Print progress every N IDs (catalog dump)
@@ -467,4 +471,398 @@ SlashCmdList["DVSEEK"] = function(msg)
     DVD.Utils.PrintMessage("/dvseek dump categories - Dump housing categories/subcategories")
     DVD.Utils.PrintMessage("/dvseek dump bosses   - Dump boss encounter floor mapIDs")
     DVD.Utils.PrintMessage("/dvseek dump clear    - Clear saved dump logs")
+end
+
+function Dumper.CompareDumpToCatalog()
+    DV_DumpLog = DV_DumpLog or {}
+
+    local gallery = DVD.Gallery
+    local includedDecorIDs = {}
+    local includedCount = 0
+
+    local function AddDecorID(value)
+        local decorID = tonumber(value)
+
+        if decorID
+        and not includedDecorIDs[decorID] then
+            includedDecorIDs[decorID] = true
+            includedCount = includedCount + 1
+        end
+    end
+
+    local function AddLookupTable(lookup)
+        if type(lookup) ~= "table" then
+            return
+        end
+
+        for key, record in pairs(lookup) do
+            if type(record) == "table" then
+                AddDecorID(
+                    record.decorID
+                    or record.recordID
+                    or key
+                )
+            else
+                AddDecorID(key)
+            end
+        end
+    end
+
+    local function AddRecordList(records)
+        if type(records) ~= "table" then
+            return
+        end
+
+        for _, record in ipairs(records) do
+            if type(record) == "table" then
+                AddDecorID(
+                    record.decorID
+                    or record.recordID
+                )
+            end
+        end
+    end
+
+    -- Check every possible current catalog location.
+    AddLookupTable(DVD.catalogByDecorID)
+    AddRecordList(DVD.catalogRecords)
+
+    if gallery then
+        AddLookupTable(gallery.catalogByDecorID)
+        AddRecordList(gallery.catalogRecords)
+    end
+
+    local missing = {}
+    local dumpCount = 0
+    local matchedCount = 0
+
+    for _, row in ipairs(DV_DumpLog.catalogDump or {}) do
+        dumpCount = dumpCount + 1
+
+        local decorID =
+            tonumber(
+                row.decorID
+                or row.recordID
+            )
+
+        if decorID
+        and includedDecorIDs[decorID] then
+            matchedCount = matchedCount + 1
+        else
+            missing[#missing + 1] = row
+        end
+    end
+
+    table.sort(missing, function(a, b)
+        return
+            (tonumber(a.decorID or a.recordID) or 0)
+            <
+            (tonumber(b.decorID or b.recordID) or 0)
+    end)
+
+    DV_DumpLog.dumpOnlyRecords = missing
+
+    print(
+        "|cff00ccffDecor Vendor Compare:|r",
+        "Dump:",
+        dumpCount,
+        "Catalog IDs:",
+        includedCount,
+        "Matched:",
+        matchedCount,
+        "Dump-only:",
+        #missing
+    )
+
+    if includedCount == 0 then
+        print(
+            "|cffff4040Decor Vendor:|r",
+            "No loaded catalog records were found. Open the Gallery and wait for its catalog-loaded message before running /dvcompare."
+        )
+    end
+end
+
+-------------------------------------------------
+-- Dump-only records viewer
+-------------------------------------------------
+
+local dumpViewerFrame
+
+local function CleanDumpField(value)
+    if value == nil or value == "" then
+        return "-"
+    end
+
+    value = tostring(value)
+    value = value:gsub("[\r\n\t]+", " ")
+
+    return value
+end
+
+local function BuildDumpOnlyText()
+    local records =
+        DV_DumpLog
+        and DV_DumpLog.dumpOnlyRecords
+        or {}
+
+    local lines = {
+        "Decor Vendor — Dump-Only Catalog Records",
+        "Total records: " .. tostring(#records),
+        "",
+        "#\tDecor ID\tItem ID\tAsset / Model\tScene ID\tPrefab\tName",
+        string.rep("-", 115),
+    }
+
+    for index, record in ipairs(records) do
+        lines[#lines + 1] = table.concat({
+            tostring(index),
+            CleanDumpField(record.decorID or record.recordID),
+            CleanDumpField(record.itemID),
+            CleanDumpField(record.asset or record.model3D),
+            CleanDumpField(record.uiModelSceneID),
+            CleanDumpField(record.isPrefab),
+            CleanDumpField(record.name),
+        }, "\t")
+    end
+
+    return table.concat(lines, "\n")
+end
+
+function Dumper.ShowDumpOnlyRecords()
+    DV_DumpLog = DV_DumpLog or {}
+
+    local records =
+        DV_DumpLog.dumpOnlyRecords
+        or {}
+
+    if #records == 0 then
+        print(
+            "|cffff4040Decor Vendor:|r",
+            "There are no dump-only records to display. Run /dvcompare first."
+        )
+        return
+    end
+
+    if not dumpViewerFrame then
+        local frame = CreateFrame(
+            "Frame",
+            "DecorVendorDumpCompareFrame",
+            UIParent,
+            "BackdropTemplate"
+        )
+
+        dumpViewerFrame = frame
+
+        frame:SetSize(980, 620)
+        frame:SetPoint("CENTER")
+        frame:SetFrameStrata("DIALOG")
+        frame:SetFrameLevel(500)
+        frame:SetClampedToScreen(true)
+        frame:SetMovable(true)
+        frame:EnableMouse(true)
+        frame:RegisterForDrag("LeftButton")
+
+        frame:SetScript("OnDragStart", function(self)
+            self:StartMoving()
+        end)
+
+        frame:SetScript("OnDragStop", function(self)
+            self:StopMovingOrSizing()
+        end)
+
+        frame:SetBackdrop({
+            bgFile = "Interface\\Buttons\\WHITE8X8",
+            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+            edgeSize = 14,
+            insets = {
+                left = 4,
+                right = 4,
+                top = 4,
+                bottom = 4,
+            },
+        })
+
+        frame:SetBackdropColor(0.055, 0.025, 0.085, 0.98)
+        frame:SetBackdropBorderColor(0.62, 0.35, 0.85, 1)
+
+        local title = frame:CreateFontString(
+            nil,
+            "OVERLAY",
+            "GameFontNormalLarge"
+        )
+
+        title:SetPoint("TOPLEFT", frame, "TOPLEFT", 18, -16)
+        title:SetText("Decor Vendor — Dump-Only Records")
+        title:SetTextColor(0.82, 0.58, 1)
+
+        frame.title = title
+
+        local countText = frame:CreateFontString(
+            nil,
+            "OVERLAY",
+            "GameFontHighlight"
+        )
+
+        countText:SetPoint(
+            "LEFT",
+            title,
+            "RIGHT",
+            12,
+            0
+        )
+
+        frame.countText = countText
+
+        local closeButton = CreateFrame(
+            "Button",
+            nil,
+            frame,
+            "UIPanelCloseButton"
+        )
+
+        closeButton:SetPoint("TOPRIGHT", frame, "TOPRIGHT", -5, -5)
+
+        local scrollFrame = CreateFrame(
+            "ScrollFrame",
+            nil,
+            frame,
+            "UIPanelScrollFrameTemplate"
+        )
+
+        scrollFrame:SetPoint("TOPLEFT", frame, "TOPLEFT", 18, -50)
+        scrollFrame:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -38, 52)
+
+        frame.scrollFrame = scrollFrame
+
+        local editBox = CreateFrame(
+            "EditBox",
+            nil,
+            scrollFrame
+        )
+
+        editBox:SetMultiLine(true)
+        editBox:SetAutoFocus(false)
+        editBox:SetFontObject(ChatFontNormal)
+        editBox:SetTextInsets(6, 6, 6, 6)
+        editBox:SetWidth(900)
+        editBox:SetMaxLetters(0)
+
+        editBox:SetScript("OnEscapePressed", function(self)
+            self:ClearFocus()
+            frame:Hide()
+        end)
+
+        scrollFrame:SetScrollChild(editBox)
+
+        frame.editBox = editBox
+
+        local selectAllButton = CreateFrame(
+            "Button",
+            nil,
+            frame,
+            "UIPanelButtonTemplate"
+        )
+
+        selectAllButton:SetSize(110, 24)
+        selectAllButton:SetPoint(
+            "BOTTOMLEFT",
+            frame,
+            "BOTTOMLEFT",
+            18,
+            16
+        )
+        selectAllButton:SetText("Select All")
+
+        selectAllButton:SetScript("OnClick", function()
+            editBox:SetFocus()
+            editBox:HighlightText()
+        end)
+
+        local refreshButton = CreateFrame(
+            "Button",
+            nil,
+            frame,
+            "UIPanelButtonTemplate"
+        )
+
+        refreshButton:SetSize(110, 24)
+        refreshButton:SetPoint(
+            "LEFT",
+            selectAllButton,
+            "RIGHT",
+            8,
+            0
+        )
+        refreshButton:SetText("Refresh")
+
+        refreshButton:SetScript("OnClick", function()
+            Dumper.ShowDumpOnlyRecords()
+        end)
+
+        local closeBottomButton = CreateFrame(
+            "Button",
+            nil,
+            frame,
+            "UIPanelButtonTemplate"
+        )
+
+        closeBottomButton:SetSize(90, 24)
+        closeBottomButton:SetPoint(
+            "BOTTOMRIGHT",
+            frame,
+            "BOTTOMRIGHT",
+            -18,
+            16
+        )
+        closeBottomButton:SetText("Close")
+
+        closeBottomButton:SetScript("OnClick", function()
+            frame:Hide()
+        end)
+    end
+
+    local text = BuildDumpOnlyText()
+    local lineCount = 1
+
+    for _ in text:gmatch("\n") do
+        lineCount = lineCount + 1
+    end
+
+    dumpViewerFrame.countText:SetText(
+        tostring(#records) .. " records"
+    )
+
+    dumpViewerFrame.editBox:SetText(text)
+    dumpViewerFrame.editBox:SetHeight(
+        math.max(
+            520,
+            (lineCount + 2) * 16
+        )
+    )
+
+    dumpViewerFrame.editBox:ClearFocus()
+    dumpViewerFrame.scrollFrame:SetVerticalScroll(0)
+
+    dumpViewerFrame:Show()
+    dumpViewerFrame:Raise()
+end
+-------------------------------------------------
+-- Dump comparison command
+-------------------------------------------------
+
+SLASH_DVDUMPCOMPARE1 = "/dvcompare"
+
+SlashCmdList.DVDUMPCOMPARE = function()
+    if not Dumper.CompareDumpToCatalog then
+        print(
+            "|cffff4040Decor Vendor:|r",
+            "CompareDumpToCatalog is unavailable."
+        )
+        return
+    end
+
+    Dumper.CompareDumpToCatalog()
+	if Dumper.ShowDumpOnlyRecords then
+    Dumper.ShowDumpOnlyRecords()
+end
 end

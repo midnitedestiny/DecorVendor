@@ -40,6 +40,7 @@
 -- ============================================================
 
 local addonName, DVD = ...
+local Gallery = DVD.Gallery
 
 DVD.ActiveItems = DVD.ActiveItems or {}
 DVD.ActiveItemsByExpansion = DVD.ActiveItemsByExpansion or {}
@@ -916,6 +917,7 @@ SlashCmdList["DVMISSING"] = function()
     end)
 end
 
+
 SLASH_DVFLATTENVENDORS1 = "/dvflattenvendors"
 
 SlashCmdList["DVFLATTENVENDORS"] = function()
@@ -1278,30 +1280,308 @@ SlashCmdList["DVPROFBOOK"] = function()
         return false
     end
 
-    local function GetProfessionInfoText(info, record)
-        local sourceText = record and tostring(record.sourceText or "") or ""
-        local skill = sourceText:match("Profession:%s*(.-)%s*%(") or (info and info.parentProfessionName) or (info and info.professionName) or "Profession"
-        local skillNeeded = tonumber(sourceText:match("%((%d+)%)")) or (info and tonumber(info.requiredSkillRank)) or (info and tonumber(info.skillLineCurrentLevelRequirement)) or (info and tonumber(info.skillLevel)) or 0
-        return skill, skillNeeded
-    end
+-------------------------------------------------
+-- Profession metadata
+-------------------------------------------------
 
-    local function GetExpansionFromSkill(skill)
-        skill = tostring(skill or "")
-        local expansion = skill:gsub("%s+Alchemy$", ""):gsub("%s+Blacksmithing$", ""):gsub("%s+Cooking$", ""):gsub("%s+Enchanting$", ""):gsub("%s+Engineering$", ""):gsub("%s+Inscription$", ""):gsub("%s+Jewelcrafting$", ""):gsub("%s+Leatherworking$", ""):gsub("%s+Tailoring$", "")
-        if expansion == skill or expansion == "" then return "Unknown" end
-        return expansion
-    end
+local PROFESSION_NAMES = {
+    "Alchemy",
+    "Blacksmithing",
+    "Cooking",
+    "Enchanting",
+    "Engineering",
+    "Inscription",
+    "Jewelcrafting",
+    "Leatherworking",
+    "Tailoring",
+}
 
-    local function GetCategoryFromSkill(skill)
-        skill = tostring(skill or "")
-        local professions = { "Alchemy", "Blacksmithing", "Cooking", "Enchanting", "Engineering", "Inscription", "Jewelcrafting", "Leatherworking", "Tailoring" }
-        for _, profession in ipairs(professions) do
-            if skill:find(profession, 1, true) then return profession end
+local function GetProfessionMetadata(recipeID, record)
+    local professionInfo
+
+    if C_TradeSkillUI.GetProfessionInfoByRecipeID then
+        local ok, result =
+            pcall(
+                C_TradeSkillUI.GetProfessionInfoByRecipeID,
+                recipeID
+            )
+
+        if ok and type(result) == "table" then
+            professionInfo = result
         end
-        return skill
     end
 
-    local function FindCatalogRecordByName(recipeName)
+    local sourceText =
+        tostring(
+            record
+            and record.sourceText
+            or ""
+        )
+
+    local category =
+        professionInfo
+        and (
+            professionInfo.parentProfessionName
+            or professionInfo.professionName
+        )
+        or nil
+
+    local expansion =
+        professionInfo
+        and professionInfo.expansionName
+        or nil
+
+    local skill =
+        professionInfo
+        and professionInfo.professionName
+        or nil
+
+    category = CleanName(category)
+    expansion = CleanName(expansion)
+    skill = CleanName(skill)
+
+    -------------------------------------------------
+    -- Catalog fallback
+    -------------------------------------------------
+
+    if skill == "" then
+        skill =
+            CleanName(
+                sourceText:match(
+                    "Profession:%s*(.-)%s*%("
+                )
+                or sourceText:match(
+                    "Profession:%s*(.+)$"
+                )
+            )
+    end
+
+    -------------------------------------------------
+    -- Determine the base profession when the API
+    -- did not provide parentProfessionName.
+    -------------------------------------------------
+
+    if category == "" then
+        for _, professionName in ipairs(PROFESSION_NAMES) do
+            if skill:find(professionName, 1, true) then
+                category = professionName
+                break
+            end
+        end
+    end
+
+    if category == "" then
+        category = "Profession"
+    end
+
+    -------------------------------------------------
+    -- Rebuild the full skill name when Blizzard
+    -- returns only the base profession name.
+    -------------------------------------------------
+
+    if skill == ""
+    or skill == category then
+        if expansion ~= ""
+        and expansion ~= "Unknown" then
+            skill =
+                expansion
+                .. " "
+                .. category
+        else
+            skill = category
+        end
+    end
+
+    -------------------------------------------------
+    -- Derive expansion only as a fallback.
+    -------------------------------------------------
+
+    if expansion == "" then
+        if skill ~= category
+        and #skill > #category
+        and skill:sub(-#category) == category then
+            expansion =
+                CleanName(
+                    skill:sub(
+                        1,
+                        #skill - #category
+                    )
+                )
+        end
+    end
+
+    if expansion == "" then
+        expansion = "Unknown"
+    end
+
+    -------------------------------------------------
+    -- This must be the recipe requirement, not the
+    -- character's current profession skill.
+    -------------------------------------------------
+
+    local skillNeeded =
+        tonumber(
+            sourceText:match("%((%d+)%)")
+        )
+        or 0
+
+    return
+        category,
+        expansion,
+        skill,
+        skillNeeded
+end
+
+-------------------------------------------------
+-- Collect recipes from every unlocked expansion
+-- of the currently open profession.
+-------------------------------------------------
+
+local function CollectAllUnlockedExpansionRecipeIDs(callback)
+    if type(callback) ~= "function" then
+        return
+    end
+
+    local collected = {}
+    local seen = {}
+
+    local function AddCurrentRecipeIDs()
+        local recipeIDs =
+            C_TradeSkillUI.GetAllRecipeIDs
+            and C_TradeSkillUI.GetAllRecipeIDs()
+            or {}
+
+        for _, recipeID in ipairs(recipeIDs) do
+            recipeID = tonumber(recipeID)
+
+            if recipeID
+            and not seen[recipeID] then
+                seen[recipeID] = true
+                collected[#collected + 1] = recipeID
+            end
+        end
+    end
+
+    local childInfos =
+        C_TradeSkillUI.GetChildProfessionInfos
+        and C_TradeSkillUI.GetChildProfessionInfos()
+        or {}
+
+    -------------------------------------------------
+    -- Older-client or single-expansion fallback.
+    -------------------------------------------------
+
+    if type(childInfos) ~= "table"
+    or #childInfos == 0
+    or not C_TradeSkillUI.SetProfessionChildSkillLineID then
+        AddCurrentRecipeIDs()
+        table.sort(collected)
+        callback(collected)
+        return
+    end
+
+    local originalSkillLineID =
+        C_TradeSkillUI.GetProfessionChildSkillLineID
+        and C_TradeSkillUI.GetProfessionChildSkillLineID()
+        or nil
+
+    local childIndex = 0
+
+    local function WaitForProfessionData(done, attempt)
+        attempt = attempt or 1
+
+        local isChanging =
+            C_TradeSkillUI.IsDataSourceChanging
+            and C_TradeSkillUI.IsDataSourceChanging()
+
+        local isReady =
+            not C_TradeSkillUI.IsTradeSkillReady
+            or C_TradeSkillUI.IsTradeSkillReady()
+
+        if (
+            not isChanging
+            and isReady
+        )
+        or attempt >= 40 then
+            C_Timer.After(0, done)
+            return
+        end
+
+        C_Timer.After(0.05, function()
+            WaitForProfessionData(
+                done,
+                attempt + 1
+            )
+        end)
+    end
+
+    local ScanNextExpansion
+
+    ScanNextExpansion = function()
+        childIndex = childIndex + 1
+
+        local childInfo =
+            childInfos[childIndex]
+
+        if not childInfo then
+            -------------------------------------------------
+            -- Restore the expansion the user originally had
+            -- selected in the profession book.
+            -------------------------------------------------
+
+            if originalSkillLineID then
+                pcall(
+                    C_TradeSkillUI
+                        .SetProfessionChildSkillLineID,
+                    originalSkillLineID
+                )
+            end
+
+            table.sort(collected)
+            callback(collected)
+            return
+        end
+
+        local skillLineID =
+            tonumber(
+                childInfo.professionID
+                or childInfo.skillLineID
+            )
+
+        if not skillLineID then
+            ScanNextExpansion()
+            return
+        end
+
+        local ok =
+            pcall(
+                C_TradeSkillUI
+                    .SetProfessionChildSkillLineID,
+                skillLineID
+            )
+
+        if not ok then
+            ScanNextExpansion()
+            return
+        end
+
+        -------------------------------------------------
+        -- Give Blizzard a moment to begin changing the
+        -- profession data source, then wait for readiness.
+        -------------------------------------------------
+
+        C_Timer.After(0.10, function()
+            WaitForProfessionData(function()
+                AddCurrentRecipeIDs()
+                ScanNextExpansion()
+            end)
+        end)
+    end
+
+    ScanNextExpansion()
+end
+   
+   local function FindCatalogRecordByName(recipeName)
         local wanted = NormalizeName(recipeName)
         if wanted == "" then return nil end
 
@@ -1328,74 +1608,203 @@ SlashCmdList["DVPROFBOOK"] = function()
         )
     end
 
-    DVD.LoadCatalogRecords(function(success)
-        if not success then
-            print("|cffff4040DV Prof Book:|r Housing catalog failed to load.")
-            return
-        end
+DVD.LoadCatalogRecords(function(success)
+    if not success then
+        print(
+            "|cffff4040DV Prof Book:|r "
+            .. "Housing catalog failed to load."
+        )
+        return
+    end
 
+    CollectAllUnlockedExpansionRecipeIDs(function(recipeIDs)
         local lines = {}
         local skipped = {}
         local confirmedCount = 0
         local lumberCount = 0
-        local recipeIDs = C_TradeSkillUI.GetAllRecipeIDs() or {}
 
-        table.insert(lines, "-- ============================================================")
-        table.insert(lines, "-- DecorVendorData Profession Book Housing Export")
-        table.insert(lines, "-- Generated with /dvprofbook")
-        table.insert(lines, "-- ============================================================")
+        table.insert(
+            lines,
+            "-- ============================================================"
+        )
+        table.insert(
+            lines,
+            "-- DecorVendor Profession Book Housing Export"
+        )
+        table.insert(
+            lines,
+            "-- Generated with /dvprofbook"
+        )
+        table.insert(
+            lines,
+            "-- Scanned unlocked expansion profession books: automatic"
+        )
+        table.insert(
+            lines,
+            "-- ============================================================"
+        )
         table.insert(lines, "")
 
         for _, recipeID in ipairs(recipeIDs) do
-            local info = C_TradeSkillUI.GetRecipeInfo(recipeID)
-            local recipeName = info and info.name or ""
-            local itemID = GetOutputItemID(recipeID)
-            local reagents, reagentIDs = GetRecipeReagents(recipeID)
+            local recipeInfo =
+                C_TradeSkillUI.GetRecipeInfo(recipeID)
 
-            local record = itemID and DVD.catalogByItemID and DVD.catalogByItemID[itemID]
+            local recipeName =
+                recipeInfo
+                and recipeInfo.name
+                or ""
 
-            if not record and recipeName ~= "" then
-                record = FindCatalogRecordByName(recipeName)
-                if record then itemID = record.itemID end
+            local itemID =
+                GetOutputItemID(recipeID)
+
+            local reagents, reagentIDs =
+                GetRecipeReagents(recipeID)
+
+            local record =
+                itemID
+                and DVD.catalogByItemID
+                and DVD.catalogByItemID[itemID]
+
+            if not record
+            and recipeName ~= "" then
+                record =
+                    FindCatalogRecordByName(
+                        recipeName
+                    )
+
+                if record then
+                    itemID =
+                        tonumber(record.itemID)
+                        or itemID
+                end
             end
 
+            local category,
+                  expansion,
+                  skill,
+                  skillNeeded =
+                GetProfessionMetadata(
+                    recipeID,
+                    record
+                )
+
             if record and itemID then
-                confirmedCount = confirmedCount + 1
-                local skill, skillNeeded = GetProfessionInfoText(info, record)
-                local expansion = GetExpansionFromSkill(skill)
-                local category = GetCategoryFromSkill(skill)
+                confirmedCount =
+                    confirmedCount + 1
 
-                table.insert(lines, BuildExportLine(itemID, category, expansion, tonumber(record.model3D or record.asset) or 0, recipeID, skill, skillNeeded, reagents, record.name or recipeName, false))
-            elseif itemID and HasLumberReagent(reagentIDs) then
-                lumberCount = lumberCount + 1
-                local skill = (info and (info.parentProfessionName or info.professionName)) or "Profession"
-                local skillNeeded = (info and tonumber(info.requiredSkillRank)) or (info and tonumber(info.skillLineCurrentLevelRequirement)) or (info and tonumber(info.skillLevel)) or 0
-                local expansion = GetExpansionFromSkill(skill)
-                local category = GetCategoryFromSkill(skill)
+                table.insert(
+                    lines,
+                    BuildExportLine(
+                        itemID,
+                        category,
+                        expansion,
+                        tonumber(
+                            record.model3D
+                            or record.asset
+                        )
+                        or 0,
+                        recipeID,
+                        skill,
+                        skillNeeded,
+                        reagents,
+                        record.name
+                            or recipeName,
+                        false
+                    )
+                )
 
-                table.insert(lines, BuildExportLine(itemID, category, expansion, 0, recipeID, skill, skillNeeded, reagents, recipeName, true))
-            elseif info and info.name then
-                table.insert(skipped, tostring(recipeID) .. " - " .. tostring(info.name))
+            elseif itemID
+            and HasLumberReagent(reagentIDs) then
+                lumberCount =
+                    lumberCount + 1
+
+                table.insert(
+                    lines,
+                    BuildExportLine(
+                        itemID,
+                        category,
+                        expansion,
+                        0,
+                        recipeID,
+                        skill,
+                        skillNeeded,
+                        reagents,
+                        recipeName,
+                        true
+                    )
+                )
+
+            elseif recipeInfo
+            and recipeInfo.name then
+                table.insert(
+                    skipped,
+                    tostring(recipeID)
+                    .. " - "
+                    .. tostring(recipeInfo.name)
+                )
             end
         end
 
         table.insert(lines, "")
-        table.insert(lines, "-- Confirmed housing decor recipes exported: " .. tostring(confirmedCount))
-        table.insert(lines, "-- Missing-catalog lumber recipes exported: " .. tostring(lumberCount))
-        table.insert(lines, "-- Total exported: " .. tostring(confirmedCount + lumberCount))
-        table.insert(lines, "-- Skipped recipes: " .. tostring(#skipped))
+
+        table.insert(
+            lines,
+            "-- Recipe IDs scanned: "
+            .. tostring(#recipeIDs)
+        )
+
+        table.insert(
+            lines,
+            "-- Confirmed housing decor recipes exported: "
+            .. tostring(confirmedCount)
+        )
+
+        table.insert(
+            lines,
+            "-- Missing-catalog lumber recipes exported: "
+            .. tostring(lumberCount)
+        )
+
+        table.insert(
+            lines,
+            "-- Total exported: "
+            .. tostring(
+                confirmedCount
+                + lumberCount
+            )
+        )
+
+        table.insert(
+            lines,
+            "-- Skipped recipes: "
+            .. tostring(#skipped)
+        )
 
         if #skipped > 0 then
-            table.insert(lines, "\n-- Skipped:")
-            for _, skippedLine in ipairs(skipped) do table.insert(lines, "-- " .. skippedLine) end
+            table.insert(lines, "")
+            table.insert(lines, "-- Skipped:")
+
+            for _, skippedLine in ipairs(skipped) do
+                table.insert(
+                    lines,
+                    "-- " .. skippedLine
+                )
+            end
         end
 
+        local output =
+            table.concat(lines, "\n")
+
         if DVD.ShowCopyBox then
-            DVD.ShowCopyBox("|cffffd100Profession Book Housing Export|r", table.concat(lines, "\n"))
+            DVD.ShowCopyBox(
+                "|cffffd100Profession Book Housing Export|r",
+                output
+            )
         else
-            print(table.concat(lines, "\n"))
+            print(output)
         end
     end)
+end)
 end
 
 -- ============================================================
@@ -1735,4 +2144,130 @@ SlashCmdList["DVSCANXP"] = function()
     table.insert(lines, "\n-- Total Compiled Items: " .. totalScanned)
 
     DVD.ShowCopyBox("|cffffd100Scoped Vendor Database|r", table.concat(lines, "\n"))
+end
+
+-------------------------------------------------
+-- Current Neighborhood Endeavor debug command
+-------------------------------------------------
+
+SLASH_DVENDEAVOR1 = "/dvendeavor"
+
+SlashCmdList.DVENDEAVOR = function()
+    if not C_NeighborhoodInitiative then
+        print("|cffff4040Decor Vendor:|r Neighborhood Initiative API is unavailable.")
+        return
+    end
+
+    if C_NeighborhoodInitiative.RequestNeighborhoodInitiativeInfo then
+        C_NeighborhoodInitiative.RequestNeighborhoodInitiativeInfo()
+    end
+
+    C_Timer.After(0.50, function()
+        local info =
+            C_NeighborhoodInitiative.GetNeighborhoodInitiativeInfo
+            and C_NeighborhoodInitiative.GetNeighborhoodInitiativeInfo()
+
+        if type(info) ~= "table" then
+            print("|cffffd100Decor Vendor:|r No neighborhood Endeavor information returned.")
+            return
+        end
+
+        if not info.isLoaded then
+            print("|cffffd100Decor Vendor:|r Endeavor information is not loaded yet.")
+            return
+        end
+
+        print("|cff00ccffDecor Vendor — Current Endeavor|r")
+        print("Title:", tostring(info.title))
+        print("Initiative ID:", tostring(info.initiativeID))
+        print("Cycle ID:", tostring(info.currentCycleID))
+        print(
+            "Progress:",
+            tostring(info.currentProgress),
+            "/",
+            tostring(info.progressRequired)
+        )
+        print("Neighborhood GUID:", tostring(info.neighborhoodGUID))
+    end)
+end
+
+-- ============================================================
+-- Missing Quests Exporter / Debugger (Final Corrected Mapping)
+-- ============================================================
+SLASH_DVMISSINGQUESTS1 = "/dvmissingquests"
+
+SlashCmdList["DVMISSINGQUESTS"] = function()
+    local missing = {}
+    local count = 0
+
+    -- Build lookup tables of all quest IDs and itemIDs currently in DVD.quests to avoid duplicates
+    local existingQuestIDs = {}
+    local existingItemIDs = {}
+    for _, group in ipairs(DVD.quests or {}) do
+        if group.quests then
+            for _, q in ipairs(group.quests) do
+                if q.id then existingQuestIDs[q.id] = true end
+                if q.itemID then existingItemIDs[q.itemID] = true end
+            end
+        end
+    end
+
+    -- Scan Gallery.ItemDetails for quest-related entries
+    for itemID, details in pairs(Gallery.ItemDetails or {}) do
+        if details and (details.questID or details.questId or details.questName) then
+            local qID = details.questID or details.questId or 0
+            
+            -- Skip if it's already in DVD.quests
+            if (qID > 0 and not existingQuestIDs[qID]) or (itemID and not existingItemIDs[itemID]) then
+                
+                -- Pull companion data from DVD.ActiveItems
+                local activeData = DVD.ActiveItems and DVD.ActiveItems[itemID] or {}
+                
+                -- Resolve the item name from cache or item info if the active table name comment isn't parsed
+                local itemName = "Unknown Title"
+                if C_Item and C_Item.GetItemNameByID then
+                    itemName = C_Item.GetItemNameByID(itemID) or itemName
+                end
+
+                missing[itemID] = {
+                    itemID = itemID,
+                    questID = qID,
+                    questName = details.questName or "Decor Treasure Hunt",
+                    model3D = activeData.model3D or 0,
+                    title = itemName,
+                    expansion = activeData.expansion or "Midnight",
+                    faction = activeData.faction or "alliance"
+                }
+                count = count + 1
+            end
+        end
+    end
+
+    local lines = {}
+    table.insert(lines, "-- ============================================================")
+    table.insert(lines, "-- Missing Quests Export for DVD.quests")
+    table.insert(lines, "-- Generated with /dvmissingquests")
+    table.insert(lines, "-- Total missing found: " .. tostring(count))
+    table.insert(lines, "-- ============================================================")
+    table.insert(lines, "")
+
+    for _, data in pairs(missing) do
+        local line = string.format(
+            "    { id = %d, questName = %q, type = \"quest\", itemID = %d, model3D = %d, title = %q, expansion = %q, faction = %q },",
+            data.questID,
+            data.questName,
+            data.itemID,
+            data.model3D,
+            data.title,
+            data.expansion,
+            data.faction
+        )
+        table.insert(lines, line)
+    end
+
+    if DVD.ShowCopyBox then
+        DVD.ShowCopyBox("|cffffd100Missing Quests Export|r", table.concat(lines, "\n"))
+    else
+        print(table.concat(lines, "\n"))
+    end
 end

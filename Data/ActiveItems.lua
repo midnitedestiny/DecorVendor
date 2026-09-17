@@ -41,11 +41,6 @@ DVD.ActiveItems[245333] = { decorID = 1315, model3D = 6877809, soldBy = {14624},
 DVD.ActiveItems[246409] = { decorID = 2226, model3D = 197155, soldBy = {14624}, source = "quest", noxp = true } -- Shadowforge Grinding Wheel
 end
 
-do -- 🏪 VENDOR NPC: 16528 (Provisioner Vredigar)
-DVD.ActiveItems[256049] = { decorID = 10950, model3D = 6050850, requirement = { type = "reputation", faction = "Tranquillien", rank = 5 }, soldBy = {16528}, source = "vendor" } -- Sin'dorei Sleeper
-DVD.ActiveItems[257419] = { decorID = 11500, model3D = 6033615, requirement = { type = "reputation", faction = "Tranquillien", rank = 5 }, soldBy = {16528}, source = "vendor" } -- Sin'dorei Crafter's Forge
-end
-
 do -- 🏪 VENDOR NPC: 23995 (Axle)
 DVD.ActiveItems[244852] = { decorID = 1674, model3D = 6927099, soldBy = {23995}, source = "achievement", noxp = true } -- Head of the Broodmother
 end
@@ -80,54 +75,14 @@ DVD.ActiveItems[256903] = { decorID = 11301, model3D = 304626, soldBy = {48258},
 
 end
 
-do -- 🏪 VENDOR NPC: 49877 (Captain Lancy Revshon)
-DVD.ActiveItems[248333] = { decorID = 4402, model3D = 936473, requirement = { type = "reputation", faction = "Stormwind", rank = 3 }, soldBy = {49877}, source = "vendor", noxp = true } -- Stormwind Large Wooden Table
-DVD.ActiveItems[248619] = { decorID = 4445, model3D = 1004948, requirement = { type = "reputation", faction = "Stormwind", rank = 5 }, soldBy = {49877}, source = "vendor", noxp = true } -- Stormwind Gazebo
-DVD.ActiveItems[248620] = { decorID = 4446, model3D = 1004961, requirement = { type = "reputation", faction = "Stormwind", rank = 4 }, soldBy = {49877}, source = "vendor", noxp = true } -- Stormwind Trellis and Basin
-DVD.ActiveItems[248617] = { decorID = 4443, model3D = 929381, requirement = { type = "reputation", faction = "Stormwind", rank = 4 }, soldBy = {49877}, source = "vendor", noxp = true } -- Stormwind Keg Stand
-DVD.ActiveItems[248665] = { decorID = 4490, model3D = 1028015, requirement = { type = "reputation", faction = "Stormwind", rank = 5 }, soldBy = {49877}, source = "vendor", noxp = true } -- Stormwind Peddler's Cart
-DVD.ActiveItems[248794] = { decorID = 4811, model3D = 194903, requirement = { type = "reputation", faction = "Stormwind", rank = 2 }, soldBy = {49877}, source = "vendor", noxp = true } -- Elwynn Fence
-DVD.ActiveItems[248795] = { decorID = 4812, model3D = 194909, requirement = { type = "reputation", faction = "Stormwind", rank = 2 }, soldBy = {49877}, source = "vendor", noxp = true } -- Elwynn Fencepost
-DVD.ActiveItems[248939] = { decorID = 5116, model3D = 960215, requirement = { type = "reputation", faction = "Stormwind", rank = 3 }, soldBy = {49877}, source = "vendor", noxp = true } -- Stormwind Lamppost
-DVD.ActiveItems[248336] = { decorID = 4405, model3D = 953804, soldBy = {49877}, source = "quest", noxp = true } -- Stormwind Wooden Table
-DVD.ActiveItems[248618] = { decorID = 4444, model3D = 949210, soldBy = {49877}, source = "quest", noxp = true } -- Westfall Woven Basket
-DVD.ActiveItems[248621] = { decorID = 4447, model3D = 1004965, soldBy = {49877}, source = "quest", noxp = true } -- Stormwind Arched Trellis
-DVD.ActiveItems[248662] = { decorID = 4487, model3D = 950140, soldBy = {49877}, source = "quest", noxp = true } -- Jewelcrafter's Tent
-DVD.ActiveItems[248797] = { decorID = 4814, model3D = 936393, soldBy = {49877}, source = "quest", noxp = true } -- City Wanderer's Candleholder
-DVD.ActiveItems[248798] = { decorID = 4815, model3D = 950755, soldBy = {49877}, source = "quest", noxp = true } -- Northshire Barrel
-DVD.ActiveItems[248801] = { decorID = 4819, model3D = 4618938, soldBy = {49877}, source = "quest", noxp = true } -- Stormwind Weapon Rack
-DVD.ActiveItems[248938] = { decorID = 5115, model3D = 960094, soldBy = {49877}, source = "quest", noxp = true } -- Hooded Iron Lantern
-DVD.ActiveItems[256673] = { decorID = 11274, model3D = 953668, soldBy = {49877}, source = "quest", noxp = true } -- Stormwind Forge
-end
-
 do -- 🏪 VENDOR NPC: 50304 (Captain Donald Adams)
 DVD.ActiveItems[245504] = { decorID = 923, model3D = 397900, soldBy = {50304}, source = "quest", noxp = true } -- Lordaeron Fence
 DVD.ActiveItems[245505] = { decorID = 924, model3D = 397901, soldBy = {50304}, source = "vendor", noxp = true } -- Lordaeron Fencepost
 end
 
-do -- 🏪 VENDOR NPC: 50307 (Lord Candren) 252520 (Ripley Kiefer)
-DVD.ActiveItems[245518] = { decorID = 858, model3D = 305584, soldBy = {50307, 252520}, source = "quest", noxp = true } -- Worgen's Chicken Coop
-DVD.ActiveItems[245603] = { decorID = 1794, model3D = 6930895, requirement = { type = "reputation", faction = "Gilneas", rank =  4}, soldBy = {50307, 252520}, source = "vendor"}-- Gilnean Noble's Trellis
-DVD.ActiveItems[245605] = { decorID = 1796, model3D = 6930898, requirement = { type = "reputation", faction = "Gilneas", rank = 3 }, soldBy = {50307, 252520}, source = "vendor"}-- Gilnean Stone Wall
-DVD.ActiveItems[245620] = { decorID = 1829, model3D = 321660, soldBy = {50307, 252520}, source = "quest", noxp = true } -- Little Wolf's Loo
-end
-
 do -- 🏪 VENDOR NPC: 50483 (Brave Tuho)
 DVD.ActiveItems[243335] = { decorID = 1281, model3D = 6711674, soldBy = {50483}, source = "quest", noxp = true } -- Tauren Bluff Rug
 
-end
-
-do -- 🏪 VENDOR NPC: 58414 (San Redscale)
-DVD.ActiveItems[247730] = { decorID = 3870, model3D = 524268, requirement = { type = "reputation", faction = "Order of the Cloud Serpent", rank = 4 }, soldBy = {58414}, source = "vendor"} -- Red Crane Kite
-DVD.ActiveItems[247732] = { decorID = 3872, model3D = 526372, requirement = { type = "reputation", faction = "Order of the Cloud Serpent", rank = 3 }, soldBy = {58414}, source = "vendor"} -- Lucky Hanging Lantern
-end
-
-do -- 🏪 VENDOR NPC: 58706 (Gina Mudclaw)
-DVD.ActiveItems[245508] = { decorID = 1201, model3D = 528075, requirement = { type = "friendship", faction = "Tina Mudclaw", rank = 5 }, soldBy = {58706}, source = "vendor"}-- Pandaren Cooking Table
-DVD.ActiveItems[247670] = { decorID = 3840, model3D = 6854357, requirement = { type = "friendship", faction = "Ella", rank = 5 }, soldBy = {58706}, source = "vendor"}-- Pandaren Pantry
-DVD.ActiveItems[247734] = { decorID = 3874, model3D = 527720, requirement = { type = "friendship", faction = "Farmer Fung", rank = 5 }, soldBy = {58706}, source = "vendor"}-- Paw'don Well
-DVD.ActiveItems[247737] = { decorID = 3877, model3D = 531170, requirement = { type = "friendship", faction = "Jogu the Drunk", rank = 5 }, soldBy = {58706}, source = "vendor"}-- Stormstout Brew Keg
-DVD.ActiveItems[248663] = { decorID = 4488, model3D = 955690, soldBy = {58706}, source = "quest", noxp = true } -- Wooden Doghouse
 end
 
 do -- 🏪 VENDOR NPC: 59698 (Brother Furtrim)
@@ -145,15 +100,6 @@ end
 do -- 🏪 VENDOR NPC: 64001 (Sage Lotusbloom Horde) 64032 (Sage Whiteheart Alliance)
 DVD.ActiveItems[247729] = { decorID = 3869, model3D = 519135, soldBy = {64001, 64032}, source = "quest", noxp = true } -- Pandaren Stone Lamppost
 DVD.ActiveItems[264362] = { decorID = 15605, model3D = 576300, soldBy = {64001, 64032}, source = "quest", noxp = true } -- Golden Pandaren Privacy Screen
-end
-
-do -- 🏪 VENDOR NPC: 64605 (Tan Shin Tiao)
-DVD.ActiveItems[245512] = { decorID = 1172, model3D = 555960, requirement = { type = "reputation", faction = "The Lorewalkers", rank = 2}, soldBy = {64605}, source = "vendor"}-- Pandaren Cradle Stool
-DVD.ActiveItems[247662] = { decorID = 3832, model3D = 535966, requirement = { type = "reputation", faction = "The Lorewalkers", rank = 3}, soldBy = {64605}, source = "vendor"} -- Pandaren Scholar's Lectern
-DVD.ActiveItems[247663] = { decorID = 3833, model3D = 536629, requirement = { type = "reputation", faction = "The Lorewalkers", rank = 4}, soldBy = {64605}, source = "vendor"}-- Pandaren Scholar's Bookcase
-DVD.ActiveItems[247855] = { decorID = 3993, model3D = 520092, requirement = { type = "reputation", faction = "The Lorewalkers", rank = 3}, soldBy = {64605}, source = "vendor"}-- Pandaren Lacquered Crate
-DVD.ActiveItems[247858] = { decorID = 3995, model3D = 531955, soldBy = {64605}, source = "quest", noxp = true } -- Shaohao Ceremonial Bell
-DVD.ActiveItems[258147] = { decorID = 11873, model3D = 6854355, requirement = { type = "reputation", faction = "The Lorewalkers", rank = 4}, soldBy = {64605}, source = "vendor"}-- Empty Lorewalker's Bookcase
 end
 
 do -- 🏪 VENDOR NPC: 68363 (Quackenbush) 68364 (Paul North)
@@ -182,7 +128,7 @@ DVD.ActiveItems[244315] = { decorID = 1407, model3D = 979433, soldBy = {79774}, 
 DVD.ActiveItems[244316] = { decorID = 1408, model3D = 984690, soldBy = {79774}, source = "vendor" } -- Warsong Workbench
 DVD.ActiveItems[244320] = { decorID = 1412, model3D = 996200, soldBy = {79774}, source = "quest", noxp = true } -- Youngling's Courser Toys
 DVD.ActiveItems[244653] = { decorID = 1443, model3D = 974442, soldBy = {79774}, source = "vendor" } -- Orcish Scribe's Drafting Table
-DVD.ActiveItems[245438] = { decorID = 1318, model3D = 971699, soldBy = {79774}, source = "quest" } -- Frostwolf Bookcase
+DVD.ActiveItems[245438] = { decorID = 1318, model3D = 971699, soldBy = {79774}, source = "vendor" } -- Frostwolf Bookcase
 DVD.ActiveItems[245443] = { decorID = 1353, model3D = 971720, soldBy = {79774}, source = "vendor" } -- Frostwolf Round Table
 end
 
@@ -267,26 +213,6 @@ DVD.ActiveItems[247912] = { decorID = 4026, model3D = 1361706, soldBy = {93971},
 DVD.ActiveItems[247919] = { decorID = 4033, model3D = 1378306, soldBy = {93971}, source = "vendor" } -- Traditional Shal'dorei Rug
 end
 
-do -- 🏪 VENDOR NPC: 100196 (Eadric the Pure)
-DVD.ActiveItems[250230] = { decorID = 7571, model3D = 1247929, soldBy = {100196}, source = "achievement", noxp = true } -- Replica Altar of Ancient Kings
-DVD.ActiveItems[250231] = { decorID = 7572, model3D = 1267028, soldBy = {100196}, source = "vendor" } -- Silver Hand Banner
-DVD.ActiveItems[250232] = { decorID = 7573, model3D = 1267032, soldBy = {100196}, source = "vendor" } -- Sanctum of Light Hallway Rug
-DVD.ActiveItems[250233] = { decorID = 7574, model3D = 1267045, soldBy = {100196}, source = "achievement" } -- Replica Libram of Ancient Kings
-DVD.ActiveItems[250234] = { decorID = 7575, model3D = 1267052, soldBy = {100196}, source = "achievement", noxp = true } -- Sanctum of Light Candelabra
-DVD.ActiveItems[250235] = { decorID = 7576, model3D = 1267056, soldBy = {100196}, source = "vendor" } -- Silver Hand Tribute to the Fallen
-DVD.ActiveItems[250236] = { decorID = 7577, model3D = 1270418, soldBy = {100196}, source = "achievement" } -- Silver Hand Weapon Rack
-end
-
-do -- 🏪 VENDOR NPC: 103693 (Outfitter Reynolds)
-DVD.ActiveItems[245549] = { decorID = 1740, model3D = 6905474, soldBy = {103693}, source = "vendor" } -- Trueshot Lodge Fireplace
-DVD.ActiveItems[248011] = { decorID = 4042, model3D = 1315073, soldBy = {103693}, source = "achievement", noxp = true } -- Trueshot Skeletal Dragon Head
-DVD.ActiveItems[250110] = { decorID = 5877, model3D = 1313898, soldBy = {103693}, source = "vendor" } -- Trueshot Lodge Weapon Rack
-DVD.ActiveItems[250125] = { decorID = 5890, model3D = 1276980, soldBy = {103693}, source = "achievement", noxp = true } -- Replica Altar of the Eternal Hunt
-DVD.ActiveItems[250126] = { decorID = 5891, model3D = 7233609, soldBy = {103693}, source = "achievement" } -- Unseen Path Archer's Gallery
-DVD.ActiveItems[250127] = { decorID = 5892, model3D = 7233610, soldBy = {103693}, source = "achievement", noxp = true } -- Replica Tales of the Hunt
-DVD.ActiveItems[250128] = { decorID = 5893, model3D = 7233612, soldBy = {103693}, source = "vendor" } -- Banner of the Unseen Path
-end
-
 do -- 🏪 VENDOR NPC: 105333 (Val'zuun) Legion Remix 
 DVD.ActiveItems[250307] = { decorID = 7610, model3D = 7150661, soldBy = {105333}, source = "achievement", noxp = true } -- Tome of the Corrupt
 DVD.ActiveItems[250402] = { decorID = 7620, model3D = 1102771, soldBy = {105333}, source = "achievement", noxp = true } -- Vrykul Lord's Throne
@@ -305,17 +231,6 @@ DVD.ActiveItems[252753] = { decorID = 9165, model3D = 1349995, soldBy = {105333}
 DVD.ActiveItems[256677] = { decorID = 11278, model3D = 1307161, soldBy = {105333}, source = "achievement", noxp = true } -- Large Legion Candle
 DVD.ActiveItems[256678] = { decorID = 11279, model3D = 1307162, soldBy = {105333}, source = "achievement", noxp = true } -- Small Legion Candle
 DVD.ActiveItems[258299] = { decorID = 11942, model3D = 7240010, soldBy = {105333}, source = "achievement", noxp = true } -- Hanging Felsteel Cage
-end
-
-do -- 🏪 VENDOR NPC: 106902 (Ransa Greyfeather)
-DVD.ActiveItems[243290] = { decorID = 1252, model3D = 6872427, requirement = { type = "reputation", faction = "Highmountain Tribe", rank = 5 }, soldBy = {106902}, source = "vendor"}-- Tauren Waterwheel
-DVD.ActiveItems[243359] = { decorID = 1292, model3D = 1305135, requirement = { type = "reputation", faction = "Highmountain Tribe", rank = 4 }, soldBy = {106902}, source = "vendor"}-- Tauren Windmill
-DVD.ActiveItems[245270] = { decorID = 1703, model3D = 6892736, requirement = { type = "reputation", faction = "Highmountain Tribe", rank = 4 }, soldBy = {106902}, source = "vendor"}-- Thunder Totem Kiln
-DVD.ActiveItems[245450] = { decorID = 1297, model3D = 1861620, requirement = { type = "reputation", faction = "Highmountain Tribe", rank = 5 }, soldBy = {106902}, source = "vendor"}-- Highmountain Totem
-DVD.ActiveItems[245452] = { decorID = 1231, model3D = 1255423, requirement = { type = "reputation", faction = "Highmountain Tribe", rank = 3 }, soldBy = {106902}, source = "vendor"}-- Stonebull Canoe
-DVD.ActiveItems[245454] = { decorID = 1293, model3D = 1318477, requirement = { type = "reputation", faction = "Highmountain Tribe", rank = 2 }, soldBy = {106902}, source = "vendor"}-- Small Highmountain Drum
-DVD.ActiveItems[245458] = { decorID = 1295, model3D = 1327167, requirement = { type = "reputation", faction = "Highmountain Tribe", rank = 2 }, soldBy = {106902}, source = "vendor"}-- Riverbend Jar
-DVD.ActiveItems[248985] = { decorID = 5136, model3D = 7194087, requirement = { type = "reputation", faction = "Highmountain Tribe", rank = 3 }, soldBy = {106902}, source = "vendor"}-- Tauren Hanging Brazier	
 end
 
 do -- 🏪 VENDOR NPC: 108017 (Torv Dubstomp)
@@ -348,53 +263,6 @@ DVD.ActiveItems[245698] = { decorID = 1882, model3D = 1096764, soldBy = {109306}
 DVD.ActiveItems[245699] = { decorID = 1883, model3D = 1096766, soldBy = {109306}, source = "vendor", noxp = true } -- Kaldorei Stone Fencepost
 end
 
-do -- 🏪 VENDOR NPC: 112318 (Flamesmith Lanying) 105986 (Kelsey Steelspark)
-DVD.ActiveItems[250914] = { decorID = 7837, model3D = 1279203, soldBy = {112318}, source = "achievement" } -- Elemental Altar of the Maelstrom
-DVD.ActiveItems[250915] = { decorID = 7838, model3D = 1323611, soldBy = {112318}, source = "achievement" } -- Replica Words of Wind and Earth
-DVD.ActiveItems[250916] = { decorID = 7839, model3D = 1328745, soldBy = {112318}, source = "vendor" } -- Pedestal of the Maelstrom's Wisdom
-DVD.ActiveItems[250918] = { decorID = 7841, model3D = 1396607, soldBy = {112318}, source = "vendor" } -- Maelstrom Banner
-DVD.ActiveItems[251014] = { decorID = 7874, model3D = 7262794, soldBy = {112318}, source = "achievement" } -- Earthen Ring Scouting Map
-DVD.ActiveItems[251015] = { decorID = 7875, model3D = 7262795, soldBy = {112318}, source = "vendor" } -- Maelstrom Chimes
-DVD.ActiveItems[257403] = { decorID = 11493, model3D = 366699, soldBy = {112318, 105986}, source = "achievement", noxp = true } -- Maelstrom Lava Lamp
-DVD.ActiveItems[260776] = { decorID = 14461, model3D = 1345395, soldBy = {105986}, source = "achievement", noxp = true } -- Uncrowned Market Stall
-DVD.ActiveItems[250783] = { decorID = 7815, model3D = 1305341, soldBy = {105986}, source = "vendor" } -- Uncrowned Apothecary's Cabinet
-DVD.ActiveItems[250784] = { decorID = 7816, model3D = 1305343, soldBy = {105986}, source = "vendor" } -- Uncrowned Apothecary's Supplies
-DVD.ActiveItems[250785] = { decorID = 7817, model3D = 1305536, soldBy = {105986}, source = "vendor" } -- Uncrowned Banner
-DVD.ActiveItems[250786] = { decorID = 7818, model3D = 1305549, soldBy = {105986}, source = "achievement" } -- Uncrowned Planning Table
-DVD.ActiveItems[250787] = { decorID = 7819, model3D = 1337146, soldBy = {105986}, source = "achievement" } -- Replica Crucible of the Uncrowned
-DVD.ActiveItems[250788] = { decorID = 7820, model3D = 1338498, soldBy = {105986}, source = "achievement", noxp = true } -- Stolen Copy of the Blood Ledger
-end
-
-do -- 🏪 VENDOR NPC: 112323 (Amurra Thistledew)
-DVD.ActiveItems[245550] = { decorID = 1741, model3D = 7515605, soldBy = {112323}, source = "vendor" } -- Runed Dreamweaver Moonstone
-DVD.ActiveItems[246216] = { decorID = 2086, model3D = 1108749, soldBy = {112323}, source = "vendor" } -- Sprouting Lamppost
-DVD.ActiveItems[250111] = { decorID = 5878, model3D = 1324674, soldBy = {112323}, source = "achievement", noxp = true } -- Replica Tome of the Ancients
-DVD.ActiveItems[250133] = { decorID = 5897, model3D = 7233614, soldBy = {112323}, source = "vendor" } -- Dreamweaver Banner
-DVD.ActiveItems[250134] = { decorID = 5898, model3D = 7233615, soldBy = {112323}, source = "achievement", noxp = true } -- Seed of Ages Cutting
-DVD.ActiveItems[251013] = { decorID = 7873, model3D = 7233616, soldBy = {112323}, source = "achievement" } -- Cenarion Arch
-DVD.ActiveItems[260581] = { decorID = 14358, model3D = 1108732, soldBy = {112323}, source = "achievement", noxp = true } -- Brazier of Elune
-end
-
-do -- 🏪 VENDOR NPC: 112338 (Caydori Brightstar)
-DVD.ActiveItems[248935] = { decorID = 5112, model3D = 520067, soldBy = {112338}, source = "vendor" } -- Five Dawns Weapon Rack
-DVD.ActiveItems[248936] = { decorID = 5113, model3D = 529275, soldBy = {112338}, source = "vendor" } -- Five Dawns Shrine of the Smoking Fish
-DVD.ActiveItems[248942] = { decorID = 5119, model3D = 1323662, soldBy = {112338}, source = "achievement" } -- Five Dawns Planning Table
-DVD.ActiveItems[248958] = { decorID = 5126, model3D = 6877675, soldBy = {112338}, source = "achievement" } -- Monastery Gong
-DVD.ActiveItems[256679] = { decorID = 11280, model3D = 1324675, soldBy = {112338}, source = "achievement" } -- Replica Chronicle of Ages
-DVD.ActiveItems[262619] = { decorID = 14644, model3D = 7483166, soldBy = {112338}, source = "achievement" } -- Replica Forge of the Roaring Mountain
-DVD.ActiveItems[267372] = { decorID = 18897, model3D = 6877676, soldBy = {112338}, source = "vendor", noxp = true } -- Banner of Five Dawns
-end
-
-do -- 🏪 VENDOR NPC: 112392 (Quartermaster Durnolf)
-DVD.ActiveItems[249458] = { decorID = 5526, model3D = 1300920, soldBy = {112392}, source = "achievement" } -- Replica Forge of Odyn
-DVD.ActiveItems[249460] = { decorID = 5528, model3D = 1332984, soldBy = {112392}, source = "vendor" } -- Skyhold Brazier
-DVD.ActiveItems[249461] = { decorID = 5529, model3D = 1450335, soldBy = {112392}, source = "achievement" } -- Skyhold War Table
-DVD.ActiveItems[249464] = { decorID = 5532, model3D = 7155603, soldBy = {112392}, source = "vendor" } -- Valarjar Banner
-DVD.ActiveItems[249466] = { decorID = 5534, model3D = 7155606, soldBy = {112392}, source = "achievement", noxp = true } -- Valarjar Shield Wall
-DVD.ActiveItems[249551] = { decorID = 5562, model3D = 7209759, soldBy = {112392}, source = "vendor" } -- Skyhold Spear Rack
-DVD.ActiveItems[257396] = { decorID = 11486, model3D = 1325991, soldBy = {112392}, source = "achievement", noxp = true } -- Replica Saga of the Valarjar
-end
-
 do -- 🏪 VENDOR NPC: 112401 (Meridelle Lightspark)
 DVD.ActiveItems[250302] = { decorID = 7606, model3D = 1321771, soldBy = {112401}, source = "vendor" } -- Netherlight Conclave Voidwell
 DVD.ActiveItems[250303] = { decorID = 7607, model3D = 1321796, soldBy = {112401}, source = "vendor" } -- Conclave Pedestal
@@ -406,43 +274,6 @@ DVD.ActiveItems[250792] = { decorID = 7824, model3D = 7240008, soldBy = {112401}
 DVD.ActiveItems[251636] = { decorID = 8768, model3D = 1339273, soldBy = {112401}, source = "achievement" } -- Netherlight Command Map
 end
 
-do -- 🏪 VENDOR NPC: 112407 (Falara Nightsong) 93550 (Quartermaster Ozorg)
-DVD.ActiveItems[249457] = { decorID = 5525, model3D = 1260635, soldBy = {112407}, source = "achievement", noxp = true } -- Replica Cursed Forge of the Nathrezim
-DVD.ActiveItems[249459] = { decorID = 5527, model3D = 1301086, soldBy = {112407}, source = "achievement", noxp = true } -- Illidari Glaiverest
-DVD.ActiveItems[249462] = { decorID = 5530, model3D = 6892652, soldBy = {112407}, source = "vendor" } -- Illidari Banner
-DVD.ActiveItems[249463] = { decorID = 5531, model3D = 6892653, soldBy = {112407}, source = "vendor" } -- Illidari Skull Sentinel
-DVD.ActiveItems[249518] = { decorID = 5555, model3D = 1321783, soldBy = {112407}, source = "achievement" } -- Fel Hammer Scouting Map
-DVD.ActiveItems[249690] = { decorID = 5575, model3D = 6892689, soldBy = {112407, 93550}, source = "achievement", noxp = true } -- Replica Tome of Fel Secrets
-DVD.ActiveItems[250112] = { decorID = 5879, model3D = 1338446, soldBy = {93550}, source = "achievement" } -- Ebon Blade Planning Map
-DVD.ActiveItems[250113] = { decorID = 5880, model3D = 1354764, soldBy = {93550}, source = "vendor", noxp = true } -- Ebon Blade Tome
-DVD.ActiveItems[250114] = { decorID = 5881, model3D = 1355133, soldBy = {93550}, source = "vendor", noxp = true } -- Acherus Worktable
-DVD.ActiveItems[250115] = { decorID = 5882, model3D = 1355367, soldBy = {93550}, source = "achievement", noxp = true } -- Ebon Blade Weapon Rack
-DVD.ActiveItems[250123] = { decorID = 5888, model3D = 6892693, soldBy = {93550}, source = "achievement", noxp = true } -- Replica Acherus Soul Forge
-DVD.ActiveItems[250124] = { decorID = 5889, model3D = 6892710, soldBy = {93550}, source = "vendor", noxp = true } -- Ebon Blade Banner
-DVD.ActiveItems[256675] = { decorID = 11276, model3D = 1101719, soldBy = {112407}, source = "vendor" } -- Illidari Tent
-DVD.ActiveItems[260584] = { decorID = 14361, model3D = 7474233, soldBy = {93550}, source = "achievement", noxp = true } -- Replica Libram of the Dead
-end
-
-do -- 🏪 VENDOR NPC: 112434 (Gigi Gigavoid)
-DVD.ActiveItems[248940] = { decorID = 5117, model3D = 1277582, soldBy = {112434}, source = "achievement", noxp = true } -- Replica Felblood Altar
-DVD.ActiveItems[248943] = { decorID = 5120, model3D = 1394859, soldBy = {112434}, source = "vendor" } -- Black Harvest Banner
-DVD.ActiveItems[248959] = { decorID = 5127, model3D = 6877677, soldBy = {112434}, source = "vendor" } -- Dreadscar Bookcase
-DVD.ActiveItems[248960] = { decorID = 5128, model3D = 6877678, soldBy = {112434}, source = "achievement", noxp = true } -- Dreadscar Dais
-DVD.ActiveItems[249004] = { decorID = 5292, model3D = 6877679, soldBy = {112434}, source = "vendor" } -- Black Harvest Orrery
-DVD.ActiveItems[256907] = { decorID = 11307, model3D = 1125315, soldBy = {112434}, source = "achievement", noxp = true } -- Replica Tome of Blighted Implements
-DVD.ActiveItems[264242] = { decorID = 15477, model3D = 7506478, soldBy = {112434}, source = "achievement" } -- Dreadscar Battle Planning Map
-end
-
-do -- 🏪 VENDOR NPC: 112440 (Jackson Watkins)
-DVD.ActiveItems[245429] = { decorID = 750, model3D = 964976, soldBy = {112440}, source = "achievement", noxp = true } -- Tirisgarde Book Tempest
-DVD.ActiveItems[250130] = { decorID = 5894, model3D = 965876, soldBy = {112440}, source = "vendor" } -- Tirisgarde Candle
-DVD.ActiveItems[250131] = { decorID = 5895, model3D = 1315074, soldBy = {112440}, source = "achievement" } -- Tirisgarde War Map
-DVD.ActiveItems[250132] = { decorID = 5896, model3D = 1315103, soldBy = {112440}, source = "vendor" } -- Tirisgarde Brazier
-DVD.ActiveItems[250239] = { decorID = 7579, model3D = 7233625, soldBy = {112440}, source = "vendor" } -- Tirisgarde Banner
-DVD.ActiveItems[250306] = { decorID = 7609, model3D = 1311397, soldBy = {112440}, source = "achievement", noxp = true } -- Conjured Altar of the Guardian
-DVD.ActiveItems[256674] = { decorID = 11275, model3D = 965217, soldBy = {112440}, source = "achievement", noxp = true } -- Conjured Archive of the Tirisgarde
-end
-
 do -- 🏪 VENDOR NPC: 112634 (Hilseth Travelstride)
 DVD.ActiveItems[238863] = { decorID = 679, model3D = 1240416, soldBy = {112634}, source = "vendor" } -- Kaldorei Desk
 DVD.ActiveItems[245260] = { decorID = 1694, model3D = 1240419, soldBy = {112634}, source = "vendor" } -- Kaldorei Chef's Table
@@ -452,17 +283,6 @@ do -- 🏪 VENDOR NPC: 112716 (Rasil Fireborne)
 DVD.ActiveItems[246851] = { decorID = 2517, model3D = 1453482, soldBy = {112716}, source = "vendor", noxp = true } -- "Raising Your Eyes" Painting
 end
 
-do -- 🏪 VENDOR NPC: 115736 (First Arcanist Thalyssra)
-DVD.ActiveItems[244536] = { decorID = 1440, model3D = 6905475, requirement = { type = "reputation", faction = "The Nightfallen", rank = 5 }, soldBy = {115736}, source = "vendor", noxp = true } -- Nightborne Fireplace
-DVD.ActiveItems[246850] = { decorID = 2516, model3D = 1399651, requirement = { type = "reputation", faction = "The Nightfallen", rank = 5 }, soldBy = {115736}, source = "vendor", noxp = true } -- "Fruit of the Arcan'dor" Painting
-DVD.ActiveItems[247844] = { decorID = 3983, model3D = 1366196, requirement = { type = "reputation", faction = "The Nightfallen", rank = 3 }, soldBy = {115736}, source = "vendor", noxp = true } -- Suramar Library
-DVD.ActiveItems[247845] = { decorID = 3984, model3D = 1369308, requirement = { type = "reputation", faction = "The Nightfallen", rank = 4 }, soldBy = {115736}, source = "vendor"}-- Nightborne Bench
-DVD.ActiveItems[247847] = { decorID = 3985, model3D = 1393424, requirement = { type = "reputation", faction = "The Nightfallen", rank = 4 }, soldBy = {115736}, source = "vendor"}-- Arcwine Counter
-DVD.ActiveItems[247910] = { decorID = 4024, model3D = 1360655, requirement = { type = "reputation", faction = "The Nightfallen", rank = 2 }, soldBy = {115736}, source = "vendor"}-- Suramar Sconce
-DVD.ActiveItems[247921] = { decorID = 4035, model3D = 1389475, requirement = { type = "reputation", faction = "The Nightfallen", rank = 2 }, soldBy = {115736}, source = "vendor"}-- Nightborne Wall Shelf
-DVD.ActiveItems[247924] = { decorID = 4038, model3D = 1410429, requirement = { type = "reputation", faction = "The Nightfallen", rank = 4 }, soldBy = {115736}, source = "vendor", noxp = true } -- Suramar Street Light
-end
-
 do -- 🏪 VENDOR NPC: 115805 (Hoddruc Bladebender)
 DVD.ActiveItems[256331] = { decorID = 11131, model3D = 7385423, soldBy = {115805}, source = "quest", noxp = true } -- Shadowforge Lamppost
 end
@@ -470,22 +290,6 @@ end
 do -- 🏪 VENDOR NPC: 127151 (Toraan the Revered)
 DVD.ActiveItems[245422] = { decorID = 930, model3D = 979926, soldBy = {127151}, source = "quest", note = "Use Teleporter Pad in Legion Dalaran to get to the ship", noxp = true } -- Draenic Bookcase
 DVD.ActiveItems[251480] = { decorID = 8189, model3D = 902396, soldBy = {127151}, source = "quest", note = "Use Teleporter Pad in Legion Dalaran to get to the ship", noxp = true } -- Draenic Wooden Wall Shelf
-end
-
-do -- 🏪 VENDOR NPC: 135459 (Provisioner Lija)
-DVD.ActiveItems[245488] = { decorID = 1170, model3D = 1590851, soldBy = {135459}, source = "quest", noxp = true } -- Zandalari Rickshaw
-DVD.ActiveItems[245413] = { decorID = 1199, model3D = 6653374, requirement = { type = "reputation", faction = "Talanji's Expedition", rank = 3 }, soldBy = {135459}, source = "vendor"}-- Zandalari Sconce
-DVD.ActiveItems[245495] = { decorID = 1178, model3D = 1590834, requirement = { type = "reputation", faction = "Talanji's Expedition", rank = 4 }, soldBy = {135459}, source = "vendor"}-- Dazar'alor Market Tent
-DVD.ActiveItems[245500] = { decorID = 1218, model3D = 1629654, requirement = { type = "reputation", faction = "Talanji's Expedition", rank = 4 }, soldBy = {135459}, source = "vendor"}-- Red Dazar'alor Tent
-DVD.ActiveItems[257394] = { decorID = 11484, model3D = 668858, requirement = { type = "reputation", faction = "Talanji's Expedition", rank = 3 }, soldBy = {135459}, source = "vendor"} -- Zandalari War Torch 
-end
-
-do -- 🏪 VENDOR NPC: 135808 (Provisioner Fray)
-DVD.ActiveItems[246222] = { decorID = 2091, model3D = 2026170, requirement = { type = "reputation", faction = "Proudmoore Admiralty", rank = 3 }, soldBy = {135808}, source = "vendor"}-- Boralus String Lights
-DVD.ActiveItems[252036] = { decorID = 8984, model3D = 1901195, requirement = { type = "reputation", faction = "Proudmoore Admiralty", rank = 4 }, soldBy = {135808}, source = "vendor"}-- Tidesage's Bookcase
-DVD.ActiveItems[252387] = { decorID = 9036, model3D = 1602432, requirement = { type = "reputation", faction = "Proudmoore Admiralty", rank = 2 }, soldBy = {135808}, source = "vendor"}-- Boralus Fence
-DVD.ActiveItems[252388] = { decorID = 9037, model3D = 1602433, requirement = { type = "reputation", faction = "Proudmoore Admiralty", rank = 2 }, soldBy = {135808}, source = "vendor"}-- Boralus Fencepost
-DVD.ActiveItems[252402] = { decorID = 9051, model3D = 1852952, requirement = { type = "reputation", faction = "Proudmoore Admiralty", rank = 4 }, soldBy = {135808}, source = "vendor"}-- Tidesage's Double Bookshelves
 end
 
 do -- 🏪 VENDOR NPC: 144129 (Plugger Spazzring)
@@ -506,23 +310,6 @@ DVD.ActiveItems[245476] = { decorID = 937, model3D = 2481224, soldBy = {148924},
 DVD.ActiveItems[245477] = { decorID = 938, model3D = 2481225, soldBy = {148924}, source = "vendor" } -- Small Forsaken War Tent
 end
 
-do -- 🏪 VENDOR NPC: 150716 (Stolen Royal Vendorbot)
-DVD.ActiveItems[246479] = { decorID = 2322, model3D = 999909, soldBy = {150716}, source = "achievement" } -- Gnomish T.O.O.L.B.O.X.
-DVD.ActiveItems[246483] = { decorID = 2326, model3D = 2745098, soldBy = {150716}, source = "achievement", noxp = true } -- Redundant Reclamation Rig
-DVD.ActiveItems[246484] = { decorID = 2327, model3D = 2765475, requirement = { type = "reputation", faction = "Rustbolt Resistance", rank = 2 }, soldBy = {150716}, source = "vendor"}-- Mechagon Hanging Floodlight
-DVD.ActiveItems[246497] = { decorID = 2337, model3D = 2316618, requirement = { type = "reputation", faction = "Rustbolt Resistance", rank = 2 }, soldBy = {150716}, source = "vendor"}-- Small Emergency Warning Lamp
-DVD.ActiveItems[246498] = { decorID = 2338, model3D = 2316619, requirement = { type = "reputation", faction = "Rustbolt Resistance", rank = 3 }, soldBy = {150716}, source = "vendor"}-- Emergency Warning Lamp
-DVD.ActiveItems[246499] = { decorID = 2339, model3D = 2765473, requirement = { type = "reputation", faction = "Rustbolt Resistance", rank = 4 }, soldBy = {150716}, source = "vendor"}-- Mechagon Eyelight Lamp
-DVD.ActiveItems[246501] = { decorID = 2341, model3D = 2929686, requirement = { type = "reputation", faction = "Rustbolt Resistance", rank = 5 }, soldBy = {150716}, source = "vendor"}-- Gnomish Safety Flamethrower
-DVD.ActiveItems[246503] = { decorID = 2343, model3D = 6699746, requirement = { type = "reputation", faction = "Rustbolt Resistance", rank = 3 }, soldBy = {150716}, source = "vendor"}-- Large H.O.M.E. Cog
-DVD.ActiveItems[246605] = { decorID = 2437, model3D = 2907352, requirement = { type = "reputation", faction = "Rustbolt Resistance", rank = 4 }, soldBy = {150716}, source = "vendor"}-- Mecha-Storage Mecha-Chest
-DVD.ActiveItems[246480] = { decorID = 2323, model3D = 1089040, requirement = { type = "reputation", faction = "Rustbolt Resistance", rank = 5 }, soldBy = {150716}, source = "vendor"}-- Automated Gnomeregan Guardian
-DVD.ActiveItems[246598] = { decorID = 2430, model3D = 1842466, soldBy = {150716}, source = "achievement" } -- Screw-Sealed Stembarrel
-DVD.ActiveItems[246603] = { decorID = 2435, model3D = 2068146, soldBy = {150716}, source = "achievement", noxp = true } -- Gnomish Cog Stack
-DVD.ActiveItems[246701] = { decorID = 2466, model3D = 1842929, soldBy = {150716}, source = "quest", noxp = true } -- Gnomish Sprocket Table
-DVD.ActiveItems[246703] = { decorID = 2467, model3D = 1842930, soldBy = {150716}, source = "quest", noxp = true } -- Double-Sprocket Table
-end
-
 do -- 🏪 VENDOR NPC: 152194 (MOTHER)
 DVD.ActiveItems[247667] = { decorID = 3837, model3D = 1934697, soldBy = {152194}, source = "achievement" } -- MOTHER's Titanic Brazier
 DVD.ActiveItems[247668] = { decorID = 3838, model3D = 3074885, soldBy = {152194}, source = "achievement" } -- N'Zoth's Captured Eye
@@ -534,15 +321,6 @@ end
 
 do -- 🏪 VENDOR NPC: 174710 (Chachi the Artiste)
 DVD.ActiveItems[245501] = { decorID = 756, model3D = 3533100, soldBy = {174710}, source = "vendor" } -- Venthyr Tome of Unforgiven Sins
-end
-
-do -- 🏪 VENDOR NPC: 189226 (Cataloger Jakes) 188265 (Rae'ana)
-DVD.ActiveItems[238975] = { decorID = 720, model3D = 4496829, requirement = { type = "renown", faction = "Dragonscale Expedition", level = 24 }, soldBy = {189226, 188265}, source = "vendor", noxp = true } -- Reliquary Telescope
-DVD.ActiveItems[245283] = { decorID = 1177, model3D = 4239021, requirement = { type = "renown", faction = "Dragonscale Expedition", level = 16 }, soldBy = {189226, 188265}, source = "vendor", noxp = true } -- Blood Elven Candelabra
-DVD.ActiveItems[245285] = { decorID = 716, model3D = 4239016, requirement = { type = "renown", faction = "Dragonscale Expedition", level = 16 }, soldBy = {189226, 188265}, source = "vendor"}-- Reliquary Storage Crate
-DVD.ActiveItems[245286] = { decorID = 1181, model3D = 4239026, requirement = { type = "renown", faction = "Dragonscale Expedition", level = 10 }, soldBy = {189226, 188265}, source = "vendor"}-- Rectangular Sin'dorei Rug
-DVD.ActiveItems[245287] = { decorID = 717, model3D = 4239027, requirement = { type = "renown", faction = "Dragonscale Expedition", level = 10 }, soldBy = {189226, 188265}, source = "vendor"}-- Long Sin'dorei Rug
-DVD.ActiveItems[245288] = { decorID = 718, model3D = 4239028, requirement = { type = "renown", faction = "Dragonscale Expedition", level = 10 }, soldBy = {189226, 188265}, source = "vendor"}-- Circular Sin'dorei Rug
 end
 
 do -- 🏪 VENDOR NPC: 191025 (Lifecaller Tzadrak)
@@ -631,31 +409,6 @@ do -- 🏪 VENDOR NPC: 226994 (Blair Bass)
 DVD.ActiveItems[245309] = { decorID = 1277, model3D = 5793104, soldBy = {226994}, source = "vendor" } -- Rusty Patchwork Tub
 end
 
-do -- 🏪 VENDOR NPC: 231396 (Sitch Lowdown)
-DVD.ActiveItems[245307] = { decorID = 1268, model3D = 5721326, requirement = { type = "reputation", faction = "Darkfuse Solutions", rank = 3 }, soldBy = {231396}, source = "vendor"}-- Undermine Bookcase
-DVD.ActiveItems[256327] = { decorID = 11127, model3D = 5689833, requirement = { type = "reputation", faction = "Darkfuse Solutions", rank = 2 }, soldBy = {231396}, source = "vendor", noxp = true } -- Open Rust-Plated Storage Crate
-end
-
-do -- 🏪 VENDOR NPC: 231405 (Boatswain Hardee)
-DVD.ActiveItems[248758] = { decorID = 4560, model3D = 7152353, requirement = { type = "reputation", faction = "Blackwater Cartel", rank = 4 }, soldBy = {231405}, source = "vendor"}-- Relaxing Goblin Beach Chair with Cup Gripper
-DVD.ActiveItems[255642] = { decorID = 10853, model3D = 6008895, requirement = { type = "reputation", faction = "Blackwater Cartel", rank = 3 }, soldBy = {231405}, source = "vendor"} -- Undermine Alleyway Sconce
-end
-
-do -- 🏪 VENDOR NPC: 231406 (Rocco Razzboom)
-DVD.ActiveItems[245313] = { decorID = 1259, model3D = 5689816, requirement = { type = "reputation", faction = "Bilgewater Cartel", rank = 3 }, soldBy = {231406}, source = "vendor", noxp = true } -- Spring-Powered Undermine Chair
-DVD.ActiveItems[255674] = { decorID = 10889, model3D = 5929384, requirement = { type = "reputation", faction = "Bilgewater Cartel", rank = 3 }, soldBy = {231406}, source = "vendor", noxp = true } -- Incontinental Table Lamp
-end
-
-do -- 🏪 VENDOR NPC: 231407 (Shredz the Scrapper)
-DVD.ActiveItems[245311] = { decorID = 1269, model3D = 5721328, requirement = { type = "reputation", faction = "Venture Company", rank = 3 }, soldBy = {231407}, source = "vendor"}-- Undermine Wall Shelf
-DVD.ActiveItems[255647] = { decorID = 10857, model3D = 6892785, requirement = { type = "reputation", faction = "Venture Company", rank = 4}, soldBy = {231407}, source = "vendor"} -- Spring-Powered Pointer
-end
-
-do -- 🏪 VENDOR NPC: 231408 (Lab Assistant Laszly)
-DVD.ActiveItems[245321] = { decorID = 1265, model3D = 5689835, requirement = { type = "reputation", faction = "Steamwheedle Cartel", rank = 2 }, soldBy = {231408}, source = "vendor"}-- Rust-Plated Storage Barrel
-DVD.ActiveItems[255641] = { decorID = 10852, model3D = 5657266, requirement = { type = "reputation", faction = "Steamwheedle Cartel", rank = 3 }, soldBy = {231408}, source = "vendor"}-- Undermine Mechanic's Hanging Lamp
-end
-
 do -- 🏪 VENDOR NPC: 235252 (Om'sirik)
 DVD.ActiveItems[247751] = { decorID = 3891, model3D = 6009484, soldBy = {235252}, source = "vendor", noxp = true } -- Deactivated K'areshi Warp Cannon
 DVD.ActiveItems[258306] = { decorID = 11948, model3D = 6118548, soldBy = {235252}, source = "vendor" } -- K'areshi Warp Platform
@@ -688,24 +441,6 @@ do -- 🏪 VENDOR NPC: 239333 (Street Food Vendor)
 DVD.ActiveItems[256328] = { decorID = 11128, model3D = 5793085, soldBy = {239333}, source = "vendor", noxp = true } -- Leftover Undermine Takeout
 end
 
-do -- 🏪 VENDOR NPC: 240279 (Magovu)
-DVD.ActiveItems[256924] = { decorID = 11324, model3D = 6125166, requirement = { type = "renown", faction = "Amani Tribe", level = 15 }, soldBy = {240279}, source = "vendor"}-- Hash'ey Heartbroth Cauldron
-DVD.ActiveItems[256926] = { decorID = 11326, model3D = 6125778, requirement = { type = "renown", faction = "Amani Tribe", level = 15 }, soldBy = {240279}, source = "vendor"}-- Empty Amani Cauldron
-DVD.ActiveItems[256927] = { decorID = 11327, model3D = 6212420, requirement = { type = "renown", faction = "Amani Tribe", level = 7 }, soldBy = {240279}, source = "vendor"}-- Carved Idol of Nalorakk, Loa of War
-DVD.ActiveItems[256933] = { decorID = 11333, model3D = 6866518, requirement = { type = "renown", faction = "Amani Tribe", level = 7 }, soldBy = {240279}, source = "vendor"}-- Carved Idol of Jan'alai, Loa of Fire
-DVD.ActiveItems[256934] = { decorID = 11334, model3D = 6994813, requirement = { type = "renown", faction = "Amani Tribe", level = 15 }, soldBy = {240279}, source = "vendor"}-- Boiling Amani Cauldron
-DVD.ActiveItems[258290] = { decorID = 11936, model3D = 6212418, requirement = { type = "renown", faction = "Amani Tribe", level = 7 }, soldBy = {240279}, source = "vendor"}-- Carved Idol of Halazzi, Loa of the Hunt
-DVD.ActiveItems[258549] = { decorID = 12154, model3D = 6654785, requirement = { type = "renown", faction = "Amani Tribe", level = 11 }, soldBy = {240279}, source = "vendor"}-- Burning Amani Pinecone
-DVD.ActiveItems[260202] = { decorID = 14204, model3D = 6866516, requirement = { type = "renown", faction = "Amani Tribe", level = 18 }, soldBy = {240279}, source = "vendor"}-- Visage of Akil'zon, Loa of Victory
-DVD.ActiveItems[260514] = { decorID = 14350, model3D = 6866514, requirement = { type = "renown", faction = "Amani Tribe", level = 18 }, soldBy = {240279}, source = "vendor"}-- Visage of Nalorakk, Loa of War
-DVD.ActiveItems[260515] = { decorID = 14351, model3D = 6866515, requirement = { type = "renown", faction = "Amani Tribe", level = 18 }, soldBy = {240279}, source = "vendor"} -- Visage of Halazzi, Loa of the Hunt
-DVD.ActiveItems[260516] = { decorID = 14352, model3D = 6866517, requirement = { type = "renown", faction = "Amani Tribe", level = 18 }, soldBy = {240279}, source = "vendor"} -- Visage of Jan'alai, Loa of Fire
-DVD.ActiveItems[263318] = { decorID = 15158, model3D = 6075565, requirement = { type = "renown", faction = "Amani Tribe", level = 3 }, soldBy = {240279}, source = "vendor"} -- Simple Amani Basket
-DVD.ActiveItems[263320] = { decorID = 15160, model3D = 6075567, requirement = { type = "renown", faction = "Amani Tribe", level = 3 }, soldBy = {240279}, source = "vendor"} -- Rope-Bound Amani Basket
-DVD.ActiveItems[264333] = { decorID = 15571, model3D = 6153813, requirement = { type = "renown", faction = "Amani Tribe", level = 11 }, soldBy = {240279}, source = "vendor"}-- Amani Incense Burner
-DVD.ActiveItems[264350] = { decorID = 15596, model3D = 6212419, requirement = { type = "renown", faction = "Amani Tribe", level = 7 }, soldBy = {240279}, source = "vendor"}-- Carved Idol of Akil'zon, Loa of Victory
-end
-
 do -- 🏪 VENDOR NPC: 240407 (Naynar)
 DVD.ActiveItems[246402] = { decorID = 2219, model3D = 6326907, soldBy = {240407}, source = "vendor" } -- Hollowed Harandar Gourds
 DVD.ActiveItems[246408] = { decorID = 2225, model3D = 6326916, soldBy = {240407}, source = "vendor" } -- Haranir Herb Rack
@@ -719,29 +454,6 @@ DVD.ActiveItems[263195] = { decorID = 14967, model3D = 5264290, soldBy = {240407
 DVD.ActiveItems[264267] = { decorID = 15502, model3D = 6780543, soldBy = {240407}, source = "vendor" } -- Rutaani Birdfeeder
 DVD.ActiveItems[264268] = { decorID = 15503, model3D = 6780544, soldBy = {240407}, source = "vendor" } -- Rutaani Birdbath
 DVD.ActiveItems[264269] = { decorID = 15504, model3D = 6780545, soldBy = {240407}, source = "vendor" } -- Rutaani Bird Perch
-end
-
-do -- 🏪 VENDOR NPC: 240838 (Caeris Fairdawn)
-DVD.ActiveItems[245290] = { decorID = 1198, model3D = 4235680, requirement = { type = "renown", faction = "Silvermoon Court", level = 7 }, soldBy = {240838}, source = "vendor"}-- Long Silvermoon Table
-DVD.ActiveItems[245941] = { decorID = 1896, model3D = 6075053, requirement = { type = "renown", faction = "Silvermoon Court", level = 18 }, soldBy = {240838}, source = "vendor"}-- Silvermoon Sanctum Focus
-DVD.ActiveItems[245985] = { decorID = 1901, model3D = 6005281, requirement = { type = "renown", faction = "Silvermoon Court", level = 15 }, soldBy = {240838}, source = "vendor"}-- Floating Azure Lantern
-DVD.ActiveItems[249559] = { decorID = 5564, model3D = 6684012, requirement = { type = "renown", faction = "Silvermoon Court", level = 18 }, soldBy = {240838}, source = "vendor"}-- Reverent Sin'dorei Statue
-DVD.ActiveItems[256040] = { decorID = 10944, model3D = 6005270, requirement = { type = "renown", faction = "Silvermoon Court", level = 7 }, soldBy = {240838}, source = "vendor"}-- Silvermoon Gemmed Chair
-DVD.ActiveItems[257421] = { decorID = 11502, model3D = 6023435, requirement = { type = "renown", faction = "Silvermoon Court", level = 15 }, soldBy = {240838}, source = "vendor"}-- Bejeweled Silvermoon Chandelier
-DVD.ActiveItems[257422] = { decorID = 11503, model3D = 6005271, requirement = { type = "renown", faction = "Silvermoon Court", level = 7 }, soldBy = {240838}, source = "vendor"}-- Gilded Sunfury Chair
-DVD.ActiveItems[263205] = { decorID = 14971, model3D = 6024549, requirement = { type = "renown", faction = "Silvermoon Court", level = 3 }, soldBy = {240838}, source = "vendor"}-- Crimson Silvermoon Runner
-DVD.ActiveItems[263206] = { decorID = 14972, model3D = 6024550, requirement = { type = "renown", faction = "Silvermoon Court", level = 3 }, soldBy = {240838}, source = "vendor"}-- Plum Eversong Rug
-DVD.ActiveItems[263223] = { decorID = 14985, model3D = 6209639, requirement = { type = "renown", faction = "Silvermoon Court", level = 3 }, soldBy = {240838}, source = "vendor"}-- Gilded Sky-Blue Drapery
-DVD.ActiveItems[263228] = { decorID = 15059, model3D = 6005266, requirement = { type = "renown", faction = "Silvermoon Court", level = 7 }, soldBy = {240838}, source = "vendor"}-- Grand Lightwood Table
-DVD.ActiveItems[263229] = { decorID = 15060, model3D = 6005268, requirement = { type = "renown", faction = "Silvermoon Court", level = 7 }, soldBy = {240838}, source = "vendor"}-- Ornate Lightwood Table
-DVD.ActiveItems[263232] = { decorID = 15063, model3D = 6050883, requirement = { type = "renown", faction = "Silvermoon Court", level = 11 }, soldBy = {240838}, source = "vendor"}-- Floating Spire Shelf
-DVD.ActiveItems[263234] = { decorID = 15065, model3D = 6050886, requirement = { type = "renown", faction = "Silvermoon Court", level = 11 }, soldBy = {240838}, source = "vendor"}-- Turning Silvermoon Archives
-DVD.ActiveItems[264264] = { decorID = 15499, model3D = 6388933, requirement = { type = "renown", faction = "Silvermoon Court", level = 15 }, soldBy = {240838}, source = "vendor"}-- Gilded Vigil Post
-DVD.ActiveItems[264265] = { decorID = 15500, model3D = 6402434, requirement = { type = "renown", faction = "Silvermoon Court", level = 15 }, soldBy = {240838}, source = "vendor"}-- Sanctified Flame Lantern	
-end
-
-do -- 🏪 VENDOR NPC: 240852 (Lars Bronsmaelt)
-DVD.ActiveItems[245293] = { decorID = 763, model3D = 5533958, requirement = { type = "renown", faction = "Flame's Radiance", level = 8 }, soldBy = {240852}, source = "vendor"}-- Collection of Arathi Scripture
 end
 
 do -- 🏪 VENDOR NPC: 241451 (Eriden)
@@ -762,35 +474,24 @@ end
 do -- 🏪 VENDOR NPC: 242398 (Naleidea Rivergleam)
 DVD.ActiveItems[246779] = { decorID = 2503, model3D = 7079626, soldBy = {242398}, source = "vendor", noxp = true } -- Hanging Mana Brazier
 DVD.ActiveItems[250770] = { decorID = 7780, model3D = 6190522, soldBy = {242398}, source = "vendor", noxp = true } -- Silvermoon Privacy Screen
+
+DVD.ActiveItems[275857] = { decorID = 24765, model3D = 5947874, soldBy = {242398}, source =  "vendor"} -- Zul'Aman Creeping Pangoroot
+DVD.ActiveItems[275853] = { decorID = 25296, model3D = 6684643, soldBy = {242398}, source =  "vendor"} -- Zul'Aman Burning Pinecone
 end
 
 do -- 🏪 VENDOR NPC: 242399 (Telemancer Astrandis Delivers Journey)
-DVD.ActiveItems[263994] = { decorID = 15399, model3D = 5838194, soldBy = {242399}, source = "vendor"} -- Fungal Chest
-DVD.ActiveItems[263995] = { decorID = 15400, model3D = 5869301, soldBy = {242399}, source = "vendor"} -- Delver's Bountiful Coffer
-DVD.ActiveItems[263996] = { decorID = 15401, model3D = 5975175, soldBy = {242399}, source = "vendor"} -- Twilight Tabernacle
-DVD.ActiveItems[264007] = { decorID = 15412, model3D = 6210898, soldBy = {242399}, source = "vendor"} -- Corewarden's Spoils
-DVD.ActiveItems[264008] = { decorID = 15413, model3D = 6730919, soldBy = {242399}, source = "vendor"} -- Root-Wrapped Reliquary
-DVD.ActiveItems[264170] = { decorID = 15455, model3D = 1349621, soldBy = {242399}, source = "vendor"} -- Ancient Kaldorei Coffer
-DVD.ActiveItems[264175] = { decorID = 15460, model3D = 6195763, soldBy = {242399}, source = "vendor"} -- Amani Strongbox
-end
+DVD.ActiveItems[263994] = { decorID = 15399, model3D = 5838194, soldBy = {242399}, noxp = true, source = "vendor"} -- Fungal Chest
+DVD.ActiveItems[263995] = { decorID = 15400, model3D = 5869301, soldBy = {242399}, noxp = true, source = "vendor"} -- Delver's Bountiful Coffer
+DVD.ActiveItems[263996] = { decorID = 15401, model3D = 5975175, soldBy = {242399}, noxp = true, source = "vendor"} -- Twilight Tabernacle
+DVD.ActiveItems[264007] = { decorID = 15412, model3D = 6210898, soldBy = {242399}, noxp = true, source = "vendor"} -- Corewarden's Spoils
+DVD.ActiveItems[264008] = { decorID = 15413, model3D = 6730919, soldBy = {242399}, noxp = true, source = "vendor"} -- Root-Wrapped Reliquary
+DVD.ActiveItems[264170] = { decorID = 15455, model3D = 1349621, soldBy = {242399}, noxp = true, source = "vendor"} -- Ancient Kaldorei Coffer
+DVD.ActiveItems[264175] = { decorID = 15460, model3D = 6195763, soldBy = {242399}, noxp = true, source = "vendor"} -- Amani Strongbox
 
-do -- 🏪 VENDOR NPC: 242723 (Apprentice Diell)
-DVD.ActiveItems[263224] = { decorID = 14995, model3D = 6998409, requirement = { type = "subfaction", faction = "Magisters", tier = 5 }, soldBy = {242723}, source = "vendor"}-- Gentle Floating Planter
-DVD.ActiveItems[263225] = { decorID = 15013, model3D = 7237277, requirement = { type = "subfaction", faction = "Magisters", tier = 3 }, soldBy = {242723}, source = "vendor"}-- Sunlit Glass Mirror
-end
-
-do -- 🏪 VENDOR NPC: 242724 (Ranger Allorn)
-DVD.ActiveItems[263212] = { decorID = 14978, model3D = 6050842, requirement = { type = "subfaction", faction = "Farstriders", tier = 3 }, soldBy = {242724}, source = "vendor"} -- Farstrider's Comfy Cushion
-DVD.ActiveItems[263216] = { decorID = 14979, model3D = 6050856, requirement = { type = "subfaction", faction = "Farstriders", tier = 5 }, soldBy = {242724}, source = "vendor"} -- Gilded Lightwood Wardrobe
-end
-
-do -- 🏪 VENDOR NPC: 242725 (Armorer Goldcrest)
-DVD.ActiveItems[263203] = { decorID = 14970, model3D = 6005301, requirement = { type = "subfaction", faction = "Blood Knights", tier = 3 }, soldBy = {242725}, source = "vendor"}-- Rack of Silvermoon Arms
-end
-
-do -- 🏪 VENDOR NPC: 242726 (Neriv)
-DVD.ActiveItems[246692] = { decorID = 2459, model3D = 7033299, requirement = { type = "subfaction", faction = "Shades of the Row", tier = 5 }, soldBy = {242726}, source = "vendor"}-- Murder Row Wine Decanter
-DVD.ActiveItems[250772] = { decorID = 7782, model3D = 6197997, requirement = { type = "subfaction", faction = "Shades of the Row", tier = 3 }, soldBy = {242726}, source = "vendor"} -- Crimson Lightwood Privacy Screen	
+DVD.ActiveItems[265033] = { decorID = 16316, model3D = 6163862, soldBy = {242399}, source =  "vendor"} -- Zul'Aman Brazier Post
+DVD.ActiveItems[265386] = { decorID = 16808, model3D = 6153836, soldBy = {242399}, source =  "vendor"} -- Fortified Amani Awning
+DVD.ActiveItems[267207] = { decorID = 18798, model3D = 6195758, soldBy = {242399}, source =  "vendor"} -- Amani Territorial Totem
+DVD.ActiveItems[272360] = { decorID = 21951, model3D = 7277153, soldBy = {242399}, source =  "vendor"} -- Ula'tek Ritual Stone
 end
 
 do -- 🏪 VENDOR NPC: 243350 (Lyna)
@@ -817,43 +518,6 @@ DVD.ActiveItems[252404] = { decorID = 9053, model3D = 1907403, soldBy = {246721}
 DVD.ActiveItems[258765] = { decorID = 12210, model3D = 1668010, soldBy = {246721}, source = "vendor" } -- Hull'n'Home Window
 end
 
-do -- 🏪 VENDOR NPC: 248328 (Void Researcher Anomander)
-DVD.ActiveItems[248964] = { decorID = 5132, model3D = 6885568, requirement = { type = "renown", faction = "The Singularity", level =  3 }, soldBy = {248328}, source = "vendor"} -- Cosmic Void Table
-DVD.ActiveItems[262462] = { decorID = 14592, model3D = 6700986, requirement = { type = "renown", faction = "The Singularity", level = 8 }, soldBy = {248328}, source = "vendor"} -- Dark Void Inkwell
-DVD.ActiveItems[262463] = { decorID = 14593, model3D = 6700988, requirement = { type = "renown", faction = "The Singularity", level = 12 }, soldBy = {248328}, source = "vendor"} --Cosmic Void Ashwell
-DVD.ActiveItems[262466] = { decorID = 14596, model3D = 6700998, requirement = { type = "renown", faction = "The Singularity", level = 8 }, soldBy = {248328}, source = "vendor"}-- Void Elf Table
-DVD.ActiveItems[262473] = { decorID = 14603, model3D = 7412673, requirement = { type = "renown", faction = "The Singularity", level = 5 }, soldBy = {248328}, source = "vendor"}-- Cosmic Chalice
-DVD.ActiveItems[262607] = { decorID = 14632, model3D = 6701000, requirement = { type = "renown", faction = "The Singularity", level = 3 }, soldBy = {248328}, source = "vendor"}-- Void Elf Throne
-DVD.ActiveItems[262609] = { decorID = 14634, model3D = 6701006, requirement = { type = "renown", faction = "The Singularity", level = 12 }, soldBy = {248328}, source = "vendor"}-- Void Elf Floating Lantern
-DVD.ActiveItems[263499] = { decorID = 15260, model3D = 6701009, requirement = { type = "renown", faction = "The Singularity", level = 5 }, soldBy = {248328}, source = "vendor"}-- Sturdy Void Elf Trunk
-DVD.ActiveItems[264337] = { decorID = 15575, model3D = 6210899, requirement = { type = "renown", faction = "The Singularity", level = 18 }, soldBy = {248328}, source = "vendor"}-- Cosmic Void Training Dummy
-DVD.ActiveItems[264339] = { decorID = 15578, model3D = 6224354, requirement = { type = "renown", faction = "The Singularity", level = 18 }, soldBy = {248328}, source = "vendor"}-- Cosmic Void Summoning Crystal
-DVD.ActiveItems[264341] = { decorID = 15581, model3D = 6391991, requirement = { type = "renown", faction = "The Singularity", level = 18 }, soldBy = {248328}, source = "vendor"}-- Cosmic Void Crate
-DVD.ActiveItems[264344] = { decorID = 15584, model3D = 7141588, requirement = { type = "renown", faction = "The Singularity", level = 8 }, soldBy = {248328}, source = "vendor"}-- Cosmic Void Orb
-DVD.ActiveItems[264351] = { decorID = 15597, model3D = 6700981, requirement = { type = "renown", faction = "The Singularity", level = 12 }, soldBy = {248328}, source = "vendor"} -- Ornate Cosmic Banner
-DVD.ActiveItems[264509] = { decorID = 15769, model3D = 6701015, requirement = { type = "renown", faction = "The Singularity", level = 5 }, soldBy = {248328}, source = "vendor"}-- Void Elf Barrel
-end
-
-do -- 🏪 VENDOR NPC: 248525 (Pascal-K1N6)
-DVD.ActiveItems[254400] = { decorID = 10339, model3D = 2261833, soldBy = {248525}, source = "vendor", noxp = true } -- Triple-Tested Steam Valve
-DVD.ActiveItems[254401] = { decorID = 10340, model3D = 2439478, soldBy = {248525}, source = "vendor", noxp = true } -- Mad Science Blueprints
-DVD.ActiveItems[254402] = { decorID = 10341, model3D = 2439523, soldBy = {248525}, source = "vendor", noxp = true } -- Safety Electrical Cabling
-DVD.ActiveItems[254403] = { decorID = 10342, model3D = 2628252, soldBy = {248525}, source = "vendor", noxp = true } -- Mechagon Control Console
-DVD.ActiveItems[254404] = { decorID = 10343, model3D = 2745101, soldBy = {248525}, source = "vendor", noxp = true } -- Sticky Lever
-DVD.ActiveItems[254405] = { decorID = 10344, model3D = 2745103, soldBy = {248525}, source = "vendor", noxp = true } -- Dual-Action Turbo Pro Lever
-DVD.ActiveItems[254406] = { decorID = 10345, model3D = 2745104, soldBy = {248525}, source = "vendor", noxp = true } -- Mechanical Gauge
-DVD.ActiveItems[254407] = { decorID = 10346, model3D = 2745105, soldBy = {248525}, source = "vendor", noxp = true } -- Dual Mechanical Gauge
-DVD.ActiveItems[254408] = { decorID = 10347, model3D = 2745106, soldBy = {248525}, source = "vendor", noxp = true } -- Lively Pistons
-DVD.ActiveItems[254409] = { decorID = 10348, model3D = 2764153, soldBy = {248525}, source = "vendor", noxp = true } -- Sturdy Drive Belt
-DVD.ActiveItems[254410] = { decorID = 10349, model3D = 2765485, soldBy = {248525}, source = "vendor", noxp = true } -- Blue-Glo Lantern
-DVD.ActiveItems[254411] = { decorID = 10350, model3D = 2766212, soldBy = {248525}, source = "vendor", noxp = true } -- Z-205 Mechanical Device
-DVD.ActiveItems[254412] = { decorID = 10351, model3D = 2816646, soldBy = {248525}, source = "vendor", noxp = true } -- Well-Oiled Machine Cog
-DVD.ActiveItems[254413] = { decorID = 10352, model3D = 2903633, soldBy = {248525}, source = "vendor", noxp = true } -- Jury-Rigged Electrical Couple
-DVD.ActiveItems[254415] = { decorID = 10354, model3D = 2932044, soldBy = {248525}, source = "vendor", noxp = true } -- Miniature Charging Station
-DVD.ActiveItems[254416] = { decorID = 10355, model3D = 3279745, soldBy = {248525}, source = "vendor", noxp = true } -- Galvanic Storage and Maintenance Device
-DVD.ActiveItems[254766] = { decorID = 10537, model3D = 2958572, soldBy = {248525}, source = "vendor", noxp = true } -- Ineffective Mechanical Privacy Screen
-end
-
 do -- 🏪 VENDOR NPC: 248594 (Sundries Merchant)
 DVD.ActiveItems[244654] = { decorID = 1444, model3D = 1361687, requirement = { type = "reputation", faction = "The Nightfallen", rank = 2 }, soldBy = {248594}, source = "vendor"}-- Small Purple Suramar Seat Cushion
 DVD.ActiveItems[244676] = { decorID = 1464, model3D = 1361698, requirement = { type = "reputation", faction = "The Nightfallen", rank = 3 }, soldBy = {248594}, source = "vendor"}-- Teal Suramar Seat Cushion
@@ -861,45 +525,6 @@ DVD.ActiveItems[244677] = { decorID = 1465, model3D = 1361699, requirement = { t
 DVD.ActiveItems[244678] = { decorID = 1466, model3D = 1390429, requirement = { type = "reputation", faction = "The Nightfallen", rank = 2 }, soldBy = {248594}, source = "vendor"}-- Small Red Suramar Seat Cushion
 DVD.ActiveItems[246001] = { decorID = 1919, model3D = 1390430, requirement = { type = "reputation", faction = "The Nightfallen", rank = 3 }, soldBy = {248594}, source = "vendor"}-- Orange Suramar Seat Cushion
 DVD.ActiveItems[246002] = { decorID = 1920, model3D = 1390431, requirement = { type = "reputation", faction = "The Nightfallen", rank = 4 }, soldBy = {248594}, source = "vendor"}-- Red Suramar Seat Cushion
-end
-
-do -- 🏪 VENDOR NPC: 249684 (Brother Dovetail)
-DVD.ActiveItems[246686] = { decorID = 2453, model3D = 579120, soldBy = {249684}, source = "vendor", noxp = true } -- Grummle Sleeping Bag
-DVD.ActiveItems[246741] = { decorID = 2495, model3D = 579122, soldBy = {249684}, source = "vendor", noxp = true } -- Grummle Bedroll
-DVD.ActiveItems[246838] = { decorID = 2510, model3D = 1305131, soldBy = {249684}, source = "vendor", noxp = true } -- Kafa Press
-DVD.ActiveItems[248402] = { decorID = 4424, model3D = 532503, soldBy = {249684}, source = "vendor", noxp = true } -- Grummle Kafa Refinery
-DVD.ActiveItems[248403] = { decorID = 4425, model3D = 577606, soldBy = {249684}, source = "vendor", noxp = true } -- Grummle Tent
-DVD.ActiveItems[248405] = { decorID = 4427, model3D = 1305118, soldBy = {249684}, source = "vendor", noxp = true } -- Kafa Creamer
-DVD.ActiveItems[248406] = { decorID = 4428, model3D = 1305132, soldBy = {249684}, source = "vendor", noxp = true } -- Legerdemain Lounge Sign Board
-DVD.ActiveItems[248407] = { decorID = 4429, model3D = 1400889, soldBy = {249684}, source = "vendor", noxp = true } -- Dalaran Kafa Table
-DVD.ActiveItems[251472] = { decorID = 8179, model3D = 523264, soldBy = {249684}, source = "vendor", noxp = true } -- Pandaren Wooden Cart
-DVD.ActiveItems[251473] = { decorID = 8180, model3D = 970083, soldBy = {249684}, source = "vendor", noxp = true } -- Commander's Kafa Mug
-DVD.ActiveItems[251474] = { decorID = 8181, model3D = 1305117, soldBy = {249684}, source = "vendor", noxp = true } -- Ceramic Kafa Mug
-DVD.ActiveItems[251475] = { decorID = 8182, model3D = 1305134, soldBy = {249684}, source = "vendor", noxp = true } -- Dalaran Kafa Grinder
-DVD.ActiveItems[252039] = { decorID = 8987, model3D = 1305114, soldBy = {249684}, source = "vendor", noxp = true } -- Open Sack of Roasted Kafa
-DVD.ActiveItems[252040] = { decorID = 8988, model3D = 1305115, soldBy = {249684}, source = "vendor", noxp = true } -- Sealed Sack of Roasted Kafa
-DVD.ActiveItems[252041] = { decorID = 8989, model3D = 1305133, soldBy = {249684}, source = "vendor", noxp = true } -- Dalaran Espresso Machine
-end
-
-do -- 🏪 VENDOR NPC: 250820 (Hordranin 12)
-DVD.ActiveItems[250627] = { decorID = 7668, model3D = 4254398, soldBy = {250820}, source = "vendor", noxp = true } -- Forbidden Fork
-DVD.ActiveItems[250694] = { decorID = 7691, model3D = 4095168, soldBy = {250820}, source = "vendor" } -- Draconic Metalshaper's Anvil
-DVD.ActiveItems[250695] = { decorID = 7692, model3D = 4095171, soldBy = {250820}, source = "vendor" } -- Replica Grathardormu's Hammer
-DVD.ActiveItems[250696] = { decorID = 7693, model3D = 4186848, soldBy = {250820}, source = "vendor", noxp = true } -- Green Thumb's Watering Can
-DVD.ActiveItems[250697] = { decorID = 7694, model3D = 4420697, soldBy = {250820}, source = "vendor" } -- Draconic Auctioneer's Lectern
-DVD.ActiveItems[250698] = { decorID = 7695, model3D = 4495212, soldBy = {250820}, source = "vendor", noxp = true } -- Obsidian Warder Pennant
-DVD.ActiveItems[250699] = { decorID = 7696, model3D = 4495213, soldBy = {250820}, source = "vendor", noxp = true } -- Dark Talon Pennant
-DVD.ActiveItems[250700] = { decorID = 7697, model3D = 4500571, soldBy = {250820}, source = "vendor", noxp = true } -- Roasted Ram Leg
-DVD.ActiveItems[250701] = { decorID = 7698, model3D = 4543421, soldBy = {250820}, source = "vendor", noxp = true } -- Draconic Trader's Cart
-DVD.ActiveItems[250702] = { decorID = 7699, model3D = 4551438, soldBy = {250820}, source = "vendor", noxp = true } -- Artisan's Measuring Scales
-DVD.ActiveItems[250703] = { decorID = 7700, model3D = 4563732, soldBy = {250820}, source = "vendor", noxp = true } -- War Creche Teaching Crystal
-DVD.ActiveItems[250704] = { decorID = 7701, model3D = 4572369, soldBy = {250820}, source = "vendor" } -- Ancient Weyrn Device
-end
-
-do -- 🏪 VENDOR NPC: 250982 (Dethelin) Pre Midnight Event Vendor
-DVD.ActiveItems[245284] = { decorID = 714, model3D = 4235683, soldBy = {250982}, source = "vendor", noxp = true } -- Silvermoon Wooden Chair
-DVD.ActiveItems[245330] = { decorID = 1236, model3D = 6431404, soldBy = {250982}, source = "vendor", noxp = true } -- Enchanted Blood Elven Candelabra
-DVD.ActiveItems[251997] = { decorID = 1227, model3D = 6025947, soldBy = {250982}, source = "vendor", noxp = true } -- Sin'dorei Winged Chaise
 end
 
 do -- 🏪 VENDOR NPC: 251091 (Nael Silvertongue)
@@ -928,24 +553,6 @@ DVD.ActiveItems[257353] = { decorID = 11455, model3D = 5160932, soldBy = {251911
 DVD.ActiveItems[260700] = { decorID = 14381, model3D = 5689810, soldBy = {251911}, source = "quest", noxp = true } -- Gob-chanical Trash Heap
 end
 
-do -- 🏪 VENDOR NPC: 251921 (Arcanist Peroleth)
-DVD.ActiveItems[239606] = { decorID = 865, model3D = 2620663, soldBy = {251921}, source = "quest", noxp = true } -- Forsaken Round Rug
-DVD.ActiveItems[241062] = { decorID = 944, model3D = 2620664, soldBy = {251921}, source = "achievement", noxp = true } -- Lordaeron Rectangular Rug
-DVD.ActiveItems[245463] = { decorID = 838, model3D = 2341255, soldBy = {251921}, source = "achievement", noxp = true } -- Lordaeron Banded Barrel
-DVD.ActiveItems[245465] = { decorID = 863, model3D = 2341259, soldBy = {251921}, source = "quest", noxp = true } -- Tirisfal Wooden Chair
-DVD.ActiveItems[245466] = { decorID = 864, model3D = 2341260, soldBy = {251921}, source = "quest", noxp = true } -- Forsaken Spiked Chair
-DVD.ActiveItems[245467] = { decorID = 837, model3D = 2341251, soldBy = {251921}, source = "achievement", noxp = true } -- Lordaeron Banded Crate
-DVD.ActiveItems[245469] = { decorID = 934, model3D = 2353882, soldBy = {251921}, source = "quest", noxp = true } -- Lordaeron Lantern
-DVD.ActiveItems[245470] = { decorID = 936, model3D = 2470997, soldBy = {251921}, source = "quest", noxp = true } -- Lordaeron Hanging Lantern
-DVD.ActiveItems[245473] = { decorID = 862, model3D = 2341256, soldBy = {251921}, source = "quest", noxp = true } -- Forsaken Studded Table
-DVD.ActiveItems[245475] = { decorID = 935, model3D = 2445708, soldBy = {251921}, source = "quest", noxp = true } -- Forsaken Long Table
-DVD.ActiveItems[245483] = { decorID = 933, model3D = 2351848, soldBy = {251921}, source = "achievement", noxp = true } -- Lordaeron Spiked Weapon Rack
-DVD.ActiveItems[245478] = { decorID = 941, model3D = 2503603, requirement = { type = "reputation", faction = "The Honorbound", rank = 3 }, soldBy = {251921}, source = "vendor"}-- Lordaeron Sconce
-DVD.ActiveItems[245479] = { decorID = 942, model3D = 2510482, requirement = { type = "reputation", faction = "The Honorbound", rank = 4 }, soldBy = {251921}, source = "vendor"}-- Blightfire Sconce
-DVD.ActiveItems[245480] = { decorID = 945, model3D = 2622608, requirement = { type = "reputation", faction = "The Honorbound", rank = 3 }, soldBy = {251921}, source = "vendor"}-- Lordaeron Torch
-DVD.ActiveItems[245481] = { decorID = 946, model3D = 2622609, requirement = { type = "reputation", faction = "The Honorbound", rank = 4 }, soldBy = {251921}, source = "vendor"}-- Blightfire Torch
-end
-
 do -- 🏪 VENDOR NPC: 252043 (Halenthos Brightstride)
 DVD.ActiveItems[245411] = { decorID = 947, model3D = 6431407, soldBy = {252043}, source = "quest", noxp = true } -- Dark Ship's Lantern
 DVD.ActiveItems[253251] = { decorID = 9267, model3D = 1598111, soldBy = {252043}, source = "quest", noxp = true } -- Blightfire Candle
@@ -965,41 +572,9 @@ DVD.ActiveItems[253173] = { decorID = 9247, model3D = 7262874, soldBy = {252312}
 DVD.ActiveItems[256168] = { decorID = 10962, model3D = 4075131, soldBy = {252312}, source = "vendor", noxp = true } -- Draconic Sconce
 end
 
-do -- 🏪 VENDOR NPC: 252313 (Caspian)
-DVD.ActiveItems[245984] = { decorID = 1900, model3D = 6988296, soldBy = {252313}, source = "quest", noxp = true } -- Sagehold Window
-DVD.ActiveItems[252395] = { decorID = 9044, model3D = 1709395, soldBy = {252313}, source = "quest", noxp = true } -- Brennadam Coop
-DVD.ActiveItems[252394] = { decorID = 9043, model3D = 1602487, requirement = { type = "reputation", faction = "Storm's Wake", rank = 4 }, soldBy = {252313}, source = "vendor"}-- Bowhull Bookcase
-DVD.ActiveItems[252396] = { decorID = 9045, model3D = 1711709, requirement = { type = "reputation", faction = "Storm's Wake", rank = 2 }, soldBy = {252313}, source = "vendor"}-- Admiralty's Copper Lantern
-DVD.ActiveItems[252398] = { decorID = 9047, model3D = 1800789, requirement = { type = "reputation", faction = "Storm's Wake", rank = 3 }, soldBy = {252313}, source = "vendor"}-- Stormsong Water Pump
-DVD.ActiveItems[252652] = { decorID = 9139, model3D = 1801975, requirement = { type = "reputation", faction = "Storm's Wake", rank = 4 }, soldBy = {252313}, source = "vendor"}-- Copper Stormsong Well
-DVD.ActiveItems[252655] = { decorID = 9142, model3D = 7301013, soldBy = {252313}, source = "quest", noxp = true } -- Copper Tidesage's Sconce
-end
-
 do -- 🏪 VENDOR NPC: 252316 (Delphine)
 DVD.ActiveItems[252392] = { decorID = 9041, model3D = 1602483, soldBy = {252316}, source = "quest", noxp = true } -- Admiral's Chandelier
 DVD.ActiveItems[252405] = { decorID = 9054, model3D = 1939942, soldBy = {252316}, source = "vendor" } -- Admiral's Low-Hanging Chandelier
-end
-
-do -- 🏪 VENDOR NPC: 252326 (T'lama)
-DVD.ActiveItems[244325] = { decorID = 1417, model3D = 6877808, soldBy = {252326}, source = "achievement", noxp = true } -- Zuldazar Cook's Griddle
-DVD.ActiveItems[244326] = { decorID = 1418, model3D = 6877810, soldBy = {252326}, source = "achievement", noxp = true } -- Zandalari Wall Shelf
-DVD.ActiveItems[245263] = { decorID = 1697, model3D = 1707340, soldBy = {252326}, source = "quest", noxp = true } -- Zocalo Drinks
-DVD.ActiveItems[245417] = { decorID = 1310, model3D = 6877803, soldBy = {252326}, source = "quest", noxp = true } -- Akunda the Tapestry
-DVD.ActiveItems[245485] = { decorID = 1205, model3D = 2098556, soldBy = {252326}, source = "quest", noxp = true } -- Golden Zandalari Bed
-DVD.ActiveItems[245486] = { decorID = 1193, model3D = 1597478, soldBy = {252326}, source = "quest", noxp = true } -- Tired Troll's Bench
-DVD.ActiveItems[245487] = { decorID = 1175, model3D = 1597477, soldBy = {252326}, source = "achievement", noxp = true } -- Bookcase of Gonk
-DVD.ActiveItems[245489] = { decorID = 1192, model3D = 1597479, soldBy = {252326}, source = "quest", noxp = true } -- Zuldazar Stool
-DVD.ActiveItems[245490] = { decorID = 1191, model3D = 1696757, soldBy = {252326}, source = "achievement", noxp = true } -- Dazar'alor Forge
-DVD.ActiveItems[245491] = { decorID = 1179, model3D = 1661034, soldBy = {252326}, source = "quest", noxp = true } -- Bwonsamdi's Golden Gong
-DVD.ActiveItems[245493] = { decorID = 1196, model3D = 1888157, soldBy = {252326}, source = "quest", noxp = true } -- Idol of Rezan, Loa of Kings
-DVD.ActiveItems[245494] = { decorID = 1185, model3D = 1922339, soldBy = {252326}, source = "achievement", noxp = true } -- Idol of Pa'ku, Master of Winds
-DVD.ActiveItems[245497] = { decorID = 1188, model3D = 2432865, soldBy = {252326}, source = "achievement", noxp = true } -- Golden Loa's Altar
-DVD.ActiveItems[245522] = { decorID = 1183, model3D = 7555186, soldBy = {252326}, source = "achievement", noxp = true } -- Grand Mask of Bwonsamdi, Loa of Graves
-DVD.ActiveItems[256919] = { decorID = 11319, model3D = 668856, requirement = { type = "reputation", faction = "Zandalari Empire", rank = 4}, soldBy = {252326}, source = "vendor"}-- Zandalari War Chandelier
-DVD.ActiveItems[257399] = { decorID = 11489, model3D = 668854, requirement = { type = "reputation", faction = "Zandalari Empire", rank = 4 }, soldBy = {252326}, source = "vendor"}-- Zandalari War Brazier	
-DVD.ActiveItems[245521] = { decorID = 1189, model3D = 792633, requirement = { type = "reputation", faction = "Zandalari Empire", rank = 2 }, soldBy = {252326}, source = "vendor"}-- Stone Zandalari Lamp
-DVD.ActiveItems[243113] = { decorID = 1180, model3D = 1590846, requirement = { type = "reputation", faction = "Zandalari Empire", rank = 3 }, soldBy = {252326}, source = "vendor"}-- Blue Dazar'alor Rug
-DVD.ActiveItems[243130] = { decorID = 1197, model3D = 1597757, requirement = { type = "reputation", faction = "Zandalari Empire", rank = 3 }, soldBy = {252326}, source = "vendor"}-- Zandalari Weapon Rack
 end
 
 do -- 🏪 VENDOR NPC: 252345 (Pearl Barlow)
@@ -1019,21 +594,6 @@ DVD.ActiveItems[245615] = { decorID = 1801, model3D = 6930894, soldBy = {252498}
 DVD.ActiveItems[245616] = { decorID = 1802, model3D = 6930897, soldBy = {252498}, source = "quest", noxp = true } -- Bradensbrook Thorned Well
 end
 
-do -- 🏪 VENDOR NPC: 252605 (Aeeshna)
-DVD.ActiveItems[262664] = { decorID = 14677, model3D = 5916219, soldBy = {252605}, source = "vendor", noxp = true } -- Complete Guide to K'areshi Wrappings, Vol. 11
-DVD.ActiveItems[262665] = { decorID = 14678, model3D = 6380241, soldBy = {252605}, source = "vendor", noxp = true } -- K'areshi Holo-Crystal Projector
-DVD.ActiveItems[262666] = { decorID = 14679, model3D = 6380243, soldBy = {252605}, source = "vendor", noxp = true } -- K'areshi Incense Burner
-DVD.ActiveItems[262667] = { decorID = 14680, model3D = 6380244, soldBy = {252605}, source = "vendor", noxp = true } -- Oath Scale
-DVD.ActiveItems[262884] = { decorID = 14793, model3D = 5916223, soldBy = {252605}, source = "vendor", noxp = true } -- Consortium Glowpost
-DVD.ActiveItems[262907] = { decorID = 14800, model3D = 6323399, soldBy = {252605}, source = "vendor", noxp = true } -- Tazaveshi Hookah
-DVD.ActiveItems[263043] = { decorID = 14829, model3D = 192556, soldBy = {252605}, source = "vendor", noxp = true } -- Consortium Energy Barrel
-DVD.ActiveItems[263044] = { decorID = 14830, model3D = 192557, soldBy = {252605}, source = "vendor", noxp = true } -- Empty Consortium Energy Barrel
-DVD.ActiveItems[263045] = { decorID = 14831, model3D = 192562, soldBy = {252605}, source = "vendor", noxp = true } -- Consortium Energy Collector
-DVD.ActiveItems[263046] = { decorID = 14832, model3D = 192563, soldBy = {252605}, source = "vendor", noxp = true } -- Consortium Energy Crate
-DVD.ActiveItems[263047] = { decorID = 14833, model3D = 192564, soldBy = {252605}, source = "vendor", noxp = true } -- Empty Consortium Energy Crate
-DVD.ActiveItems[263048] = { decorID = 14834, model3D = 192576, soldBy = {252605}, source = "vendor", noxp = true } -- Consortium Energy Banner
-end
-
 do -- 🏪 VENDOR NPC: 252873 (Morta Gage)
 DVD.ActiveItems[253174] = { decorID = 9248, model3D = 305201, soldBy = {252873}, source = "quest" } -- Dried Gilnean Roses
 DVD.ActiveItems[253175] = { decorID = 9249, model3D = 651497, soldBy = {252873}, source = "quest" } -- Hyjal Climbing Vine
@@ -1047,6 +607,9 @@ DVD.ActiveItems[253544] = { decorID = 9441, model3D = 985164, soldBy = {252873},
 DVD.ActiveItems[253598] = { decorID = 9475, model3D = 194802, soldBy = {252873}, source = "quest" } -- Banner of the Ebon Blade
 DVD.ActiveItems[253700] = { decorID = 9624, model3D = 1674723, soldBy = {252873}, source = "quest" } -- Sandy Vulpera Banner
 DVD.ActiveItems[269316] = { decorID = 20679, model3D = 7696290, soldBy = {252873}, source = "vendor"} -- Bartender Bob's "No Weapons Allowed" Rack
+DVD.ActiveItems[278038] = { decorID = 26202, model3D = 5658299, soldBy = {252873}, source =  "quest"} -- Arathor Toy Sword
+--DVD.ActiveItems[278044] = { decorID = 26201, model3D = 5503816, soldBy = {252873}, source =  "quest"} -- Hanging Candles removed currently
+DVD.ActiveItems[278694] = { decorID = 26651, model3D = 526368, soldBy = {252873}, source =  "quest"} -- Stormstout Hanging Lantern
 end
 
 do -- 🏪 VENDOR NPC: 252887 (Chert) 221390 (Waxmonger Squick)
@@ -1073,19 +636,19 @@ DVD.ActiveItems[253163] = { decorID = 9237, model3D = 4896167, soldBy = {252910}
 end
 
 do -- 🏪 VENDOR NPC: 252915 (Corlen Hordralin)
-DVD.ActiveItems[253602] = { decorID = 9479, model3D = 6033625, soldBy = {252915}, source = "achievement" } -- "Silvermoon in Summer" Painting
-DVD.ActiveItems[253603] = { decorID = 9480, model3D = 6033626, soldBy = {252915}, source = "achievement" } -- "The Last Day of the Semester" Painting
-DVD.ActiveItems[253604] = { decorID = 9481, model3D = 6033627, soldBy = {252915}, source = "achievement" } -- "A Bridge Over Calm Waters" Painting
-DVD.ActiveItems[253605] = { decorID = 9482, model3D = 6880011, soldBy = {252915}, source = "achievement" } -- "Family Portrait" Painting
-DVD.ActiveItems[253607] = { decorID = 9484, model3D = 6929059, soldBy = {252915}, source = "achievement" } -- "Eversong in Bloom" Painting
-DVD.ActiveItems[253608] = { decorID = 9485, model3D = 6929060, soldBy = {252915}, source = "achievement" } -- "Nature's Strength" Painting
-DVD.ActiveItems[253614] = { decorID = 9491, model3D = 7241253, soldBy = {252915}, source = "achievement" } -- "Brunch and a Book" Painting
-DVD.ActiveItems[253615] = { decorID = 9492, model3D = 7241254, soldBy = {252915}, source = "achievement" } -- "Autumnal Eversong" Painting
-DVD.ActiveItems[253616] = { decorID = 9493, model3D = 7241255, soldBy = {252915}, source = "achievement" } -- "Isolation" Painting
-DVD.ActiveItems[253617] = { decorID = 9494, model3D = 7241256, soldBy = {252915}, source = "achievement" } -- "Reclamation" Painting
-DVD.ActiveItems[253618] = { decorID = 9495, model3D = 7241257, soldBy = {252915}, source = "achievement" } -- "The Light Blooms" Painting
-DVD.ActiveItems[253619] = { decorID = 9496, model3D = 7241258, soldBy = {252915}, source = "achievement"} -- "The Fallen Protectors" Painting
-DVD.ActiveItems[253620] = { decorID = 9497, model3D = 7241259, soldBy = {252915}, source = "achievement" } -- "River's Protectors" Painting
+DVD.ActiveItems[253602] = { decorID = 9479, model3D = 6033625, soldBy = {252915}, source = "vendor" } -- "Silvermoon in Summer" Painting
+DVD.ActiveItems[253603] = { decorID = 9480, model3D = 6033626, soldBy = {252915}, source = "vendor" } -- "The Last Day of the Semester" Painting
+DVD.ActiveItems[253604] = { decorID = 9481, model3D = 6033627, soldBy = {252915}, source = "vendor" } -- "A Bridge Over Calm Waters" Painting
+DVD.ActiveItems[253605] = { decorID = 9482, model3D = 6880011, soldBy = {252915}, source = "vendor" } -- "Family Portrait" Painting
+DVD.ActiveItems[253607] = { decorID = 9484, model3D = 6929059, soldBy = {252915}, source = "vendor" } -- "Eversong in Bloom" Painting
+DVD.ActiveItems[253608] = { decorID = 9485, model3D = 6929060, soldBy = {252915}, source = "vendor" } -- "Nature's Strength" Painting
+DVD.ActiveItems[253614] = { decorID = 9491, model3D = 7241253, soldBy = {252915}, source = "vendor" } -- "Brunch and a Book" Painting
+DVD.ActiveItems[253615] = { decorID = 9492, model3D = 7241254, soldBy = {252915}, source = "vendor" } -- "Autumnal Eversong" Painting
+DVD.ActiveItems[253616] = { decorID = 9493, model3D = 7241255, soldBy = {252915}, source = "vendor" } -- "Isolation" Painting
+DVD.ActiveItems[253617] = { decorID = 9494, model3D = 7241256, soldBy = {252915}, source = "vendor" } -- "Reclamation" Painting
+DVD.ActiveItems[253618] = { decorID = 9495, model3D = 7241257, soldBy = {252915}, source = "vendor" } -- "The Light Blooms" Painting
+DVD.ActiveItems[253619] = { decorID = 9496, model3D = 7241258, soldBy = {252915}, source = "vendor"} -- "The Fallen Protectors" Painting
+DVD.ActiveItems[253620] = { decorID = 9497, model3D = 7241259, soldBy = {252915}, source = "vendor" } -- "River's Protectors" Painting
 end
 
 do -- 🏪 VENDOR NPC: 252916 (Hesta Forlath)
@@ -1100,18 +663,6 @@ DVD.ActiveItems[253704] = { decorID = 9628, model3D = 6929058, soldBy = {252916}
 DVD.ActiveItems[253705] = { decorID = 9629, model3D = 7241246, soldBy = {252916}, source = "vendor", noxp = true } -- "The Light Blooms" Unframed Painting
 end
 
-do -- 🏪 VENDOR NPC: 252917 (Hesta Forlath)
-DVD.ActiveItems[253522] = { decorID = 9419, model3D = 6017293, soldBy = {252917}, source = "vendor", noxp = true } -- Thalassian Chest
-DVD.ActiveItems[253523] = { decorID = 9420, model3D = 6024530, soldBy = {252917}, source = "vendor", noxp = true } -- Astalor's Hookah
-DVD.ActiveItems[253524] = { decorID = 9421, model3D = 6025946, soldBy = {252917}, source = "vendor", noxp = true } -- 590 Quel'Lithien Red Display Bottle
-DVD.ActiveItems[253525] = { decorID = 9422, model3D = 6935638, soldBy = {252917}, source = "vendor", noxp = true } -- Thalassian Academy Dictation Device
-DVD.ActiveItems[253526] = { decorID = 9423, model3D = 6998416, soldBy = {252917}, source = "vendor", noxp = true } -- Sin'dorei Wine Display
-DVD.ActiveItems[253599] = { decorID = 9476, model3D = 6017291, soldBy = {252917}, source = "vendor", noxp = true } -- Artisanal Display Tent
-DVD.ActiveItems[253600] = { decorID = 9477, model3D = 6025942, soldBy = {252917}, source = "vendor", noxp = true } -- Eversong Crystal Glass
-DVD.ActiveItems[253601] = { decorID = 9478, model3D = 6025944, soldBy = {252917}, source = "vendor", noxp = true } -- 590 Quel'Lithien Red
-DVD.ActiveItems[254235] = { decorID = 10273, model3D = 7338840, soldBy = {252917}, source = "vendor", noxp = true } -- Sin'dorei Artisan's Easel
-end
-
 do -- 🏪 VENDOR NPC: 252969 (Jocenna)
 DVD.ActiveItems[245448] = { decorID = 752, model3D = 1399648, soldBy = {252969}, source = "achievement", noxp = true } -- "Night on the Jeweled Estate" Painting
 DVD.ActiveItems[245558] = { decorID = 1747, model3D = 6924250, soldBy = {252969}, source = "quest", noxp = true } -- Elaborate Suramar Window
@@ -1123,29 +674,8 @@ DVD.ActiveItems[247917] = { decorID = 4031, model3D = 1361714, soldBy = {252969}
 DVD.ActiveItems[248009] = { decorID = 4040, model3D = 1309274, soldBy = {252969}, source = "quest", noxp = true } -- Suramar Window
 end
 
-do -- 🏪 VENDOR NPC: 253067 (Silvrath) 193015 (Unatos)
-DVD.ActiveItems[246706] = { decorID = 2469, model3D = 4201172, soldBy = {253067}, source = "quest", noxp = true } -- Elegant Dracthyr's Tea Cup
-DVD.ActiveItems[247223] = { decorID = 2594, model3D = 7109344, soldBy = {253067}, source = "quest", noxp = true } -- Roast Riverbeast Platter
-DVD.ActiveItems[256169] = { decorID = 10963, model3D = 4195090, requirement = { type = "renown", faction = "Valdrakken Accord", level = 3 }, soldBy = {193015, 253067}, source = "vendor"}-- Valdrakken Oven
-DVD.ActiveItems[248112] = { decorID = 4168, model3D = 4204643, requirement = { type = "renown", faction = "Valdrakken Accord", level = 6 }, soldBy = {193015, 253067}, source = "vendor"} -- Valdrakken Garden Fountain
-DVD.ActiveItems[248103] = { decorID = 4159, model3D = 3883454, requirement = { type = "renown", faction = "Valdrakken Accord", level = 14 }, soldBy = {193015, 253067}, source = "vendor"}-- Draconic Stone Table
-DVD.ActiveItems[248652] = { decorID = 4478, model3D = 7141931, requirement = { type = "renown", faction = "Valdrakken Accord", level = 20 }, soldBy = {193015, 253067}, source = "vendor"}-- Dragon's Grand Mirror
-DVD.ActiveItems[248104] = { decorID = 4160, model3D = 3883455, soldBy = {253067}, source = "achievement" } -- Pentagonal Stone Table
-DVD.ActiveItems[248651] = { decorID = 4477, model3D = 7141928, soldBy = {253067}, source = "quest", noxp = true } -- Draconic Memorial Stone
-DVD.ActiveItems[248653] = { decorID = 4479, model3D = 7141933, soldBy = {253067}, source = "quest", noxp = true } -- Valdrakken Stone Stool
-DVD.ActiveItems[248655] = { decorID = 4481, model3D = 7141935, soldBy = {253067}, source = "quest", noxp = true } -- Elegant Dracthyr's Tea Set
-DVD.ActiveItems[256429] = { decorID = 11164, model3D = 3952854, soldBy = {253067}, source = "quest", noxp = true } -- Valdrakken Lamppost
-end
-
 do -- 🏪 VENDOR NPC: 253086 (Jolinth)
 DVD.ActiveItems[248656] = { decorID = 4482, model3D = 7141936, soldBy = {253086}, source = "achievement", noxp = true } -- Dragon's Hoard Chest
-end
-
-do -- 🏪 VENDOR NPC: 253227 (Breana Bitterbrand) 49386 (Craw MacGraw)
-DVD.ActiveItems[246108] = { decorID = 1998, model3D = 6436349, requirement = { type = "reputation", faction = "Wildhammer Clan", rank = 3 }, soldBy = {253227, 49386}, source = "vendor"}-- Embellished Dwarven Tome
-DVD.ActiveItems[246425] = { decorID = 2242, model3D = 197563, requirement = { type = "reputation", faction = "Wildhammer Clan", rank = 2 }, soldBy = {253227, 49386}, source = "vendor"}-- Round Dwarven Table
-DVD.ActiveItems[246427] = { decorID = 2244, model3D = 391448, soldBy = {253227}, source = "quest", noxp = true } -- Dilapidated Wildhammer Well
-DVD.ActiveItems[246428] = { decorID = 2245, model3D = 392127, soldBy = {253227}, source = "quest", noxp = true } -- Overgrown Wildhammer Fountain
 end
 
 do -- 🏪 VENDOR NPC: 253232 (Inge Brightview)
@@ -1153,37 +683,8 @@ DVD.ActiveItems[246411] = { decorID = 2228, model3D = 197281, soldBy = {253232},
 DVD.ActiveItems[246412] = { decorID = 2229, model3D = 197282, soldBy = {253232}, source = "vendor", noxp = true } -- Small Ironforge Bookcase
 end
 
-do -- 🏪 VENDOR NPC: 253235 (Dedric Sleetshaper) 50309 (Captain Stonehelm)
-DVD.ActiveItems[245426] = { decorID = 1216, model3D = 1018949, soldBy = {253235}, source = "achievement" } -- Dark Iron Brazier
-DVD.ActiveItems[245427] = { decorID = 1118, model3D = 1019061, soldBy = {253235}, source = "quest", noxp = true } -- Dark Iron Expedition Tent
-DVD.ActiveItems[246426] = { decorID = 2243, model3D = 197568, requirement = { type = "reputation", faction = "Ironforge", rank = 3 }, soldBy = {253235, 50309}, source = "vendor"}-- Ornate Ironforge Table
-DVD.ActiveItems[246490] = { decorID = 2333, model3D = 7014379, requirement = { type = "reputation", faction = "Ironforge", rank = 2 }, soldBy = {253235, 50309}, source = "vendor", noxp = true } -- Ironforge Fencepost
-DVD.ActiveItems[246491] = { decorID = 2334, model3D = 7014380, requirement = { type = "reputation", faction = "Ironforge", rank = 2 }, soldBy = {253235, 50309}, source = "vendor", noxp = true } -- Ironforge Fence
-DVD.ActiveItems[252010] = { decorID = 8982, model3D = 7296322, requirement = { type = "reputation", faction = "Ironforge", rank = 3 }, soldBy = {253235, 50309}, source = "vendor"}-- Ornate Ironforge Bench
-DVD.ActiveItems[256333] = { decorID = 11133, model3D = 7385424, requirement = { type = "reputation", faction = "Ironforge", rank = 4 }, soldBy = {253235, 50309}, source = "vendor"} -- Ornate Dwarven Wardrobe
-DVD.ActiveItems[256425] = { decorID = 11160, model3D = 7385422, soldBy = {253235}, source = "achievement", noxp = true } -- Shadowforge Stone Chair
-end
-
-do -- 🏪 VENDOR NPC: 253387 (Selfira Ambergrove) 106901 (Sylvia Hartshorn)
-DVD.ActiveItems[238859] = { decorID = 675, model3D = 1108747, requirement = { type = "reputation", faction = "Dreamweavers", rank = 5 }, soldBy = {253387, 106901}, source = "vendor"}-- Cenarion Privacy Screen
-DVD.ActiveItems[238860] = { decorID = 676, model3D = 1108751, soldBy = {253387}, source = "vendor" } -- Deluxe Val'sharah Bed
-DVD.ActiveItems[238861] = { decorID = 677, model3D = 1108813, requirement = { type = "reputation", faction = "Dreamweavers", rank = 3 }, soldBy = {253387, 106901}, source = "vendor"}-- Cenarion Rectangular Rug
-DVD.ActiveItems[245261] = { decorID = 1695, model3D = 1244321, requirement = { type = "reputation", faction = "Dreamweavers", rank = 4 }, soldBy = {253387, 106901}, source = "vendor"}-- Kaldorei Washbasin
-DVD.ActiveItems[245697] = { decorID = 1881, model3D = 1108752, soldBy = {253387}, source = "achievement", noxp = true } -- Shala'nir Feather Bed
-DVD.ActiveItems[245700] = { decorID = 1884, model3D = 7508794, soldBy = {253387}, source = "quest", noxp = true } -- Kaldorei Cushioned Seat
-DVD.ActiveItems[245702] = { decorID = 1886, model3D = 1128060, soldBy = {253387}, source = "quest", noxp = true } -- Kaldorei Wall Shelf
-DVD.ActiveItems[245703] = { decorID = 1887, model3D = 1349622, soldBy = {253387}, source = "achievement", noxp = true } -- Kaldorei Treasure Trove
-DVD.ActiveItems[245739] = { decorID = 1889, model3D = 1096777, soldBy = {253387}, source = "quest", noxp = true } -- Crescent Moon Lamppost
-DVD.ActiveItems[251494] = { decorID = 8195, model3D = 1096752, requirement = { type = "reputation", faction = "Dreamweavers", rank = 2 }, soldBy = {253387, 106901}, source = "vendor"}-- Moon-Blessed Barrel
-DVD.ActiveItems[264168] = { decorID = 15453, model3D = 7504767, requirement = { type = "reputation", faction = "Dreamweavers", rank = 3 }, soldBy = {253387, 106901}, source = "vendor"} -- Cenarion Round Rug	
-end
-
 do -- 🏪 VENDOR NPC: 253434 (Sileas Duskvine)
 DVD.ActiveItems[245701] = { decorID = 1885, model3D = 1096883, soldBy = {253434}, source = "quest", noxp = true } -- Elven Round Table
-end
-
-do -- 🏪 VENDOR NPC: 253596 (The Last Architect Horde) 248854 (The Last Architect Alliance)
-DVD.ActiveItems[262453] = { decorID = 14583, model3D = 6033622, soldBy = {253596, 248854}, source = "vendor", noxp = true } -- Hearthlight Armillary
 end
 
 do -- 🏪 VENDOR NPC: 254606 (Joruh) 254603 (Riica) 219217 (Velerd)
@@ -1225,6 +726,8 @@ DVD.ActiveItems[264479] = { decorID = 15743, model3D = 6212406, soldBy = {254944
 DVD.ActiveItems[264480] = { decorID = 15744, model3D = 6212407, soldBy = {254944}, source = "quest"} -- Greenvine Amani Tapestry
 DVD.ActiveItems[264481] = { decorID = 15745, model3D = 6212408, soldBy = {254944}, source = "quest"} -- Earthhide Amani Tapestry
 DVD.ActiveItems[264715] = { decorID = 16092, model3D = 6075575, soldBy = {254944}, source = "quest"} -- Zul'Aman Flame Cradle
+
+DVD.ActiveItems[278691] = { decorID = 26203, model3D = 5975164, soldBy = {254944}, source =  "quest"} -- Twilight Brazier
 end
 
 do -- 🏪 VENDOR NPC: 255095 (Kuvahn)
@@ -1266,58 +769,129 @@ DVD.ActiveItems[265792] = { decorID = 17516, model3D = 6851751, soldBy = {255114
 DVD.ActiveItems[266259] = { decorID = 17886, model3D = 6310381, soldBy = {255114}, source = "quest", noxp = true } -- Altar of the Shul'ka
 end
 
-do -- 🏪 VENDOR NPC: 255216 (Balen Starfinder) 255298 (Jehzar Starfall 51)
-DVD.ActiveItems[246250] = { decorID = 2105, model3D = 7000939, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Silvermoon Large Platform
-DVD.ActiveItems[243495] = { decorID = 1329, model3D = 6435020, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Padded Divan
-DVD.ActiveItems[241618] = { decorID = 985, model3D = 6435018, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Padded Footstool
-DVD.ActiveItems[246255] = { decorID = 2110, model3D = 7000944, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Bel'ameth Large Platform
-DVD.ActiveItems[241620] = { decorID = 987, model3D = 6435025, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Wooden Dresser
-DVD.ActiveItems[241621] = { decorID = 988, model3D = 6435026, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Small Elegant End Table
-DVD.ActiveItems[241622] = { decorID = 989, model3D = 6435030, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Ornate Weapon Rack
-DVD.ActiveItems[243242] = { decorID = 1245, model3D = 6435032, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Circular Elven Floor Rug
-DVD.ActiveItems[243243] = { decorID = 1246, model3D = 6435033, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Rectangular Elven Floor Rug
-DVD.ActiveItems[235994] = { decorID = 80, model3D = 6033663, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Ornate Stonework Fireplace
-DVD.ActiveItems[241617] = { decorID = 984, model3D = 6435017, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Padded Chair
-DVD.ActiveItems[244781] = { decorID = 1487, model3D = 6435039, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Wall Drape
-DVD.ActiveItems[246249] = { decorID = 2104, model3D = 7000938, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Silvermoon Beam Platform
-DVD.ActiveItems[246251] = { decorID = 2106, model3D = 7000940, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Silvermoon Small Platform
-DVD.ActiveItems[246252] = { decorID = 2107, model3D = 7000941, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Silvermoon Angled Platform
-DVD.ActiveItems[246253] = { decorID = 2108, model3D = 7000942, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Silvermoon Round Platform
-DVD.ActiveItems[246254] = { decorID = 2109, model3D = 7000943, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Bel'ameth Beam Platform
-DVD.ActiveItems[246256] = { decorID = 2111, model3D = 7000945, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Bel'ameth Small Platform
-DVD.ActiveItems[246257] = { decorID = 2112, model3D = 7000946, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Bel'ameth Angled Platform
-DVD.ActiveItems[246258] = { decorID = 2113, model3D = 7000947, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Bel'ameth Round Platform
-DVD.ActiveItems[246431] = { decorID = 2254, model3D = 6435038, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Tied Curtain
-DVD.ActiveItems[246691] = { decorID = 2458, model3D = 6435040, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Grand Elven Wall Curtain
-DVD.ActiveItems[246711] = { decorID = 2474, model3D = 6435034, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Pillow Roll
-DVD.ActiveItems[246961] = { decorID = 2590, model3D = 6435035, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Seat Cushion
-DVD.ActiveItems[247501] = { decorID = 3826, model3D = 6435840, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Carved Door
-DVD.ActiveItems[248760] = { decorID = 4562, model3D = 6435029, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Lovely Elven Shelf
-DVD.ActiveItems[249558] = { decorID = 5563, model3D = 6435031, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elven Standing Mirror
-DVD.ActiveItems[251981] = { decorID = 8917, model3D = 6435837, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Elven Chandelier
-DVD.ActiveItems[251982] = { decorID = 8918, model3D = 6435839, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Gilded Silvermoon Candelabra
-DVD.ActiveItems[253180] = { decorID = 9254, model3D = 6435015, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Elven Canopy Bed
-DVD.ActiveItems[253181] = { decorID = 9255, model3D = 6435027, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Gemmed Elven Chest
-DVD.ActiveItems[253441] = { decorID = 994, model3D = 6783465, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Grand Elven Bookcase
-DVD.ActiveItems[253479] = { decorID = 1153, model3D = 6435016, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Small Elegant Padded Chair
-DVD.ActiveItems[253490] = { decorID = 1162, model3D = 6435024, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Elven Desk
-DVD.ActiveItems[253493] = { decorID = 1163, model3D = 6435028, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Carved Elven Bookcase
-DVD.ActiveItems[255650] = { decorID = 10860, model3D = 6435838, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Table Lamp
-DVD.ActiveItems[257690] = { decorID = 11719, model3D = 6435021, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Padded Chaise
-DVD.ActiveItems[264169] = { decorID = 15454, model3D = 7506135, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Homestone Doormat
-DVD.ActiveItems[264352] = { decorID = 15598, model3D = 7506479, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Elven Bathtub
-DVD.ActiveItems[264353] = { decorID = 15599, model3D = 7506480, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Empty Elegant Elven Bathtub
-DVD.ActiveItems[265653] = { decorID = 17358, model3D = 7506481, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Storage Table
-DVD.ActiveItems[265654] = { decorID = 17359, model3D = 7506482, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Elven Washbasin
-DVD.ActiveItems[267075] = { decorID = 18614, model3D = 7506483, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Ornate Elven Stove
-DVD.ActiveItems[245575] = { decorID = 1770, model3D = 1337, soldBy = {255216, 255298}, sources = {"vendor", "121"}, noxp = true } -- Bel'ameth Interior Wall
-DVD.ActiveItems[245576] = { decorID = 1771, model3D = 1337, soldBy = {255216, 255298}, sources = {"vendor", "121"}, noxp = true } -- Bel'ameth Round Interior Pillar
-DVD.ActiveItems[245578] = { decorID = 1772, model3D = 1337, soldBy = {255216, 255298}, sources = {"vendor", "121"}, noxp = true } -- Bel'ameth Interior Doorway
-DVD.ActiveItems[245579] = { decorID = 1773, model3D = 1337, soldBy = {255216, 255298}, sources = {"vendor", "121"}, noxp = true } -- Bel'ameth Interior Narrow Wall
-DVD.ActiveItems[245581] = { decorID = 1774, model3D = 1337, soldBy = {255216, 255298}, sources = {"vendor", "121"}, noxp = true } -- Silvermoon Round Interior Pillar
-DVD.ActiveItems[245582] = { decorID = 1775, model3D = 1337, soldBy = {255216, 255298}, sources = {"vendor", "121"}, noxp = true } -- Silvermoon Interior Narrow Wall
-DVD.ActiveItems[245583] = { decorID = 1776, model3D = 1337, soldBy = {255216, 255298}, sources = {"vendor", "121"}, noxp = true } -- Silvermoon Interior Wall
-DVD.ActiveItems[245649] = { decorID = 1844, model3D = 1337, soldBy = {255216, 255298}, sources = {"vendor", "121"}, noxp = true } -- Silvermoon Interior Doorway
+do -- 🏪 VENDOR NPC: 256026 (Irodalmin)
+DVD.ActiveItems[264003] = { decorID = 15408, model3D = 6049344, soldBy = {256026}, source = "achievement", noxp = true } -- Midnight Herbalist's Shop Sign
+end
+
+do -- 🏪 VENDOR NPC: 256071 (Solelo) 256119 (Lonalo)
+DVD.ActiveItems[239177] = { decorID = 766, model3D = 6717970, soldBy = {256071, 256119}, source = "vendor", noxp = true } -- Open Tome of Twilight Nihilism
+DVD.ActiveItems[239179] = { decorID = 768, model3D = 6717974, soldBy = {256071, 256119}, source = "vendor" } -- Tome of Twilight Nihilism
+DVD.ActiveItems[246845] = { decorID = 2511, model3D = 375548, soldBy = {256071, 256119}, source = "vendor" } -- Tome of Shadowforge Cunning
+DVD.ActiveItems[246847] = { decorID = 2513, model3D = 916183, soldBy = {256071, 256119}, source = "vendor", noxp = true } -- Tome of Draenei Faith
+DVD.ActiveItems[246848] = { decorID = 2514, model3D = 948845, soldBy = {256071, 256119}, source = "vendor" } -- Scribe's Working Notes
+DVD.ActiveItems[246860] = { decorID = 2526, model3D = 2499912, soldBy = {256071, 256119}, source = "vendor" } -- Tome of Forsaken Resilience
+end
+
+do -- 🏪 VENDOR NPC: 256783 (Gabbun)
+DVD.ActiveItems[258262] = { decorID = 11930, model3D = 5169937, soldBy = {256783}, source = "quest", noxp = true } -- Kobold Digger's Chair
+DVD.ActiveItems[258264] = { decorID = 11931, model3D = 5169939, soldBy = {256783}, source = "quest", noxp = true } -- Kobold Candle Trio
+DVD.ActiveItems[258265] = { decorID = 11932, model3D = 5169958, soldBy = {256783}, source = "quest", noxp = true } -- Kobold Wagon
+DVD.ActiveItems[258267] = { decorID = 11933, model3D = 5169960, soldBy = {256783}, source = "quest", noxp = true } -- Candle-Festooned Wooden Awning
+end
+
+do -- 🏪 VENDOR NPC: 256826 (Mrgrgrl)
+DVD.ActiveItems[258222] = { decorID = 11908, model3D = 1091599, soldBy = {256826}, source = "quest", noxp = true } -- Shellscale Standard
+end
+
+do -- 🏪 VENDOR NPC: 256946 (Duskcaller Erthix)
+DVD.ActiveItems[258742] = { decorID = 12202, model3D = 968424, soldBy = {256946}, source = "quest", noxp = true } -- Scroll of the Adherent
+end
+
+do -- 🏪 VENDOR NPC: 257914 (Quelis)
+DVD.ActiveItems[263999] = { decorID = 15404, model3D = 6049336, soldBy = {257914}, source = "achievement" } -- Midnight Cook's Shop Sign
+end
+
+do -- 🏪 VENDOR NPC: 258480 (Amwa'ana)
+DVD.ActiveItems[264005] = { decorID = 15410, model3D = 6049346, soldBy = {258480}, source = "achievement" } -- Midnight Jewelcrafter's Shop Sign
+end
+
+do -- 🏪 VENDOR NPC: 258507 (Mowaia)
+DVD.ActiveItems[264002] = { decorID = 15407, model3D = 6049340, soldBy = {258507}, source = "achievement" } -- Midnight Fisher's Shop Sign
+end
+
+do -- 🏪 VENDOR NPC: 258540 (Hawli)
+DVD.ActiveItems[264172] = { decorID = 15457, model3D = 6049355, soldBy = {258540}, source = "achievement", noxp = true } -- Midnight Miner's Shop Sign
+end
+
+do -- 🏪 VENDOR NPC: 259864 (Sathren Azuredawn)
+DVD.ActiveItems[244538] = { decorID = 1442, model3D = 6367922, soldBy = {259864}, source = "vendor", noxp = true } -- Silvermoon Sundial
+DVD.ActiveItems[244783] = { decorID = 1489, model3D = 6856603, soldBy = {259864}, source = "quest", noxp = true } -- Majestic Lightwood Table
+DVD.ActiveItems[245992] = { decorID = 1908, model3D = 6985813, soldBy = {259864}, source = "quest", noxp = true } -- Ornate Silvermoon Candelabra
+DVD.ActiveItems[251909] = { decorID = 8872, model3D = 6050866, soldBy = {259864}, source = "achievement", noxp = true } -- Eversong Feast Platter
+DVD.ActiveItems[251911] = { decorID = 8874, model3D = 6051296, soldBy = {259864}, source = "vendor" } -- Eversong Dessert Platter
+DVD.ActiveItems[251914] = { decorID = 8877, model3D = 6051300, soldBy = {259864}, source = "vendor", noxp = true } -- Sumptuous Berry Pie
+DVD.ActiveItems[253485] = { decorID = 1159, model3D = 6036095, soldBy = {259864}, source = "quest", noxp = true } -- Sin'dorei Honor Stone
+DVD.ActiveItems[253488] = { decorID = 1160, model3D = 6036096, soldBy = {259864}, source = "vendor" } -- Diamond Honor Stone
+DVD.ActiveItems[246458] = { decorID = 2299, model3D = 6427293, soldBy = {259864}, source = "vendor", noxp = true } -- Grand Aethercharged Crystal
+DVD.ActiveItems[254773] = { decorID = 10542, model3D = 7241260, soldBy = {259864}, source = "achievement", noxp = true } -- "Eversong Lantern" Painting
+DVD.ActiveItems[257367] = { decorID = 11470, model3D = 7338839, soldBy = {259864}, source = "achievement", noxp = true } -- Silvermoon Energy Focus
+DVD.ActiveItems[262610] = { decorID = 14635, model3D = 6701008, soldBy = {259864}, source = "quest", noxp = true } -- Swirling Ritual Pedestal
+DVD.ActiveItems[263231] = { decorID = 15062, model3D = 6050876, soldBy = {259864}, source = "quest", noxp = true } -- Silvermoon Curio Shelves
+DVD.ActiveItems[264248] = { decorID = 15483, model3D = 6026041, soldBy = {259864}, source = "vendor", noxp = true } -- Sin'dorei Storage Jar
+DVD.ActiveItems[264660] = { decorID = 15895, model3D = 6701018, soldBy = {259864}, source = "quest", noxp = true } -- Ren'dorei Spired Tent
+DVD.ActiveItems[265106] = { decorID = 16691, model3D = 6684020, soldBy = {259864}, source = "vendor", noxp = true } -- Farstriders' Pride Statue
+DVD.ActiveItems[265631] = { decorID = 17294, model3D = 6684021, soldBy = {259864}, source = "vendor", noxp = true } -- Farstriders' Glory Statue
+end
+
+do -- 🏪 VENDOR NPC: 259922 (Void Researcher Aemely)
+DVD.ActiveItems[264493] = { decorID = 15757, model3D = 6391989, soldBy = {259922}, source = "achievement", noxp = true } -- Opened Domanaar Storage Crate
+DVD.ActiveItems[264508] = { decorID = 15768, model3D = 6700991, soldBy = {259922}, source = "vendor", noxp = true } -- Sturdy Void Elf Barricade
+DVD.ActiveItems[264656] = { decorID = 15890, model3D = 6700992, soldBy = {259922}, source = "achievement", noxp = true } -- Void Elf Weapon Rack
+DVD.ActiveItems[264657] = { decorID = 15891, model3D = 6701010, soldBy = {259922}, source = "vendor", noxp = true } -- Open Sturdy Void Elf Trunk
+DVD.ActiveItems[264659] = { decorID = 15894, model3D = 6701014, soldBy = {259922}, source = "vendor", noxp = true } -- Cosmic Traveler's Satchel
+DVD.ActiveItems[267082] = { decorID = 18617, model3D = 6885569, soldBy = {259922}, source = "vendor", noxp = true } -- Ornate Cosmic Table
+DVD.ActiveItems[267209] = { decorID = 18800, model3D = 6701003, soldBy = {259922}, source = "quest", noxp = true } -- Open Void Elf Bedroll
+DVD.ActiveItems[262351] = { decorID = 14554, model3D = 6700982, soldBy = {259922}, source = "quest", noxp = true } -- Ornate Cosmic Rug
+DVD.ActiveItems[262472] = { decorID = 14602, model3D = 7412672, soldBy = {259922}, source = "vendor", noxp = true } -- Cosmic Kettle
+DVD.ActiveItems[262606] = { decorID = 14631, model3D = 6700978, soldBy = {259922}, source = "quest", noxp = true } -- Smoldering Energy Forge
+DVD.ActiveItems[263240] = { decorID = 15071, model3D = 6701011, soldBy = {259922}, source = "vendor", noxp = true } -- Sturdy Void Elf Crate
+DVD.ActiveItems[264340] = { decorID = 15579, model3D = 6391988, soldBy = {259922}, source = "vendor", noxp = true } -- Cosmic Barrel
+end
+
+do -- 🏪 VENDOR NPC: 260180 (Depthdiver Tu'nakit)
+DVD.ActiveItems[258535] = { decorID = 12140, model3D = 6212443, soldBy = {260180}, source = "vendor" } -- Simple Bone-Tied Charm
+DVD.ActiveItems[258536] = { decorID = 12141, model3D = 6212444, soldBy = {260180}, source = "vendor" } -- Windmark Tribal Charm
+DVD.ActiveItems[258537] = { decorID = 12142, model3D = 6212445, soldBy = {260180}, source = "vendor" } -- Amani Dreamer's Charm
+DVD.ActiveItems[258538] = { decorID = 12143, model3D = 6212446, soldBy = {260180}, source = "vendor" } -- Barebone Rope Charm
+DVD.ActiveItems[264251] = { decorID = 15486, model3D = 6125172, soldBy = {260180}, source = "vendor" } -- Depthdiver's Cooking Spit
+DVD.ActiveItems[264252] = { decorID = 15487, model3D = 6195748, soldBy = {260180}, source = "vendor" } -- Zul'Aman Forest Hammock
+end
+
+do -- 🏪 VENDOR NPC: 265581 (Zuronar)
+DVD.ActiveItems[276321] = { decorID = 25564, model3D = 7115733, soldBy = {265581}, source = "achievement"} -- Luminant Defender's Golden Barricade
+DVD.ActiveItems[276318] = { decorID = 25565, model3D = 7115754, soldBy = {265581}, source = "achievement"} -- Luminant Soldier's War Banner
+DVD.ActiveItems[267211] = { decorID = 18802, model3D = 7319865, soldBy = {265581}, source = "achievement"} -- Luminant Scout's Golden Fence
+DVD.ActiveItems[276316] = { decorID = 25566, model3D = 7320163, soldBy = {265581}, source = "achievement" } -- Lightveil's Transport Pad
+DVD.ActiveItems[276429] = { decorID = 25665, model3D = 1662222, soldBy = {265581}, source = "achievement" } -- Grand Artificer's Lightforged Console
+DVD.ActiveItems[276432] = { decorID = 25664, model3D = 1590817, soldBy = {265581}, source = "achievement" } -- De-Powered Lightforged Siegebreaker
+end
+
+do --Daily Quest/quest
+DVD.ActiveItems[241043] = { decorID = 925, model3D = 875378, bossevent = "Shadowmoon Valley Missive", mapID = 539, expansion = "Warlords of Draenor", zone = "Draenor", source = "quest"}-- Elodor Barrel
+DVD.ActiveItems[251329] = { decorID = 8176, model3D = 878999, bossevent = "Shadowmoon Valley Missive", mapID = 539, expansion = "Warlords of Draenor", zone = "Draenor", source = "quest"} -- Shadowmoon Open-Air Shed
+DVD.ActiveItems[251547] = { decorID = 8238, model3D = 915354, bossevent = "Shadowmoon Valley Missive", mapID = 539, expansion = "Warlords of Draenor", zone = "Draenor", source = "quest"}-- Draenei Farmer's Trellis	
+DVD.ActiveItems[258145] = { decorID = 11872, model3D = 6051297, bossevent = "Cooking Daily", mapID = 125, expansion = "Wrath of the Loch King", zone = "Northrend", source = "quest"}-- Eversong Party Platter
+end
+-------------------------------------------
+--Housing Vendors
+--------------------------------------------
+
+do -- 🏪 VENDOR NPC: 257321 (Fel'orei Moonstrider) 257303 (Den Nightshade)
+DVD.ActiveItems[280625] = { decorID = 25765, model3D = 7967692, soldBy = {257321, 257303}, source = "vendor" } -- Framed Moonbrook Quilt
+DVD.ActiveItems[280627] = { decorID = 25895, model3D = 7967693, soldBy = {257321, 257303}, source = "vendor" } -- Jansen Farm Floral Basket
+DVD.ActiveItems[280637] = { decorID = 27045, model3D = 7967689, soldBy = {257321, 257303}, source = "vendor" } -- Torquewrench Tractor
+DVD.ActiveItems[280639] = { decorID = 25896, model3D = 7967696, soldBy = {257321, 257303}, source = "vendor" } -- Saldean Autumnal Woven Rug
+DVD.ActiveItems[280642] = { decorID = 26705, model3D = 7967699, soldBy = {257321, 257303}, source = "vendor" } -- Furlbrow Farm Pumpkin Trio
+DVD.ActiveItems[280644] = { decorID = 26706, model3D = 7967700, soldBy = {257321, 257303}, source = "vendor" } -- Molsen Farm Corn Row
+DVD.ActiveItems[280646] = { decorID = 26707, model3D = 7967701, soldBy = {257321, 257303}, source = "vendor" } -- Old Moonbrook Creeping Ivy
+DVD.ActiveItems[280633] = { decorID = 26875, model3D = 7967691, soldBy = {257321, 257303}, source = "vendor" } -- Westfall Harvest Lamp
+DVD.ActiveItems[280650] = { decorID = 26708, model3D = 7967702, soldBy = {257321, 257303}, source = "vendor" } -- Westfall Farmer's Shed
+DVD.ActiveItems[280654] = { decorID = 26877, model3D = 8035585, soldBy = {257321, 257303}, source = "vendor" } -- Old Moonbrook Daylight Window
+DVD.ActiveItems[282347] = { decorID = 27973, model3D = 8035586, soldBy = {257321, 257303}, source = "vendor" } -- Old Moonbrook Nighttime Window
+DVD.ActiveItems[280635] = { decorID = 26940, model3D = 8117693, soldBy = {257321, 257303}, source = "vendor" } -- Maxwell Stables Saddle
+DVD.ActiveItems[280631] = { decorID = 26704, model3D = 7967695, soldBy = {257321, 257303}, source = "vendor" } -- Demont Orchard Juicer
+DVD.ActiveItems[280629] = { decorID = 26703, model3D = 7967690, soldBy = {257321, 257303}, source = "vendor" } -- Sentinel Hill Rocking Chair
+DVD.ActiveItems[280652] = { decorID = 26876, model3D = 7967698, soldBy = {257321, 257303}, source = "vendor" } -- Sentinel Hill Picnic Table
 end
 
 do -- 🏪 VENDOR NPC: 255221 (Trevor Grenner Alliance) 255319 ("Yen" Malone Horde)
@@ -1442,14 +1016,6 @@ DVD.ActiveItems[259470] = { decorID = 12459, model3D = 6938207, soldBy = {255222
 DVD.ActiveItems[265924] = { decorID = 17609, model3D = 7550546, soldBy = {255222, 255278}, source = "vendor", noxp = true } -- High-Mounted Razorwind Bowl Chandelier
 DVD.ActiveItems[265925] = { decorID = 17610, model3D = 7550547, soldBy = {255222, 255278}, source = "vendor", noxp = true } -- Razorwind Bowl Chandelier
 DVD.ActiveItems[265926] = { decorID = 17611, model3D = 7550548, soldBy = {255222, 255278}, source = "vendor", noxp = true } -- Low-Hanging Razorwind Bowl Chandelier
-DVD.ActiveItems[236653] = { decorID = 522, model3D = 1337, soldBy = {255278, 255222}, sources = {"vendor", "121"}, noxp = true } -- Orgrimmar Interior Narrow Wall
-DVD.ActiveItems[236654] = { decorID = 523, model3D = 1337, soldBy = {255278, 255222}, sources = {"vendor", "121"}, noxp = true } -- Orgrimmar Interior Doorway
-DVD.ActiveItems[236655] = { decorID = 524, model3D = 1337, soldBy = {255278, 255222}, sources = {"vendor", "121"}, noxp = true } -- Orgrimmar Interior Wall
-DVD.ActiveItems[236666] = { decorID = 525, model3D = 1337, soldBy = {255278, 255222}, sources = {"vendor", "121"}, noxp = true } -- Orgrimmar Round Interior Pillar
-DVD.ActiveItems[236667] = { decorID = 526, model3D = 1337, soldBy = {255278, 255222}, sources = {"vendor", "121"}, noxp = true } -- Orgrimmar Square Interior Pillar
-DVD.ActiveItems[245393] = { decorID = 534, model3D = 1337, soldBy = {255278, 255222, 255325, 255203}, source = "vendor", noxp = true } -- Plain Interior Wall
-DVD.ActiveItems[245394] = { decorID = 535, model3D = 1337, soldBy = {255278, 255222, 255325, 255203}, source = "vendor", noxp = true } -- Plain Interior Doorway
-DVD.ActiveItems[245395] = { decorID = 536, model3D = 1337, soldBy = {255278, 255222, 255325, 255203}, source = "vendor", noxp = true } -- Plain Interior Narrow Wall
 end
 
 do -- 🏪 VENDOR NPC: 255297 (Shon'ja) 255228 (Len Splinthoof Alliance)
@@ -1607,11 +1173,6 @@ DVD.ActiveItems[268029] = { decorID = 19218, model3D = 7583306, soldBy = {255203
 DVD.ActiveItems[268030] = { decorID = 19219, model3D = 7583307, soldBy = {255203, 255325}, source = "vendor", noxp = true } -- Mounted Tavern Lantern
 DVD.ActiveItems[272359] = { decorID = 21950, model3D = 7798088, soldBy = {255203, 255325}, source = "vendor", noxp = true } -- Square Woolen Rug
 DVD.ActiveItems[246106] = { decorID = 1996, model3D = 6390548, soldBy = {255326, 255325, 255203, 255213}, source = "vendor", noxp = true } -- Wooden Chamberstick
-DVD.ActiveItems[236675] = { decorID = 527, model3D = 1337, soldBy = {255325, 255203}, sources = {"vendor", "121"}, noxp = true } -- Stormwind Interior Pillar
-DVD.ActiveItems[236676] = { decorID = 528, model3D = 1337, soldBy = {255325, 255203}, sources = {"vendor", "121"}, noxp = true } -- Stormwind Interior Narrow Wall
-DVD.ActiveItems[236677] = { decorID = 529, model3D = 1337, soldBy = {255325, 255203}, sources = {"vendor", "121"}, noxp = true } -- Stormwind Interior Wall
-DVD.ActiveItems[236678] = { decorID = 530, model3D = 1337, soldBy = {255325, 255203}, sources = {"vendor", "121"}, noxp = true } -- Stormwind Interior Doorway
-DVD.ActiveItems[245392] = { decorID = 533, model3D = 1337, soldBy = {255325, 255203}, sources = {"vendor", "121"}, noxp = true } -- Sturdy Wooden Interior Pillar
 end
 
 do -- 🏪 VENDOR NPC: 255326 ("Len" Splinthoof) 255213 (Faarden the Builder)
@@ -1685,29 +1246,6 @@ DVD.ActiveItems[246871] = { decorID = 2537, model3D = 6794408, soldBy = {255213,
 DVD.ActiveItems[267084] = { decorID = 18619, model3D = 7550626, soldBy = {255213, 255326}, source = "vendor", noxp = true } -- Founder's Point Hay Bale
 end
 
-do -- 🏪 VENDOR NPC: 255495 (Rae'ana)
-DVD.ActiveItems[273159] = {decorID = 22143, model3D = 7761091, requirement = { type = "renown", faction = "Ritual Sites", level = 3 }, soldBy = {255495}, source = "vendor"} -- Void Elf Scribe's Desk
-DVD.ActiveItems[273135] = {decorID = 22181, model3D = 7761099, requirement = { type = "renown", faction = "Ritual Sites", level = 3 }, soldBy = {255495}, source = "vendor"} -- Void Elf Floating Desk
-DVD.ActiveItems[273142] = {decorID = 22182, model3D = 7815448, requirement = { type = "renown", faction = "Ritual Sites", level = 3 }, soldBy = {255495}, source = "vendor"}-- Runic Parchment
-DVD.ActiveItems[273157] = {decorID = 22183, model3D = 7815449, requirement = { type = "renown", faction = "Ritual Sites", level = 3 }, soldBy = {255495}, source = "vendor"} -- Voidflame Candle
-DVD.ActiveItems[273147] = {decorID = 22388, model3D = 7761093, requirement = { type = "renown", faction = "Ritual Sites", level = 3 }, soldBy = {255495}, source = "vendor"} -- Void Inkwell
-DVD.ActiveItems[271158] = {decorID = 21598, model3D = 5975183, requirement = { type = "renown", faction = "Ritual Sites", level = 7 }, soldBy = {255495}, source = "vendor"} -- Dark Obelisk
-DVD.ActiveItems[276083] = { decorID = 25307, model3D = 7940395, soldBy = {255495}, source = "achievement" } -- Sunstrider Omnium Simulacrum
-end
-
-do -- 🏪 VENDOR NPC: 256026 (Irodalmin)
-DVD.ActiveItems[264003] = { decorID = 15408, model3D = 6049344, soldBy = {256026}, source = "achievement", noxp = true } -- Midnight Herbalist's Shop Sign
-end
-
-do -- 🏪 VENDOR NPC: 256071 (Solelo) 256119 (Lonalo)
-DVD.ActiveItems[239177] = { decorID = 766, model3D = 6717970, soldBy = {256071, 256119}, source = "vendor", noxp = true } -- Open Tome of Twilight Nihilism
-DVD.ActiveItems[239179] = { decorID = 768, model3D = 6717974, soldBy = {256071, 256119}, source = "vendor" } -- Tome of Twilight Nihilism
-DVD.ActiveItems[246845] = { decorID = 2511, model3D = 375548, soldBy = {256071, 256119}, source = "vendor" } -- Tome of Shadowforge Cunning
-DVD.ActiveItems[246847] = { decorID = 2513, model3D = 916183, soldBy = {256071, 256119}, source = "vendor", noxp = true } -- Tome of Draenei Faith
-DVD.ActiveItems[246848] = { decorID = 2514, model3D = 948845, soldBy = {256071, 256119}, source = "vendor" } -- Scribe's Working Notes
-DVD.ActiveItems[246860] = { decorID = 2526, model3D = 2499912, soldBy = {256071, 256119}, source = "vendor" } -- Tome of Forsaken Resilience
-end
-
 do -- 🏪 VENDOR NPC: 256750 (Klasa 5) 240465 (Lonomia 5)
 DVD.ActiveItems[245400] = { decorID = 721, model3D = 6709919, soldBy = {256750, 240465}, source = "vendor", noxp = true } -- Ceiling Cobweb
 DVD.ActiveItems[245401] = { decorID = 722, model3D = 6709920, soldBy = {256750, 240465}, source = "vendor", noxp = true } -- Tented Cobweb
@@ -1716,77 +1254,114 @@ DVD.ActiveItems[245403] = { decorID = 724, model3D = 6709925, soldBy = {256750, 
 DVD.ActiveItems[245404] = { decorID = 725, model3D = 6709926, soldBy = {256750, 240465}, source = "vendor", noxp = true } -- Pillar Cobweb
 end
 
-do -- 🏪 VENDOR NPC: 256783 (Gabbun)
-DVD.ActiveItems[258262] = { decorID = 11930, model3D = 5169937, soldBy = {256783}, source = "quest", noxp = true } -- Kobold Digger's Chair
-DVD.ActiveItems[258264] = { decorID = 11931, model3D = 5169939, soldBy = {256783}, source = "quest", noxp = true } -- Kobold Candle Trio
-DVD.ActiveItems[258265] = { decorID = 11932, model3D = 5169958, soldBy = {256783}, source = "quest", noxp = true } -- Kobold Wagon
-DVD.ActiveItems[258267] = { decorID = 11933, model3D = 5169960, soldBy = {256783}, source = "quest", noxp = true } -- Candle-Festooned Wooden Awning
+do -- 🏪 VENDOR NPC: 255216 (Balen Starfinder) 255298 (Jehzar Starfall 51)
+DVD.ActiveItems[246250] = { decorID = 2105, model3D = 7000939, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Silvermoon Large Platform
+DVD.ActiveItems[243495] = { decorID = 1329, model3D = 6435020, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Padded Divan
+DVD.ActiveItems[241618] = { decorID = 985, model3D = 6435018, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Padded Footstool
+DVD.ActiveItems[246255] = { decorID = 2110, model3D = 7000944, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Bel'ameth Large Platform
+DVD.ActiveItems[241620] = { decorID = 987, model3D = 6435025, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Wooden Dresser
+DVD.ActiveItems[241621] = { decorID = 988, model3D = 6435026, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Small Elegant End Table
+DVD.ActiveItems[241622] = { decorID = 989, model3D = 6435030, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Ornate Weapon Rack
+DVD.ActiveItems[243242] = { decorID = 1245, model3D = 6435032, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Circular Elven Floor Rug
+DVD.ActiveItems[243243] = { decorID = 1246, model3D = 6435033, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Rectangular Elven Floor Rug
+DVD.ActiveItems[235994] = { decorID = 80, model3D = 6033663, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Ornate Stonework Fireplace
+DVD.ActiveItems[241617] = { decorID = 984, model3D = 6435017, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Padded Chair
+DVD.ActiveItems[244781] = { decorID = 1487, model3D = 6435039, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Wall Drape
+DVD.ActiveItems[246249] = { decorID = 2104, model3D = 7000938, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Silvermoon Beam Platform
+DVD.ActiveItems[246251] = { decorID = 2106, model3D = 7000940, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Silvermoon Small Platform
+DVD.ActiveItems[246252] = { decorID = 2107, model3D = 7000941, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Silvermoon Angled Platform
+DVD.ActiveItems[246253] = { decorID = 2108, model3D = 7000942, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Silvermoon Round Platform
+DVD.ActiveItems[246254] = { decorID = 2109, model3D = 7000943, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Bel'ameth Beam Platform
+DVD.ActiveItems[246256] = { decorID = 2111, model3D = 7000945, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Bel'ameth Small Platform
+DVD.ActiveItems[246257] = { decorID = 2112, model3D = 7000946, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Bel'ameth Angled Platform
+DVD.ActiveItems[246258] = { decorID = 2113, model3D = 7000947, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Bel'ameth Round Platform
+DVD.ActiveItems[246431] = { decorID = 2254, model3D = 6435038, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Tied Curtain
+DVD.ActiveItems[246691] = { decorID = 2458, model3D = 6435040, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Grand Elven Wall Curtain
+DVD.ActiveItems[246711] = { decorID = 2474, model3D = 6435034, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Pillow Roll
+DVD.ActiveItems[246961] = { decorID = 2590, model3D = 6435035, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Seat Cushion
+DVD.ActiveItems[247501] = { decorID = 3826, model3D = 6435840, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Carved Door
+DVD.ActiveItems[248760] = { decorID = 4562, model3D = 6435029, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Lovely Elven Shelf
+DVD.ActiveItems[249558] = { decorID = 5563, model3D = 6435031, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elven Standing Mirror
+DVD.ActiveItems[251981] = { decorID = 8917, model3D = 6435837, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Elven Chandelier
+DVD.ActiveItems[251982] = { decorID = 8918, model3D = 6435839, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Gilded Silvermoon Candelabra
+DVD.ActiveItems[253180] = { decorID = 9254, model3D = 6435015, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Elven Canopy Bed
+DVD.ActiveItems[253181] = { decorID = 9255, model3D = 6435027, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Gemmed Elven Chest
+DVD.ActiveItems[253441] = { decorID = 994, model3D = 6783465, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Grand Elven Bookcase
+DVD.ActiveItems[253479] = { decorID = 1153, model3D = 6435016, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Small Elegant Padded Chair
+DVD.ActiveItems[253490] = { decorID = 1162, model3D = 6435024, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Elven Desk
+DVD.ActiveItems[253493] = { decorID = 1163, model3D = 6435028, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Carved Elven Bookcase
+DVD.ActiveItems[255650] = { decorID = 10860, model3D = 6435838, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Table Lamp
+DVD.ActiveItems[257690] = { decorID = 11719, model3D = 6435021, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Padded Chaise
+DVD.ActiveItems[264169] = { decorID = 15454, model3D = 7506135, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Homestone Doormat
+DVD.ActiveItems[264352] = { decorID = 15598, model3D = 7506479, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Elven Bathtub
+DVD.ActiveItems[264353] = { decorID = 15599, model3D = 7506480, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Empty Elegant Elven Bathtub
+DVD.ActiveItems[265653] = { decorID = 17358, model3D = 7506481, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Storage Table
+DVD.ActiveItems[265654] = { decorID = 17359, model3D = 7506482, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Elegant Elven Washbasin
+DVD.ActiveItems[267075] = { decorID = 18614, model3D = 7506483, soldBy = {255216, 255298}, source = "vendor", noxp = true } -- Ornate Elven Stove
+
+DVD.ActiveItems[243337] = { decorID = 1283, model3D = 6872663, soldBy = {255216, 255298}, source =  "vendor", noxp = true} -- Bound-Left Silvermoon Drapes
+DVD.ActiveItems[243338] = { decorID = 1284, model3D = 6872664, soldBy = {255216, 255298}, source =  "vendor", noxp = true} -- Bound-Right Silvermoon Drapes
 end
 
-do -- 🏪 VENDOR NPC: 256826 (Mrgrgrl)
-DVD.ActiveItems[258222] = { decorID = 11908, model3D = 1091599, soldBy = {256826}, source = "quest", noxp = true } -- Shellscale Standard
+do -- 🏪 VENDOR NPC: 253596 (The Last Architect Horde) 248854 (The Last Architect Alliance)
+DVD.ActiveItems[262453] = { decorID = 14583, model3D = 6033622, soldBy = {253596, 248854}, source = "vendor", noxp = true } -- Hearthlight Armillary
+DVD.ActiveItems[253397] = { decorID = 9290, model3D = 6654743, soldBy = {253596, 248854}, source =  "quest", note = "Rank 10 house to do weekly Curated Gift quest for a chance at the item"  } -- Revered Deepstone Table
+DVD.ActiveItems[245539] = { decorID = 1730, model3D = 6930643, soldBy = {253596, 248854}, source =  "quest", note = "Rank 10 house to do weekly Curated Gift quest for a chance at the item"  } -- Elegant Enchanted Vanity
+DVD.ActiveItems[253481] = { decorID = 1154, model3D = 6036347, soldBy = {253596, 248854}, source =  "quest", note = "Rank 10 house to do weekly Curated Gift quest for a chance at the item"  } -- Masterful Sin'dorei Gravestone
+DVD.ActiveItems[249923] = { decorID = 5796, model3D = 7216049, soldBy = {253596, 248854}, source =  "quest", note = "Rank 10 house to do weekly Curated Gift quest for a chance at the item" } -- Sin'dorei Golden Welcome
+DVD.ActiveItems[254561] = { decorID = 10368, model3D = 6654718, soldBy = {253596, 248854}, source =  "quest", note = "Rank 10 house to do weekly Curated Gift quest for a chance at the item"  } -- Ogre Champion's Prized Skull
+DVD.ActiveItems[246958] = { decorID = 2587, model3D = 6225703, soldBy = {253596, 248854}, source = "quest", note = "Rank 10 house to do weekly Curated Gift quest for a chance at the item" } -- Mastercrafted Fungal Row Planter
 end
 
-do-- 🏪 VENDOR NPC: 256828 (Dennia Silvertongue)
-DVD.ActiveItems[244668] = { decorID = 1458, model3D = 6905005, soldBy = {256828}, source = "vendor", noxp = true } -- Light-Infused Fountain
-DVD.ActiveItems[245939] = { decorID = 1894, model3D = 6905006, soldBy = {256828}, source = "vendor", noxp = true } -- Void-Corrupted Fountain
-DVD.ActiveItems[246414] = { decorID = 2231, model3D = 7011540, soldBy = {256828}, source = "vendor", noxp = true } -- Light-Infused Rotunda
-DVD.ActiveItems[248809] = { decorID = 4843, model3D = 7011541, soldBy = {256828}, source = "vendor", noxp = true } -- Void-Corrupted Rotunda
-DVD.ActiveItems[252666] = { decorID = 9149, model3D = 7301966, soldBy = {256828}, source = "vendor", noxp = true } -- "The High Exarch" Painting
-DVD.ActiveItems[252667] = { decorID = 9150, model3D = 7301967, soldBy = {256828}, source = "vendor", noxp = true } -- "The Ranger of the Void" Painting
-DVD.ActiveItems[252668] = { decorID = 9151, model3D = 7301968, soldBy = {256828}, source = "vendor", noxp = true } -- "The Harbinger" Painting
-DVD.ActiveItems[252669] = { decorID = 9152, model3D = 7301965, soldBy = {256828}, source = "vendor", noxp = true } -- "The Redeemer" Painting
-DVD.ActiveItems[259046] = { decorID = 12246, model3D = 7413969, soldBy = {256828}, source = "vendor", noxp = true } -- Paw Pal Bed
-DVD.ActiveItems[259093] = { decorID = 12264, model3D = 7414328, soldBy = {256828}, source = "vendor", noxp = true } -- Paw Pal Dog House Frame
-DVD.ActiveItems[259044] = { decorID = 12244, model3D = 7410979, soldBy = {256828}, source = "vendor", noxp = true } -- Paw Pal Water Dish
-DVD.ActiveItems[259045] = { decorID = 12245, model3D = 7410980, soldBy = {256828}, source = "vendor", noxp = true } -- Paw Pal Bed and Blanket
-DVD.ActiveItems[259094] = { decorID = 12265, model3D = 7414331, soldBy = {256828}, source = "vendor", noxp = true } -- Paw Pal Dog House Elwynn Roof
-DVD.ActiveItems[264275] = { decorID = 15547, model3D = 7414329, soldBy = {256828}, source = "vendor", noxp = true } -- Paw Pal Dog House Durotar Roof
-DVD.ActiveItems[264276] = { decorID = 15548, model3D = 7414330, soldBy = {256828}, source = "vendor", noxp = true } -- Paw Pal Dog House Eversong Roof
-DVD.ActiveItems[264277] = { decorID = 15549, model3D = 7414332, soldBy = {256828}, source = "vendor", noxp = true } -- Paw Pal Dog House Shadowglen Roof
+do -- 🏪 VENDOR NPC: 267794 (Agratha) 267995 (Perry Winkles)
+DVD.ActiveItems[277163] = { decorID = 25122, model3D = 6023432, noxp = true, soldBy = {267794, 267795}, source =  "vendor"} -- Loyal Companion's Plinth
+DVD.ActiveItems[277121] = { decorID = 25121, model3D = 5199469, noxp = true, soldBy = {267794, 267795}, source =  "vendor"} -- Cozy Bird Nest
+DVD.ActiveItems[277160] = { decorID = 25106, model3D = 6080227, noxp = true, soldBy = {267794, 267795}, source =  "vendor"} -- Cozy Lightbloom Lilypad
+DVD.ActiveItems[277149] = { decorID = 25103, model3D = 876116, noxp = true, soldBy = {267794, 267795}, source =  "vendor"} -- Crude Pet Cage
+DVD.ActiveItems[277144] = { decorID = 25102, model3D = 1021562, noxp = true, soldBy = {267794, 267795}, source =  "vendor"} -- Crossroads Pet Cage
+DVD.ActiveItems[277142] = { decorID = 25101, model3D = 970227, noxp = true, soldBy = {267794, 267795}, source =  "vendor"} -- Westfall Pet Cage
+DVD.ActiveItems[277138] = { decorID = 25105, model3D = 6323400, noxp = true, soldBy = {267794, 267795}, source =  "vendor"} -- Silvermoon Dragonhawk Incubator
+DVD.ActiveItems[263880] = { decorID = 15290, model3D = 7349991, noxp = true, soldBy = {267794, 267795}, source =  "vendor" } -- Cherished Pet's Rug
+DVD.ActiveItems[276230] = { decorID = 25546, model3D = 7959391, soldBy = {267794, 267795}, source =  "vendor"} -- Pepe
+DVD.ActiveItems[276246] = { decorID = 25546, model3D = 7959391, source =  "vendor"} -- Pepe
+
 end
 
-do -- 🏪 VENDOR NPC: 256828 (Dennia Silvertongue) 261231 (Tuuran) 261262 (Gabbi)
-DVD.ActiveItems[264281] = { decorID = 15553, model3D = 7497316, soldBy = {256828, 261231, 261262}, source = "collab", noxp = true, note = "Pinterest Collab" } -- Preserved Gift of Gilneas
-DVD.ActiveItems[264282] = { decorID = 15554, model3D = 7501256, soldBy = {256828, 261231, 261262}, source = "collab", noxp = true, note = "Pinterest Collab" } -- Bluebird's Golden Cage
-DVD.ActiveItems[264283] = { decorID = 15555, model3D = 7501257, soldBy = {256828, 261231, 261262}, source = "collab", noxp = true, note = "Pinterest Collab" } -- Backboard and Hoop Playset
-DVD.ActiveItems[264396] = { decorID = 15668, model3D = 7476057, soldBy = {256828, 261231, 261262}, source = "collab", noxp = true, note = "Zillow Collab" } -- Naturally Elegant Doormat
-DVD.ActiveItems[264397] = { decorID = 15669, model3D = 7476058, soldBy = {256828, 261231, 261262}, source = "collab", noxp = true, note = "Zillow Collab" } -- Simply Adorned Vase and Flowers
-DVD.ActiveItems[263383] = { decorID = 15229, model3D = 7483958, soldBy = {256828, 261231, 261262}, source = "collab", noxp = true, note = "Fanta Collab" } -- Corked Bottle of Liquid Mystery
-DVD.ActiveItems[264279] = { decorID = 15551, model3D = 7493773, soldBy = {256828, 261231, 261262}, source = "collab", noxp = true, note = "Fanta Collab" } -- Tall Corked Bottle of Liquid Mystery
-DVD.ActiveItems[264280] = { decorID = 15552, model3D = 7493774, soldBy = {256828, 261231, 261262}, source = "collab", noxp = true, note = "Fanta Collab" } -- Short Corked Bottle of Liquid Mystery
-DVD.ActiveItems[264278] = { decorID = 15550, model3D = 7483941, soldBy = {256828, 261231, 261262}, source = "collab", noxp = true, note = "Fanta Collab" } -- Sturdy Portable Ice Chest
-DVD.ActiveItems[256764] = { decorID = 11287, model3D = 7324189, soldBy = {256828, 261231, 261262}, source = "vendor", noxp = true } -- Sanctuary's Horadric Cube
-DVD.ActiveItems[259055] = { decorID = 12247, model3D = 7388891, soldBy = {256828, 261231, 261262}, source = "vendor", noxp = true } -- Hatred's Wolfpelt Rug
-DVD.ActiveItems[259056] = { decorID = 12248, model3D = 7388893, soldBy = {256828, 261231, 261262}, source = "vendor", noxp = true } -- Prime Evil's Chest
-DVD.ActiveItems[259057] = { decorID = 12249, model3D = 7388894, soldBy = {256828, 261231, 261262}, source = "vendor", noxp = true } -- Sanctuary's Chess Match
-DVD.ActiveItems[259058] = { decorID = 12250, model3D = 7388920, soldBy = {256828, 261231, 261262}, source = "vendor", noxp = true } -- Sanctuary's Chess Board
-DVD.ActiveItems[259059] = { decorID = 12251, model3D = 7433392, soldBy = {256828, 261231, 261262}, source = "vendor", noxp = true } -- Sanctuary Chess Dark Bishop
-DVD.ActiveItems[259060] = { decorID = 12252, model3D = 7433393, soldBy = {256828, 261231, 261262}, source = "vendor", noxp = true } -- Sanctuary Chess Dark Rook
-DVD.ActiveItems[259061] = { decorID = 12253, model3D = 7433395, soldBy = {256828, 261231, 261262}, source = "vendor", noxp = true } -- Sanctuary Chess Dark Queen
-DVD.ActiveItems[259062] = { decorID = 12254, model3D = 7433396, soldBy = {256828, 261231, 261262}, source = "vendor", noxp = true } -- Sanctuary Chess Dark Pawn
-DVD.ActiveItems[259063] = { decorID = 12255, model3D = 7433397, soldBy = {256828, 261231, 261262}, source = "vendor", noxp = true } -- Sanctuary Chess Dark Knight
-DVD.ActiveItems[259064] = { decorID = 12256, model3D = 7433398, soldBy = {256828, 261231, 261262}, source = "vendor", noxp = true } -- Sanctuary Chess Dark King
-DVD.ActiveItems[259065] = { decorID = 12257, model3D = 7433399, soldBy = {256828, 261231, 261262}, source = "vendor", noxp = true } -- Sanctuary Chess Light Bishop
-DVD.ActiveItems[259066] = { decorID = 12258, model3D = 7433400, soldBy = {256828, 261231, 261262}, source = "vendor", noxp = true } -- Sanctuary Chess Light Rook
-DVD.ActiveItems[259067] = { decorID = 12259, model3D = 7433401, soldBy = {256828, 261231, 261262}, source = "vendor", noxp = true } -- Sanctuary Chess Light Queen
-DVD.ActiveItems[259068] = { decorID = 12260, model3D = 7433402, soldBy = {256828, 261231, 261262}, source = "vendor", noxp = true } -- Sanctuary Chess Light Pawn
-DVD.ActiveItems[259069] = { decorID = 12261, model3D = 7433403, soldBy = {256828, 261231, 261262}, source = "vendor", noxp = true } -- Sanctuary Chess Light Knight
-DVD.ActiveItems[259070] = { decorID = 12262, model3D = 7433404, soldBy = {256828, 261231, 261262}, source = "vendor", noxp = true } -- Sanctuary Chess Light King
-DVD.ActiveItems[260785] = { decorID = 14467, model3D = 7476464, soldBy = {256828, 261231, 261262}, source = "achievement", noxp = true } -- Miniature Replica Dark Portal
-DVD.ActiveItems[263298] = { decorID = 15148, model3D = 7493566, noxp = true, soldBy = {256828, 261231, 261262}, sources = {"vendor", "promo"}, promotionType = "Twitch Drop", promotionStatus = "PREVIOUS", promotionName = "March 2026 Drop"}-- Cuddly Alliance Blue Grrgle
-DVD.ActiveItems[263299] = { decorID = 15149, model3D = 7493568, noxp = true, soldBy = {256828, 261231, 261262}, sources = {"vendor", "promo"}, promotionType = "Twitch Drop", promotionStatus = "PREVIOUS", promotionName = "March 2026 Drop"}-- Cuddly Horde Red Grrgle
-DVD.ActiveItems[263301] = { decorID = 15151, model3D = 7493973, noxp = true, soldBy = {256828, 261231, 261262}, sources = {"vendor", "promo"}, promotionType = "Twitch Drop", promotionStatus = "PREVIOUS", promotionName = "Jan 2026 Drop"}-- Cuddly Green Grrgle
-DVD.ActiveItems[265394] = { decorID = 16818, model3D = 7531449, noxp = true, soldBy = {256828, 261231, 261262}, sources = {"vendor", "promo"}, promotionType = "Twitch Drop", promotionStatus = "PREVIOUS", promotionName = "May 2026 Drop"}-- Cuddly Pearl Grrgle
-DVD.ActiveItems[265545] = { decorID = 16965, model3D = 7525444, noxp = true, soldBy = {256828, 261231, 261262}, sources = {"vendor", "promo"}, promotionType = "Twitch Drop", promotionStatus = "PREVIOUS", promotionName = "April 2026 Drop"}-- Cuddly Void Grrgle	
-DVD.ActiveItems[265389] = { decorID = 16813, model3D = 7525412, noxp = true, soldBy = {256828, 261231, 261262}, sources = {"vendor", "promo"}, promotionType = "Twitch Drop", promotionStatus = "PREVIOUS", promotionName = "June 2026 Drop"}-- Cuddly Cotton Candy Grrgle
+do -- 🏪 VENDOR NPC: 257332 (Devin Slatesmith) 257257 (Merki)
+DVD.ActiveItems[280142] = { decorID = 23553, model3D = 7834745, soldBy = {257332, 257257}, source =  "vendor", noxp = true } -- Small Wooden Floor Tile
+DVD.ActiveItems[280144] = { decorID = 23554, model3D = 7834746, soldBy = {257332, 257257}, source =  "vendor", noxp = true } -- Large Wooden Floor Tile
+DVD.ActiveItems[280146] = { decorID = 23555, model3D = 7834747, soldBy = {257332, 257257}, source =  "vendor", noxp = true } -- Small Triangular Wooden Tile
+DVD.ActiveItems[280148] = { decorID = 23556, model3D = 7834748, soldBy = {257332, 257257}, source =  "vendor", noxp = true } -- Large Triangular Wooden Tile
+DVD.ActiveItems[280150] = { decorID = 23557, model3D = 7834749, soldBy = {257332, 257257}, source =  "vendor", noxp = true } -- Tall Round Wooden Column
+DVD.ActiveItems[280152] = { decorID = 23558, model3D = 7834750, soldBy = {257332, 257257}, source =  "vendor", noxp = true } -- Short Round Wooden Column
+DVD.ActiveItems[280154] = { decorID = 23559, model3D = 7834751, soldBy = {257332, 257257}, source =  "vendor", noxp = true } -- Short Square Wooden Column
+DVD.ActiveItems[280156] = { decorID = 23560, model3D = 7834752, soldBy = {257332, 257257}, source =  "vendor", noxp = true } -- Tall Square Wooden Column
+DVD.ActiveItems[280158] = { decorID = 23707, model3D = 7834753, soldBy = {257332, 257257}, source =  "vendor", noxp = true } -- Small Wooden Wall Tile
+DVD.ActiveItems[280160] = { decorID = 23708, model3D = 7834754, soldBy = {257332, 257257}, source =  "vendor", noxp = true } -- Large Wooden Wall Tile
+DVD.ActiveItems[280162] = { decorID = 23709, model3D = 7834756, soldBy = {257332, 257257}, source =  "vendor", noxp = true } -- Wide Wooden Staircase
+DVD.ActiveItems[280164] = { decorID = 23710, model3D = 7834757, soldBy = {257332, 257257}, source =  "vendor", noxp = true } -- Spiral Wooden Stairs
 end
 
-do -- 🏪 VENDOR NPC: 256946 (Duskcaller Erthix)
-DVD.ActiveItems[258742] = { decorID = 12202, model3D = 968424, soldBy = {256946}, source = "quest", noxp = true } -- Scroll of the Adherent
+do -- 🏪 VENDOR NPC: 271173 (Timicky) Endeavor 16
+DVD.ActiveItems[280269] = { decorID = 26938, model3D = 5348713, soldBy = {271173}, source =  "vendor"} -- Cozy Kobold Crate
+DVD.ActiveItems[280265] = { decorID = 26789, model3D = 5794799, soldBy = {271173}, source =  "vendor"} -- Hot Kobold Treasure
+DVD.ActiveItems[280267] = { decorID = 26788, model3D = 5341079, soldBy = {271173}, source =  "vendor"} -- Bold Kobold Kabin
+DVD.ActiveItems[280261] = { decorID = 26786, model3D = 5169946, soldBy = {271173}, source =  "vendor"} -- Large Threedium Warrens Candle
+DVD.ActiveItems[280263] = { decorID = 26787, model3D = 5169950, soldBy = {271173}, source =  "vendor"} -- Candle Cage
+DVD.ActiveItems[280255] = { decorID = 26618, model3D = 5169941, soldBy = {271173}, source =  "vendor"} -- Small Warrens Candle
+DVD.ActiveItems[280257] = { decorID = 26621, model3D = 5169940, soldBy = {271173}, source =  "vendor"} -- Medium Warrens Candle
+DVD.ActiveItems[280259] = { decorID = 26785, model3D = 5169943, soldBy = {271173}, source =  "vendor"} -- Large Warrens Candle
+DVD.ActiveItems[280251] = { decorID = 26619, model3D = 5350458, soldBy = {271173}, source =  "vendor"} -- Kobold Sit-Thing
+DVD.ActiveItems[280253] = { decorID = 26617, model3D = 5169938, soldBy = {271173}, source =  "vendor"} -- Highlighting High Light
+DVD.ActiveItems[280249] = { decorID = 26614, model3D = 5355798, soldBy = {271173}, source =  "vendor"} -- Kobold Dig-Thing
+DVD.ActiveItems[280246] = { decorID = 26613, model3D = 5347569, soldBy = {271173}, source =  "vendor"} -- Warrens Candlecooker
+DVD.ActiveItems[280271] = { decorID = 26937, model3D = 5345654, soldBy = {271173}, source =  "vendor"} -- Longwick Rope
+DVD.ActiveItems[280273] = { decorID = 26936, model3D = 5345653, soldBy = {271173}, source =  "vendor"} -- Droopy Longwick Rope
+DVD.ActiveItems[280275] = { decorID = 26939, model3D = 5350460, soldBy = {271173}, source =  "vendor"} -- Hanging Longwick Rope
+DVD.ActiveItems[280513] = { decorID = 27167, model3D = 8118955, soldBy = {271173}, source =  "vendor"} -- Color-Curious Candle
 end
 
-do -- 🏪 VENDOR NPC: 257897 (Harlowe Marl)
+do -- 🏪 VENDOR NPC: 257897 (Harlowe Marl) 13
 DVD.ActiveItems[264915] = { decorID = 16227, model3D = 4689406, soldBy = {257897}, source = "vendor", noxp = true } -- Decorated Underground Table
 DVD.ActiveItems[264916] = { decorID = 16228, model3D = 4689410, soldBy = {257897}, source = "vendor", noxp = true } -- Loamm Bartering Stall
 DVD.ActiveItems[264917] = { decorID = 16229, model3D = 4884000, soldBy = {257897}, source = "vendor", noxp = true } -- Ceramic Loamm Bowl
@@ -1802,569 +1377,239 @@ DVD.ActiveItems[265032] = { decorID = 16315, model3D = 4884004, soldBy = {257897
 DVD.ActiveItems[265541] = { decorID = 16962, model3D = 605596, soldBy = {257897}, source = "vendor", noxp = true } -- Loammy Soil
 end
 
-do -- 🏪 VENDOR NPC: 257914 (Quelis)
-DVD.ActiveItems[263999] = { decorID = 15404, model3D = 6049336, soldBy = {257914}, source = "achievement" } -- Midnight Cook's Shop Sign
+do -- 🏪 VENDOR NPC: 252917 (Hesta Forlath) 9
+DVD.ActiveItems[253522] = { decorID = 9419, model3D = 6017293, soldBy = {252917}, source = "vendor", noxp = true } -- Thalassian Chest
+DVD.ActiveItems[253523] = { decorID = 9420, model3D = 6024530, soldBy = {252917}, source = "vendor", noxp = true } -- Astalor's Hookah
+DVD.ActiveItems[253524] = { decorID = 9421, model3D = 6025946, soldBy = {252917}, source = "vendor", noxp = true } -- 590 Quel'Lithien Red Display Bottle
+DVD.ActiveItems[253525] = { decorID = 9422, model3D = 6935638, soldBy = {252917}, source = "vendor", noxp = true } -- Thalassian Academy Dictation Device
+DVD.ActiveItems[253526] = { decorID = 9423, model3D = 6998416, soldBy = {252917}, source = "vendor", noxp = true } -- Sin'dorei Wine Display
+DVD.ActiveItems[253599] = { decorID = 9476, model3D = 6017291, soldBy = {252917}, source = "vendor", noxp = true } -- Artisanal Display Tent
+DVD.ActiveItems[253600] = { decorID = 9477, model3D = 6025942, soldBy = {252917}, source = "vendor", noxp = true } -- Eversong Crystal Glass
+DVD.ActiveItems[253601] = { decorID = 9478, model3D = 6025944, soldBy = {252917}, source = "vendor", noxp = true } -- 590 Quel'Lithien Red
+DVD.ActiveItems[254235] = { decorID = 10273, model3D = 7338840, soldBy = {252917}, source = "vendor", noxp = true } -- Sin'dorei Artisan's Easel
 end
 
-do -- 🏪 VENDOR NPC: 258181 (Construct Ali'a)
-DVD.ActiveItems[265681] = { decorID = 17439, model3D = 7430522, soldBy = {258181}, source = "achievement" } -- Preyseeker's Magister Effigy
-DVD.ActiveItems[265682] = { decorID = 17440, model3D = 7430523, soldBy = {258181}, source = "achievement" } -- Preyseeker's Tinker Effigy
-DVD.ActiveItems[265683] = { decorID = 17441, model3D = 7430525, soldBy = {258181}, source = "achievement", noxp = true } -- Preyseeker's Ethereal Effigy
-DVD.ActiveItems[265684] = { decorID = 17442, model3D = 7430526, soldBy = {258181}, source = "achievement" } -- Preyseeker's Breaker Effigy
-DVD.ActiveItems[265685] = { decorID = 17443, model3D = 7430527, soldBy = {258181}, source = "achievement", noxp = true } -- Preyseeker's Amani Effigy
-DVD.ActiveItems[265686] = { decorID = 17444, model3D = 7430529, soldBy = {258181}, source = "achievement" } -- Preyseeker's Rutaani Effigy
-DVD.ActiveItems[265687] = { decorID = 17446, model3D = 7430530, soldBy = {258181}, source = "achievement", noxp = true } -- Preyseeker's Vindicator Effigy
-DVD.ActiveItems[265688] = { decorID = 17447, model3D = 7430531, soldBy = {258181}, source = "achievement" } -- Preyseeker's Consul Effigy
-DVD.ActiveItems[265689] = { decorID = 17449, model3D = 7430532, soldBy = {258181}, source = "achievement", noxp = true } -- Preyseeker's Executor Effigy
-DVD.ActiveItems[265690] = { decorID = 17450, model3D = 7430533, soldBy = {258181}, source = "achievement", noxp = true } -- Preyseeker's Knight-Errant Effigy
-DVD.ActiveItems[265691] = { decorID = 17452, model3D = 7430534, soldBy = {258181}, source = "achievement" } -- Preyseeker's Wretched Effigy
-DVD.ActiveItems[265692] = { decorID = 17453, model3D = 7430535, soldBy = {258181}, source = "achievement" } -- Preyseeker's Thornspeaker Effigy
-DVD.ActiveItems[265694] = { decorID = 17454, model3D = 7430536, soldBy = {258181}, source = "achievement" } -- Preyseeker's Twilight Effigy
-DVD.ActiveItems[265696] = { decorID = 17455, model3D = 7450031, soldBy = {258181}, source = "achievement" } -- Preyseeker's Magister Bust
-DVD.ActiveItems[265697] = { decorID = 17456, model3D = 7450032, soldBy = {258181}, source = "achievement", noxp = true } -- Preyseeker's Tinker Bust
-DVD.ActiveItems[265698] = { decorID = 17457, model3D = 7450034, soldBy = {258181}, source = "achievement", noxp = true } -- Preyseeker's Ethereal Bust
-DVD.ActiveItems[265699] = { decorID = 17458, model3D = 7450035, soldBy = {258181}, source = "achievement", noxp = true } -- Preyseeker's Breaker Bust
-DVD.ActiveItems[265700] = { decorID = 17459, model3D = 7450036, soldBy = {258181}, source = "achievement", noxp = true } -- Preyseeker's Amani Bust
-DVD.ActiveItems[265701] = { decorID = 17460, model3D = 7450038, soldBy = {258181}, source = "achievement", noxp = true } -- Preyseeker's Rutaani Bust
-DVD.ActiveItems[265702] = { decorID = 17462, model3D = 7450039, soldBy = {258181}, source = "achievement", noxp = true } -- Preyseeker's Vindicator Bust
-DVD.ActiveItems[265703] = { decorID = 17464, model3D = 7450040, soldBy = {258181}, source = "achievement", noxp = true } -- Preyseeker's Consul Bust
-DVD.ActiveItems[265704] = { decorID = 17465, model3D = 7450041, soldBy = {258181}, source = "achievement" } -- Preyseeker's Executor Bust
-DVD.ActiveItems[265705] = { decorID = 17467, model3D = 7450042, soldBy = {258181}, source = "achievement", noxp = true } -- Preyseeker's Knight-Errant Bust
-DVD.ActiveItems[265706] = { decorID = 17469, model3D = 7450043, soldBy = {258181}, source = "achievement", noxp = true } -- Preyseeker's Wretched Bust
-DVD.ActiveItems[265707] = { decorID = 17472, model3D = 7450044, soldBy = {258181}, source = "achievement" } -- Preyseeker's Thornspeaker Bust
-DVD.ActiveItems[265708] = { decorID = 17474, model3D = 7450045, soldBy = {258181}, source = "achievement" } -- Preyseeker's Twilight Bust
-DVD.ActiveItems[265794] = { decorID = 17518, model3D = 7302391, soldBy = {258181}, source = "vendor" } -- Preyseeker's Plinth
-DVD.ActiveItems[265795] = { decorID = 17519, model3D = 7302392, soldBy = {258181}, source = "vendor" } -- Preyseeker's Ornate Plinth
-DVD.ActiveItems[265796] = { decorID = 17520, model3D = 7430524, soldBy = {258181}, source = "achievement" } -- Preyseeker's Ren'dorei Effigy
-DVD.ActiveItems[265797] = { decorID = 17521, model3D = 7430528, soldBy = {258181}, source = "achievement" } -- Preyseeker's Farstrider Effigy
-DVD.ActiveItems[265798] = { decorID = 17522, model3D = 7450033, soldBy = {258181}, source = "achievement", noxp = true } -- Preyseeker's Ren'dorei Bust
-DVD.ActiveItems[265799] = { decorID = 17523, model3D = 7450037, soldBy = {258181}, source = "achievement", noxp = true } -- Preyseeker's Farstrider Bust
+do -- 🏪 VENDOR NPC: 268106 (Taifa) Endeavor 15
+DVD.ActiveItems[280215] = { decorID = 26871, model3D = 1659640, soldBy = {268106}, source =  "vendor"} -- Tortollan Tarp Tent
+DVD.ActiveItems[280225] = { decorID = 26564, model3D = 1663983, soldBy = {268106}, source =  "vendor"} -- Mason's Tortollan Display Rack
+DVD.ActiveItems[280221] = { decorID = 26482, model3D = 1662185, soldBy = {268106}, source =  "vendor"} -- Sealeather Sack
+DVD.ActiveItems[280236] = { decorID = 26478, model3D = 307788, soldBy = {268106}, source =  "vendor"} -- Ancient Memories of the Sea
+DVD.ActiveItems[280227] = { decorID = 26389, model3D = 1663982, soldBy = {268106}, source =  "vendor"} -- Apothecary's Tortollan Display Rack
+DVD.ActiveItems[280232] = { decorID = 26387, model3D = 1661568, soldBy = {268106}, source =  "vendor"} -- Sea Glass Lamp Post
+DVD.ActiveItems[280238] = { decorID = 26386, model3D = 1661558, soldBy = {268106}, source =  "vendor"} -- Half-Shell Hot Pot
+DVD.ActiveItems[280242] = { decorID = 26373, model3D = 1706189, soldBy = {268106}, source =  "vendor"} -- Tortollan Traveler's Chest
+DVD.ActiveItems[280234] = { decorID = 26371, model3D = 1667789, soldBy = {268106}, source =  "vendor"} -- Sea Glass Bauble
+DVD.ActiveItems[280230] = { decorID = 26370, model3D = 1663980, soldBy = {268106}, source =  "vendor"} -- Empty Tortollan Display Rack
+DVD.ActiveItems[280240] = { decorID = 26365, model3D = 1659639, soldBy = {268106}, source =  "vendor"} -- Compact Cookfire
+DVD.ActiveItems[280244] = { decorID = 26364, model3D = 1634604, soldBy = {268106}, source =  "vendor"} -- Tortollan Traveler's Tincture
+DVD.ActiveItems[280873] = { decorID = 26367, model3D = 1661563, soldBy = {268106}, source =  "vendor"} -- Protected Tortollan Scroll Case
+DVD.ActiveItems[280846] = { decorID = 27044, model3D = 7833482, soldBy = {268106}, source =  "vendor"} -- Beguiling Memories of the Sea
+DVD.ActiveItems[280223] = { decorID = 26483, model3D = 1663984, soldBy = {268106}, source =  "vendor" } -- Collector's Tortollan Display Rack
 end
 
-do -- 🏪 VENDOR NPC: 258328 (Thraxadar)
-DVD.ActiveItems[247785] = { decorID = 3922, model3D = 6210877, requirement = { type = "reputation", faction = "Slayer's Duellum", rank = 4 }, soldBy = {258328}, source = "vendor"}-- Galactic Void-Scarred Banner
-DVD.ActiveItems[264253] = { decorID = 15488, model3D = 6210879, requirement = { type = "reputation", faction = "Slayer's Duellum", rank = 2 }, soldBy = {258328}, source = "vendor"}-- Galactic Void-Scarred Barricade
-DVD.ActiveItems[264345] = { decorID = 15585, model3D = 7141590, requirement = { type = "reputation", faction = "Slayer's Duellum", rank = 3 }, soldBy = {258328}, source = "vendor"}-- Galactic Commander's Orb
+do -- 🏪 VENDOR NPC: 265551 (Roshai Lightstep) Endeavor 15
+DVD.ActiveItems[276650] = { decorID = 23176, model3D = 4182508, soldBy = {265551}, source =  "vendor" } -- Maruukai Barricade
+DVD.ActiveItems[276626] = { decorID = 23177, model3D = 4182509, soldBy = {265551}, source =  "vendor" } -- Wide Maruukai Barricade
+DVD.ActiveItems[276669] = { decorID = 23178, model3D = 4207254, soldBy = {265551}, source =  "vendor" } -- Maruukai Storage Basket
+DVD.ActiveItems[276671] = { decorID = 23179, model3D = 4207255, soldBy = {265551}, source =  "vendor" } -- Open Maruukai Storage Basket
+DVD.ActiveItems[276656] = { decorID = 23180, model3D = 4282525, soldBy = {265551}, source =  "vendor" } -- Maruukai Wooden Table
+DVD.ActiveItems[276658] = { decorID = 23181, model3D = 4286993, soldBy = {265551}, source =  "vendor" } -- Maruukai Feast Table
+DVD.ActiveItems[276663] = { decorID = 23182, model3D = 4291399, soldBy = {265551}, source =  "vendor" } -- Bakar's Napping Rug
+DVD.ActiveItems[276665] = { decorID = 23183, model3D = 4291400, soldBy = {265551}, source =  "vendor" } -- Ornate Khanam's Rug
+DVD.ActiveItems[276667] = { decorID = 23184, model3D = 4298411, soldBy = {265551}, source =  "vendor" } -- Large Ornate Khanam's Rug
+DVD.ActiveItems[276661] = { decorID = 23185, model3D = 4324622, soldBy = {265551}, source =  "vendor" } -- Maruukai Chef's Stove
+DVD.ActiveItems[276652] = { decorID = 23186, model3D = 4479330, soldBy = {265551}, source =  "vendor" } -- Tapered Maruukai Barricade
+DVD.ActiveItems[276654] = { decorID = 23548, model3D = 969722, soldBy = {265551}, source =  "vendor" } -- Bakar's Favorite Ball
+DVD.ActiveItems[276677] = { decorID = 23549, model3D = 969746, soldBy = {265551}, source =  "vendor" } -- Pet Food and Water Tray
+DVD.ActiveItems[276673] = { decorID = 23550, model3D = 4288081, soldBy = {265551}, source =  "vendor" } -- Bakar's Snack
+DVD.ActiveItems[276675] = { decorID = 23551, model3D = 4288082, soldBy = {265551}, source =  "vendor" } -- Bakar's Dinner
 end
 
-do -- 🏪 VENDOR NPC: 258480 (Amwa'ana)
-DVD.ActiveItems[264005] = { decorID = 15410, model3D = 6049346, soldBy = {258480}, source = "achievement" } -- Midnight Jewelcrafter's Shop Sign
+do -- 🏪 VENDOR NPC: 260485 (Griftah) Endeavor 15
+DVD.ActiveItems[255649] = { decorID = 10859, model3D = 6195755, soldBy = {260485}, source =  "vendor" } -- Amani Water Well
+DVD.ActiveItems[263317] = { decorID = 15157, model3D = 6075564, soldBy = {260485}, source =  "vendor" } -- Amani Wicker Crate
+DVD.ActiveItems[263708] = { decorID = 15265, model3D = 6075562, soldBy = {260485}, source =  "vendor" } -- Amani Anvil
+DVD.ActiveItems[274518] = { decorID = 22916, model3D = 6155553, soldBy = {260485}, source =  "vendor" } -- Amani Decorative Plinth
+DVD.ActiveItems[274521] = { decorID = 22917, model3D = 6195759, soldBy = {260485}, source =  "vendor" } -- Amani Road Marker
+DVD.ActiveItems[274523] = { decorID = 22918, model3D = 6212403, soldBy = {260485}, source =  "vendor" } -- Woven Forest Troll Rug
+DVD.ActiveItems[274525] = { decorID = 22919, model3D = 6212411, soldBy = {260485}, source =  "vendor" } -- Steamy Romance Tablet
+DVD.ActiveItems[274527] = { decorID = 22920, model3D = 6225023, soldBy = {260485}, source =  "vendor" } -- Amani Building Peg
+DVD.ActiveItems[274529] = { decorID = 22921, model3D = 6225620, soldBy = {260485}, source =  "vendor" } -- Forest Troll Fence
+DVD.ActiveItems[274531] = { decorID = 22922, model3D = 6225624, soldBy = {260485}, source =  "vendor" } -- Forest Troll Fencepost
+DVD.ActiveItems[274533] = { decorID = 22924, model3D = 7345745, soldBy = {260485}, source =  "vendor" } -- Witch Doctor's Punch Bowl
+DVD.ActiveItems[274535] = { decorID = 22925, model3D = 7833324, soldBy = {260485}, source =  "vendor" } -- Shrine of Nalorakk, Loa of War
+DVD.ActiveItems[274537] = { decorID = 22926, model3D = 7833325, soldBy = {260485}, source =  "vendor" } -- Shrine of Jan'alai, Loa of Fire
+DVD.ActiveItems[274505] = { decorID = 22927, model3D = 7833326, soldBy = {260485}, source =  "vendor" } -- Shrine of Akil'zon, Loa of Victory
+DVD.ActiveItems[274539] = { decorID = 23188, model3D = 7833327, soldBy = {260485}, source =  "vendor" } -- Shrine of Halazzi, Loa of the Hunt
 end
 
-do -- 🏪 VENDOR NPC: 258507 (Mowaia)
-DVD.ActiveItems[264002] = { decorID = 15407, model3D = 6049340, soldBy = {258507}, source = "achievement" } -- Midnight Fisher's Shop Sign
+do -- 🏪 VENDOR NPC: 267870 (Unquestionably Griftah) Endeavor
+DVD.ActiveItems[276312] = { decorID = 25128, model3D = 7914427, soldBy = {267870}, source =  "vendor"} -- Griftah's Torch of Rotation
+DVD.ActiveItems[244344] = { decorID = 1427, model3D = 6870561, soldBy = {267870}, source =  "vendor"} -- Griftah's Mystical Polter-Urn
+DVD.ActiveItems[263875] = { decorID = 15285, model3D = 6153817, soldBy = {267870}, source =  "vendor"} -- Griftah's Resizing Hex-Skull
 end
 
-do -- 🏪 VENDOR NPC: 258540 (Hawli)
-DVD.ActiveItems[264172] = { decorID = 15457, model3D = 6049355, soldBy = {258540}, source = "achievement", noxp = true } -- Midnight Miner's Shop Sign
+do -- 🏪 VENDOR NPC: 257168 (Throska) Endeavor
+DVD.ActiveItems[247776] = { decorID = 3913, model3D = 193949, soldBy = {257168}, source =  "vendor" } -- Glowing Zangarshroom Cup
+DVD.ActiveItems[279458] = { decorID = 26477, model3D = 192399, soldBy = {257168}, source =  "vendor" } -- Draenei Rock Goblet
+DVD.ActiveItems[279455] = { decorID = 26491, model3D = 3851908, soldBy = {257168}, source =  "vendor" } -- K'areshi Tea Cup
 end
 
-do -- 🏪 VENDOR NPC: 259864 (Sathren Azuredawn)
-DVD.ActiveItems[244538] = { decorID = 1442, model3D = 6367922, soldBy = {259864}, source = "vendor", noxp = true } -- Silvermoon Sundial
-DVD.ActiveItems[244783] = { decorID = 1489, model3D = 6856603, soldBy = {259864}, source = "quest", noxp = true } -- Majestic Lightwood Table
-DVD.ActiveItems[245992] = { decorID = 1908, model3D = 6985813, soldBy = {259864}, source = "quest", noxp = true } -- Ornate Silvermoon Candelabra
-DVD.ActiveItems[251909] = { decorID = 8872, model3D = 6050866, soldBy = {259864}, source = "achievement", noxp = true } -- Eversong Feast Platter
-DVD.ActiveItems[251911] = { decorID = 8874, model3D = 6051296, soldBy = {259864}, source = "vendor" } -- Eversong Dessert Platter
-DVD.ActiveItems[251914] = { decorID = 8877, model3D = 6051300, soldBy = {259864}, source = "vendor", noxp = true } -- Sumptuous Berry Pie
-DVD.ActiveItems[253485] = { decorID = 1159, model3D = 6036095, soldBy = {259864}, source = "quest", noxp = true } -- Sin'dorei Honor Stone
-DVD.ActiveItems[253488] = { decorID = 1160, model3D = 6036096, soldBy = {259864}, source = "vendor" } -- Diamond Honor Stone
-DVD.ActiveItems[246458] = { decorID = 2299, model3D = 6427293, soldBy = {259864}, source = "vendor", noxp = true } -- Grand Aethercharged Crystal
-DVD.ActiveItems[254773] = { decorID = 10542, model3D = 7241260, soldBy = {259864}, source = "achievement", noxp = true } -- "Eversong Lantern" Painting
-DVD.ActiveItems[257367] = { decorID = 11470, model3D = 7338839, soldBy = {259864}, source = "achievement", noxp = true } -- Silvermoon Energy Focus
-DVD.ActiveItems[262610] = { decorID = 14635, model3D = 6701008, soldBy = {259864}, source = "quest", noxp = true } -- Swirling Ritual Pedestal
-DVD.ActiveItems[263231] = { decorID = 15062, model3D = 6050876, soldBy = {259864}, source = "quest", noxp = true } -- Silvermoon Curio Shelves
-DVD.ActiveItems[264248] = { decorID = 15483, model3D = 6026041, soldBy = {259864}, source = "vendor", noxp = true } -- Sin'dorei Storage Jar
-DVD.ActiveItems[264660] = { decorID = 15895, model3D = 6701018, soldBy = {259864}, source = "quest", noxp = true } -- Ren'dorei Spired Tent
-DVD.ActiveItems[265106] = { decorID = 16691, model3D = 6684020, soldBy = {259864}, source = "vendor", noxp = true } -- Farstriders' Pride Statue
-DVD.ActiveItems[265631] = { decorID = 17294, model3D = 6684021, soldBy = {259864}, source = "vendor", noxp = true } -- Farstriders' Glory Statue
+do -- 🏪 VENDOR NPC: 249741 (Cousin Shortkaf) Endeavor
+DVD.ActiveItems[248404] = { decorID = 4426, model3D = 1305116, soldBy = {249741}, source =  "vendor"} -- Stack of Kafa Mugs
 end
 
-do -- 🏪 VENDOR NPC: 259864 (Sathren Azuredawn) Treasures
-DVD.ActiveItems[243106] = { decorID = 1173, model3D = 4381789, bossevent = "Triple-Locked Safebox", sourceAction = "Triple-Locked Safebox", soldBy = {259864}, source = "treasure", mapID = 2395}-- Gemmed Eversong Lantern	
-DVD.ActiveItems[245282] = { decorID = 1195, model3D = 4478904, bossevent = "Incomplete Book of Sonnets", sourceAction = "Incomplete Book of Sonnets", soldBy = {259864}, source = "treasure", mapID = 2393}-- Silvermoon Library Bookcase
-DVD.ActiveItems[251912] = { decorID = 8875, model3D = 6051298, bossevent = "Stone Vat", sourceAction = "Stone Vat", soldBy = {259864}, source = "treasure", mapID = 2395}-- Goldenmist Grapes
-DVD.ActiveItems[263211] = { decorID = 14977, model3D = 6025940, bossevent = "Gift of the Phoenix", sourceAction = "Gift of the Phoenix", soldBy = {259864}, source = "treasure", mapID = 2395} -- Gilded Eversong Cup
+do -- 🏪 VENDOR NPC: 252605 (Aeeshna) 12
+DVD.ActiveItems[262664] = { decorID = 14677, model3D = 5916219, soldBy = {252605}, source = "vendor", noxp = true } -- Complete Guide to K'areshi Wrappings, Vol. 11
+DVD.ActiveItems[262665] = { decorID = 14678, model3D = 6380241, soldBy = {252605}, source = "vendor", noxp = true } -- K'areshi Holo-Crystal Projector
+DVD.ActiveItems[262666] = { decorID = 14679, model3D = 6380243, soldBy = {252605}, source = "vendor", noxp = true } -- K'areshi Incense Burner
+DVD.ActiveItems[262667] = { decorID = 14680, model3D = 6380244, soldBy = {252605}, source = "vendor", noxp = true } -- Oath Scale
+DVD.ActiveItems[262884] = { decorID = 14793, model3D = 5916223, soldBy = {252605}, source = "vendor", noxp = true } -- Consortium Glowpost
+DVD.ActiveItems[262907] = { decorID = 14800, model3D = 6323399, soldBy = {252605}, source = "vendor", noxp = true } -- Tazaveshi Hookah
+DVD.ActiveItems[263043] = { decorID = 14829, model3D = 192556, soldBy = {252605}, source = "vendor", noxp = true } -- Consortium Energy Barrel
+DVD.ActiveItems[263044] = { decorID = 14830, model3D = 192557, soldBy = {252605}, source = "vendor", noxp = true } -- Empty Consortium Energy Barrel
+DVD.ActiveItems[263045] = { decorID = 14831, model3D = 192562, soldBy = {252605}, source = "vendor", noxp = true } -- Consortium Energy Collector
+DVD.ActiveItems[263046] = { decorID = 14832, model3D = 192563, soldBy = {252605}, source = "vendor", noxp = true } -- Consortium Energy Crate
+DVD.ActiveItems[263047] = { decorID = 14833, model3D = 192564, soldBy = {252605}, source = "vendor", noxp = true } -- Empty Consortium Energy Crate
+DVD.ActiveItems[263048] = { decorID = 14834, model3D = 192576, soldBy = {252605}, source = "vendor", noxp = true } -- Consortium Energy Banner
 end
 
-do -- 🏪 VENDOR NPC: 259922 (Void Researcher Aemely)
-DVD.ActiveItems[264493] = { decorID = 15757, model3D = 6391989, soldBy = {259922}, source = "achievement", noxp = true } -- Opened Domanaar Storage Crate
-DVD.ActiveItems[264508] = { decorID = 15768, model3D = 6700991, soldBy = {259922}, source = "vendor", noxp = true } -- Sturdy Void Elf Barricade
-DVD.ActiveItems[264656] = { decorID = 15890, model3D = 6700992, soldBy = {259922}, source = "achievement", noxp = true } -- Void Elf Weapon Rack
-DVD.ActiveItems[264657] = { decorID = 15891, model3D = 6701010, soldBy = {259922}, source = "vendor", noxp = true } -- Open Sturdy Void Elf Trunk
-DVD.ActiveItems[264659] = { decorID = 15894, model3D = 6701014, soldBy = {259922}, source = "vendor", noxp = true } -- Cosmic Traveler's Satchel
-DVD.ActiveItems[267082] = { decorID = 18617, model3D = 6885569, soldBy = {259922}, source = "vendor", noxp = true } -- Ornate Cosmic Table
-DVD.ActiveItems[267209] = { decorID = 18800, model3D = 6701003, soldBy = {259922}, source = "quest", noxp = true } -- Open Void Elf Bedroll
-DVD.ActiveItems[262351] = { decorID = 14554, model3D = 6700982, soldBy = {259922}, source = "quest", noxp = true } -- Ornate Cosmic Rug
-DVD.ActiveItems[262472] = { decorID = 14602, model3D = 7412672, soldBy = {259922}, source = "vendor", noxp = true } -- Cosmic Kettle
-DVD.ActiveItems[262606] = { decorID = 14631, model3D = 6700978, soldBy = {259922}, source = "quest", noxp = true } -- Smoldering Energy Forge
-DVD.ActiveItems[263240] = { decorID = 15071, model3D = 6701011, soldBy = {259922}, source = "vendor", noxp = true } -- Sturdy Void Elf Crate
-DVD.ActiveItems[264340] = { decorID = 15579, model3D = 6391988, soldBy = {259922}, source = "vendor", noxp = true } -- Cosmic Barrel
+do -- 🏪 VENDOR NPC: 249684 (Brother Dovetail) 15
+DVD.ActiveItems[246686] = { decorID = 2453, model3D = 579120, soldBy = {249684}, source = "vendor", noxp = true } -- Grummle Sleeping Bag
+DVD.ActiveItems[246741] = { decorID = 2495, model3D = 579122, soldBy = {249684}, source = "vendor", noxp = true } -- Grummle Bedroll
+DVD.ActiveItems[246838] = { decorID = 2510, model3D = 1305131, soldBy = {249684}, source = "vendor", noxp = true } -- Kafa Press
+DVD.ActiveItems[248402] = { decorID = 4424, model3D = 532503, soldBy = {249684}, source = "vendor", noxp = true } -- Grummle Kafa Refinery
+DVD.ActiveItems[248403] = { decorID = 4425, model3D = 577606, soldBy = {249684}, source = "vendor", noxp = true } -- Grummle Tent
+DVD.ActiveItems[248405] = { decorID = 4427, model3D = 1305118, soldBy = {249684}, source = "vendor", noxp = true } -- Kafa Creamer
+DVD.ActiveItems[248406] = { decorID = 4428, model3D = 1305132, soldBy = {249684}, source = "vendor", noxp = true } -- Legerdemain Lounge Sign Board
+DVD.ActiveItems[248407] = { decorID = 4429, model3D = 1400889, soldBy = {249684}, source = "vendor", noxp = true } -- Dalaran Kafa Table
+DVD.ActiveItems[251472] = { decorID = 8179, model3D = 523264, soldBy = {249684}, source = "vendor", noxp = true } -- Pandaren Wooden Cart
+DVD.ActiveItems[251473] = { decorID = 8180, model3D = 970083, soldBy = {249684}, source = "vendor", noxp = true } -- Commander's Kafa Mug
+DVD.ActiveItems[251474] = { decorID = 8181, model3D = 1305117, soldBy = {249684}, source = "vendor", noxp = true } -- Ceramic Kafa Mug
+DVD.ActiveItems[251475] = { decorID = 8182, model3D = 1305134, soldBy = {249684}, source = "vendor", noxp = true } -- Dalaran Kafa Grinder
+DVD.ActiveItems[252039] = { decorID = 8987, model3D = 1305114, soldBy = {249684}, source = "vendor", noxp = true } -- Open Sack of Roasted Kafa
+DVD.ActiveItems[252040] = { decorID = 8988, model3D = 1305115, soldBy = {249684}, source = "vendor", noxp = true } -- Sealed Sack of Roasted Kafa
+DVD.ActiveItems[252041] = { decorID = 8989, model3D = 1305133, soldBy = {249684}, source = "vendor", noxp = true } -- Dalaran Espresso Machine
 end
 
-do -- 🏪 VENDOR NPC: 260180 (Depthdiver Tu'nakit)
-DVD.ActiveItems[258535] = { decorID = 12140, model3D = 6212443, soldBy = {260180}, source = "vendor" } -- Simple Bone-Tied Charm
-DVD.ActiveItems[258536] = { decorID = 12141, model3D = 6212444, soldBy = {260180}, source = "vendor" } -- Windmark Tribal Charm
-DVD.ActiveItems[258537] = { decorID = 12142, model3D = 6212445, soldBy = {260180}, source = "vendor" } -- Amani Dreamer's Charm
-DVD.ActiveItems[258538] = { decorID = 12143, model3D = 6212446, soldBy = {260180}, source = "vendor" } -- Barebone Rope Charm
-DVD.ActiveItems[264251] = { decorID = 15486, model3D = 6125172, soldBy = {260180}, source = "vendor" } -- Depthdiver's Cooking Spit
-DVD.ActiveItems[264252] = { decorID = 15487, model3D = 6195748, soldBy = {260180}, source = "vendor" } -- Zul'Aman Forest Hammock
+do -- 🏪 VENDOR NPC: 248525 (Pascal-K1N6) 17
+DVD.ActiveItems[254400] = { decorID = 10339, model3D = 2261833, soldBy = {248525}, source = "vendor", noxp = true } -- Triple-Tested Steam Valve
+DVD.ActiveItems[254401] = { decorID = 10340, model3D = 2439478, soldBy = {248525}, source = "vendor", noxp = true } -- Mad Science Blueprints
+DVD.ActiveItems[254402] = { decorID = 10341, model3D = 2439523, soldBy = {248525}, source = "vendor", noxp = true } -- Safety Electrical Cabling
+DVD.ActiveItems[254403] = { decorID = 10342, model3D = 2628252, soldBy = {248525}, source = "vendor", noxp = true } -- Mechagon Control Console
+DVD.ActiveItems[254404] = { decorID = 10343, model3D = 2745101, soldBy = {248525}, source = "vendor", noxp = true } -- Sticky Lever
+DVD.ActiveItems[254405] = { decorID = 10344, model3D = 2745103, soldBy = {248525}, source = "vendor", noxp = true } -- Dual-Action Turbo Pro Lever
+DVD.ActiveItems[254406] = { decorID = 10345, model3D = 2745104, soldBy = {248525}, source = "vendor", noxp = true } -- Mechanical Gauge
+DVD.ActiveItems[254407] = { decorID = 10346, model3D = 2745105, soldBy = {248525}, source = "vendor", noxp = true } -- Dual Mechanical Gauge
+DVD.ActiveItems[254408] = { decorID = 10347, model3D = 2745106, soldBy = {248525}, source = "vendor", noxp = true } -- Lively Pistons
+DVD.ActiveItems[254409] = { decorID = 10348, model3D = 2764153, soldBy = {248525}, source = "vendor", noxp = true } -- Sturdy Drive Belt
+DVD.ActiveItems[254410] = { decorID = 10349, model3D = 2765485, soldBy = {248525}, source = "vendor", noxp = true } -- Blue-Glo Lantern
+DVD.ActiveItems[254411] = { decorID = 10350, model3D = 2766212, soldBy = {248525}, source = "vendor", noxp = true } -- Z-205 Mechanical Device
+DVD.ActiveItems[254412] = { decorID = 10351, model3D = 2816646, soldBy = {248525}, source = "vendor", noxp = true } -- Well-Oiled Machine Cog
+DVD.ActiveItems[254413] = { decorID = 10352, model3D = 2903633, soldBy = {248525}, source = "vendor", noxp = true } -- Jury-Rigged Electrical Couple
+DVD.ActiveItems[254415] = { decorID = 10354, model3D = 2932044, soldBy = {248525}, source = "vendor", noxp = true } -- Miniature Charging Station
+DVD.ActiveItems[254416] = { decorID = 10355, model3D = 3279745, soldBy = {248525}, source = "vendor", noxp = true } -- Galvanic Storage and Maintenance Device
+DVD.ActiveItems[254766] = { decorID = 10537, model3D = 2958572, soldBy = {248525}, source = "vendor", noxp = true } -- Ineffective Mechanical Privacy Screen
 end
 
-do -- 🏪 VENDOR NPC: 264056 (Disguised Decor Duel Vendor)
-DVD.ActiveItems[268457] = { decorID = 19763, model3D = 7649379, soldBy = {264056}, source = "vendor" } -- Sin'dorei Tiffin-Style Lamp
-DVD.ActiveItems[269613] = { decorID = 21079, model3D = 7705433, soldBy = {264056}, source = "vendor" } -- Sin'dorei Covered Cookpot
-DVD.ActiveItems[269614] = { decorID = 21080, model3D = 7707246, soldBy = {264056}, source = "vendor" } -- Sin'dorei Open Cookpot
-DVD.ActiveItems[269636] = { decorID = 21101, model3D = 7707245, soldBy = {264056}, source = "vendor" } -- Sin'dorei Cookpot Lid
-DVD.ActiveItems[269641] = { decorID = 21106, model3D = 7705434, soldBy = {264056}, source = "vendor" } -- Sin'dorei Display Case
-DVD.ActiveItems[271162] = { decorID = 21602, model3D = 7736337, soldBy = {264056}, source = "vendor" } -- Sin'dorei Garden Swing
-DVD.ActiveItems[272441] = { decorID = 22006, model3D = 943646, soldBy = {264056}, source = "vendor" } -- Small Lumber Pile
-DVD.ActiveItems[272442] = { decorID = 22007, model3D = 943678, soldBy = {264056}, source = "vendor" } -- Empty Wooden Toolbox
-DVD.ActiveItems[272443] = { decorID = 22008, model3D = 1387976, soldBy = {264056}, source = "vendor" } -- Suramar Arcfruit Bowl
-DVD.ActiveItems[272444] = { decorID = 22009, model3D = 5281476, soldBy = {264056}, source = "vendor" } -- Small Decorative Dornogal Opal
-DVD.ActiveItems[272445] = { decorID = 22010, model3D = 5281479, soldBy = {264056}, source = "vendor" } -- Decorative Dornogal Opal
-DVD.ActiveItems[272446] = { decorID = 22011, model3D = 5281480, soldBy = {264056}, source = "vendor" } -- Large Decorative Dornogal Opal
+do -- 🏪 VENDOR NPC: 250820 (Hordranin ) 12
+DVD.ActiveItems[250627] = { decorID = 7668, model3D = 4254398, soldBy = {250820}, source = "vendor", noxp = true } -- Forbidden Fork
+DVD.ActiveItems[250694] = { decorID = 7691, model3D = 4095168, soldBy = {250820}, source = "vendor" } -- Draconic Metalshaper's Anvil
+DVD.ActiveItems[250695] = { decorID = 7692, model3D = 4095171, soldBy = {250820}, source = "vendor" } -- Replica Grathardormu's Hammer
+DVD.ActiveItems[250696] = { decorID = 7693, model3D = 4186848, soldBy = {250820}, source = "vendor", noxp = true } -- Green Thumb's Watering Can
+DVD.ActiveItems[250697] = { decorID = 7694, model3D = 4420697, soldBy = {250820}, source = "vendor" } -- Draconic Auctioneer's Lectern
+DVD.ActiveItems[250698] = { decorID = 7695, model3D = 4495212, soldBy = {250820}, source = "vendor", noxp = true } -- Obsidian Warder Pennant
+DVD.ActiveItems[250699] = { decorID = 7696, model3D = 4495213, soldBy = {250820}, source = "vendor", noxp = true } -- Dark Talon Pennant
+DVD.ActiveItems[250700] = { decorID = 7697, model3D = 4500571, soldBy = {250820}, source = "vendor", noxp = true } -- Roasted Ram Leg
+DVD.ActiveItems[250701] = { decorID = 7698, model3D = 4543421, soldBy = {250820}, source = "vendor", noxp = true } -- Draconic Trader's Cart
+DVD.ActiveItems[250702] = { decorID = 7699, model3D = 4551438, soldBy = {250820}, source = "vendor", noxp = true } -- Artisan's Measuring Scales
+DVD.ActiveItems[250703] = { decorID = 7700, model3D = 4563732, soldBy = {250820}, source = "vendor", noxp = true } -- War Creche Teaching Crystal
+DVD.ActiveItems[250704] = { decorID = 7701, model3D = 4572369, soldBy = {250820}, source = "vendor" } -- Ancient Weyrn Device
 end
 
-do -- 🏪 VENDOR NPC: 265581 (Zuronar)
-DVD.ActiveItems[276321] = { decorID = 25564, model3D = 7115733, soldBy = {265581}, source = "achievement"} -- Luminant Defender's Golden Barricade
-DVD.ActiveItems[276318] = { decorID = 25565, model3D = 7115754, soldBy = {265581}, source = "achievement"} -- Luminant Soldier's War Banner
-DVD.ActiveItems[276316] = { decorID = 25566, model3D = 7320163, soldBy = {265581}, source = "achievement" } -- Lightveil's Transport Pad
-DVD.ActiveItems[267211] = { decorID = 18802, model3D = 7319865, soldBy = {265581}, source = "achievement"} -- Luminant Scout's Golden Fence
-DVD.ActiveItems[276429] = { decorID = 25665, model3D = 1662222, soldBy = {265581}, source = "achievement" } -- Grand Artificer's Lightforged Console
-DVD.ActiveItems[276432] = { decorID = 25664, model3D = 1590817, soldBy = {265581}, source = "achievement" } -- De-Powered Lightforged Siegebreaker
+do -- 🏪 VENDOR NPC: 271604 Holly Twinklebright alliance and 271366 Jolli Maxiboom horde
+DVD.ActiveItems[248101] = { decorID = 4157, model3D = 2918351, soldBy = {271604, 271366}, source = "holiday"  } -- Traditional Brewfest Stein
+DVD.ActiveItems[280335] = { decorID = 25675, model3D = 2958730, soldBy = {271604, 271366}, source = "holiday"  } -- Brewfest Crate
 end
 
-do -- 🏪 VENDOR NPC: 267859 (Richmond) Fifa related
-DVD.ActiveItems[274731] = { decorID = 23706, model3D = 7845475, soldBy = {267859}, source = "achievement", noxp = true } -- Prized Orb of Azeroth
-DVD.ActiveItems[274734] = { decorID = 24193, model3D = 7845476, soldBy = {267859}, source = "achievement", noxp = true } -- Framed Horde Pride
-DVD.ActiveItems[274736] = { decorID = 24194, model3D = 7845477, soldBy = {267859}, source = "achievement", noxp = true } -- Framed Alliance Pride
+do -- 🏪 VENDOR NPC: 271372 Fizz Alechux horde and 271603 Kay Stouthammer alliance
+DVD.ActiveItems[280337] = { decorID = 25666, model3D = 2918357, soldBy = {271372, 271603}, source = "holiday"  } -- Traditional Brewfest Banner
+DVD.ActiveItems[280339] = { decorID = 25672, model3D = 2918364, soldBy = {271372, 271603}, source = "holiday"  } -- Brewfest Fence
+DVD.ActiveItems[280341] = { decorID = 25673, model3D = 2918369, soldBy = {271372, 271603}, source = "holiday"  } -- Brewfest Fencepost
+DVD.ActiveItems[280343] = { decorID = 25674, model3D = 2918622, soldBy = {271372, 271603}, source = "holiday"  } -- Hanging Brewfest Wreath
 end
 
-do -- 📦 UNMAPPED / NEW LOOSE PTR ITEMS
+----------------------------------------------
+--Patch 12.1
+-----------------------------------------------
+do -- 🏪 VENDOR NPC: 262880  272751 (Skull of Er'inye)
+DVD.ActiveItems[275628] = { decorID = 23871, model3D = 7277158, soldBy = {272751}, source =  "vendor"} -- Cauldron of Ula'tek
+DVD.ActiveItems[269637] = { decorID = 21102, model3D = 7277157, soldBy = {272751}, source =  "vendor"} --Serpent-Caller Spike
+DVD.ActiveItems[266169] = { decorID = 17799, model3D = 7277140, soldBy = {272751}, source =  "vendor"} --Soulcoiler Canopy
+DVD.ActiveItems[279919] = { decorID = 24519, model3D = 1835148, soldBy = {272751}, source =  "vendor"} --Soulcoiler Jaw
+DVD.ActiveItems[275578] = { decorID = 23881, model3D = 7354106, soldBy = {272751}, source =  "vendor"} --Soulcoiler Sconce
+DVD.ActiveItems[279917] = { decorID = 24512, model3D = 1834576, soldBy = {272751}, source =  "vendor"} --Soulcoiler Skull
+DVD.ActiveItems[253455] = { decorID = 1140, model3D = 6195752, soldBy = {272751}, source =  "vendor"} --Unearthed Sarcophagus Lid
+DVD.ActiveItems[253473] = { decorID = 1150, model3D = 6195751, soldBy = {272751}, source =  "vendor"} --Unearthed Sarcophagus Base
+DVD.ActiveItems[272362] = { decorID = 21953, model3D = 7355771, soldBy = {272751}, source =  "vendor"} --Venombound Ropes
+DVD.ActiveItems[271850] = { decorID = 21832, model3D = 7277150, soldBy = {272751}, source =  "vendor"} --Venomous Tendril
+DVD.ActiveItems[267378] = { decorID = 18901, model3D = 7277160, soldBy = {272751}, source =  "vendor"} --Venom Scholar's Focus
+DVD.ActiveItems[279922] = { decorID = 25292, model3D = 7277155, soldBy = {272751}, source =  "vendor"} --Altar of Corrosion
+DVD.ActiveItems[271358] = { decorID = 21653, model3D = 7277182, soldBy = {272751}, source =  "vendor"} -- Clutch of Ula'tek
+DVD.ActiveItems[271604] = { decorID = 21720, model3D = 7277175, soldBy = {272751}, source =  "vendor"} -- Egg of Ula'tek
+DVD.ActiveItems[281573] = { decorID = 25137, model3D = 7277142, soldBy = {272751}, source =  "vendor"} -- Venomous Thread
+DVD.ActiveItems[281620] = { decorID = 26204, model3D = 7277206, soldBy = {272751}, source =  "vendor"} -- Corrosive Cache
+DVD.ActiveItems[280764] = { decorID = 25139, model3D = 7277198, soldBy = {272751}, source =  "vendor"} -- Venomous Defender's Barricade
+DVD.ActiveItems[281577] = { decorID = 25138, model3D = 7701866, soldBy = {272751}, source =  "vendor"} -- Venomous Globule
 end
 
-do --Treasures no  vendors
-DVD.ActiveItems[245449] = {decorID = 674, model3D = 1096835, bossevent = "Withered Army Training", sourceAction = "Withered Army Training", mapID = 680, expansion = "Legion", zone = "Broken Isles", source = "treasure"}-- Ancient Elven Highback Chair
-DVD.ActiveItems[245315] = { decorID = 1272, model3D = 5788649, bossevent = "Scraps Heaps", sourceAction = "Scraps Heaps", mapID = 2346, source = "treasure"} --"Trashfire Barrel"
-DVD.ActiveItems[262467] = { decorID = 14597, model3D = 6700999, bossevent = "Stellar Stash", sourceAction = "Stellar Stash", mapID = 2444, source = "treasure"} -- "Void Elf Round Table"
-DVD.ActiveItems[264482] = { decorID = 15746, model3D = 6701004, bossevent = "Malignant Chest", sourceAction = "Malignant Chest", mapID = 2405, source = "treasure"} -- "Void Elf Torch"
+do -- 🏪 VENDOR NPC: 270399 (Firetender Zab'ni)
+DVD.ActiveItems[263873] = { decorID = 15283, model3D = 6075561, soldBy = {270399}, source = "achievement"} -- Amani Forge
+DVD.ActiveItems[271851] = { decorID = 21833, model3D = 7277199, soldBy = {270399}, source =  "vendor"} -- Oozing Vilescar Barricade
+DVD.ActiveItems[279452] = { decorID = 27041, model3D = 7498517, soldBy = {270399}, source =  "vendor"} -- "Summoning of Ula'tek" Mural
+DVD.ActiveItems[279285] = { decorID = 26484, model3D = 1675098, soldBy = {270399}, source =  "vendor"} -- Lost Tortollan Scroll
+DVD.ActiveItems[279292] = { decorID = 26377, model3D = 5933618, soldBy = {270399}, source =  "vendor"} -- Zul'Aman Pine Tree
+DVD.ActiveItems[279508] = { decorID = 27042, model3D = 8117702, soldBy = {270399}, source =  "vendor"} -- "The Hunger Awakens" Mural
+DVD.ActiveItems[280218] = { decorID = 26481, model3D = 1661561, soldBy = {270399}, source =  "vendor"} -- Tortollan Scholar Satchel
+DVD.ActiveItems[248962] = { decorID = 5130, model3D = 6163853, soldBy = {270399}, source =  "vendor"} -- Mysterious Voodoo Mask
+DVD.ActiveItems[271175] = { decorID = 21615, model3D = 7277161, soldBy = {270399}, source =  "vendor"} -- Venomjade Necklace = venomjade necklace treasure
+DVD.ActiveItems[281580] = { decorID = 26375, model3D = 5789862, soldBy = {270399}, source =  "vendor"} -- Pungent Atal'Utek Shroom = stinking vessel treasure
+DVD.ActiveItems[244345] = { decorID = 1428, model3D = 6870562, soldBy = {270399}, source =  "vendor"} -- Forgotten Amani Urn = forgotten treasure
+DVD.ActiveItems[281582] = { decorID = 26376, model3D = 5857761, soldBy = {270399}, source =  "vendor"} -- Atal'Utek Ivy = crumbling urn treasure
+DVD.ActiveItems[271176] = { decorID = 21616, model3D = 7277162, soldBy = {270399}, source =  "vendor"} -- Feathered Ula'tek Talisman
+DVD.ActiveItems[271609] = { decorID = 21725, model3D = 7277186, soldBy = {270399}, source =  "vendor"} -- Destroyed Clutch of Ula'tek
 end
 
-do --Daily Quest/quest
-DVD.ActiveItems[241043] = { decorID = 925, model3D = 875378, bossevent = "Shadowmoon Valley Missive", mapID = 539, expansion = "Warlords of Draenor", zone = "Draenor", source = "quest"}-- Elodor Barrel
-DVD.ActiveItems[251329] = { decorID = 8176, model3D = 878999, bossevent = "Shadowmoon Valley Missive", mapID = 539, expansion = "Warlords of Draenor", zone = "Draenor", source = "quest"} -- Shadowmoon Open-Air Shed
-DVD.ActiveItems[251547] = { decorID = 8238, model3D = 915354, bossevent = "Shadowmoon Valley Missive", mapID = 539, expansion = "Warlords of Draenor", zone = "Draenor", source = "quest"}-- Draenei Farmer's Trellis	
-DVD.ActiveItems[258145] = { decorID = 11872, model3D = 6051297, bossevent = "Cooking Daily", mapID = 125, expansion = "Wrath of the Loch King", zone = "Northrend", source = "quest"}-- Eversong Party Platter
-end
-
-do --Delve Drops
-DVD.ActiveItems[251967] = { decorID = 8889, model3D = 6225689, bossevent = "Midnight Delves", mapID = 2537, expansion = "Midnight", zone = "Delves", source = "drop"}-- Fungarian Banner
-DVD.ActiveItems[263036] = { decorID = 14822, model3D = 4732009, bossevent = "Midnight Delves", mapID = 2537, expansion = "Midnight", zone = "Delves", source = "drop"}-- Hanging Dawnflower
-DVD.ActiveItems[263042] = { decorID = 14828, model3D = 6252874, bossevent = "Midnight Delves", mapID = 2537, expansion = "Midnight", zone = "Delves", source = "drop"}-- Rootlight Lamppost
-DVD.ActiveItems[263233] = { decorID = 15064, model3D = 6050885, bossevent = "Midnight Delves", mapID = 2537, expansion = "Midnight", zone = "Delves", source = "drop"}-- Sin'dorei Spinning Library
-DVD.ActiveItems[264258] = { decorID = 15493, model3D = 6225683, bossevent = "Midnight Delves", mapID = 2537, expansion = "Midnight", zone = "Delves", source = "drop"}-- Blossoming Forge
-DVD.ActiveItems[264330] = { decorID = 15568, model3D = 6075573, bossevent = "Midnight Delves", mapID = 2537, expansion = "Midnight", zone = "Delves", source = "drop"}-- Amani Hanging Brazier
-DVD.ActiveItems[264342] = { decorID = 15582, model3D = 7136759, bossevent = "Midnight Delves", mapID = 2537, expansion = "Midnight", zone = "Delves", source = "drop"}-- Cosmic Void Cache
-DVD.ActiveItems[267009] = { decorID = 18485, model3D = 6212435, bossevent = "Midnight Delves", mapID = 2537, expansion = "Midnight", zone = "Delves", source = "drop"}-- Amani Training Dummy
-DVD.ActiveItems[264329] = { decorID = 15567, model3D = 6075571, bossevent = "Midnight Delves", mapID = 2537, expansion = "Midnight", zone = "Delves", source = "drop"} -- Amani Dining Table
-end
-
-do --Darkshore Rares
-DVD.ActiveItems[241066] = { decorID = 948, model3D = 6431408, bossevent = "Darkshore Rares", mapID = 62, expansion = "Battle for Azeroth", zone = "Darkshore Rares",  source = "drop"}-- Forsaken Spiked Brazier
-DVD.ActiveItems[245462] = { decorID = 840, model3D = 2530077, bossevent = "Darkshore Rares", mapID = 62, expansion = "Battle for Azeroth", zone = "Darkshore Rares",   source = "drop"}-- Banshee Queen's Banner
-DVD.ActiveItems[245627] = { decorID = 1836, model3D = 6938369, bossevent = "Darkshore Rares", mapID = 62, expansion = "Battle for Azeroth", zone = "Darkshore Rares",  source = "drop"} -- Elven Temple Brazier
-DVD.ActiveItems[246110] = { decorID = 2000, model3D = 6980565, bossevent = "Darkshore Rares", mapID = 62, expansion = "Battle for Azeroth", zone = "Darkshore Rares",  source = "drop"}	-- Filigree Moon Sconce
-end
-
-do --Drops
-DVD.ActiveItems[246481] = { decorID = 2324, model3D = 1624683, bossevent = "Mechagon", mapID = 1462, expansion = "Battle for Azeroth", zone = "Kul Tiras", source = "drop"}-- Retired Industrial Gnomegrabber
-DVD.ActiveItems[246599] = { decorID = 2431, model3D = 1842467, bossevent = "Mechagon", mapID = 1462, expansion = "Battle for Azeroth", zone = "Kul Tiras", source = "drop"}-- Self-Sealing Stembarrel
-DVD.ActiveItems[246600] = { decorID = 2432, model3D = 1842492, bossevent = "Mechagon", mapID = 1462, expansion = "Battle for Azeroth", zone = "Kul Tiras", source = "drop"}-- Small Mechanical Crate
-DVD.ActiveItems[246602] = { decorID = 2434, model3D = 2067166, bossevent = "Mechagon", mapID = 1462, expansion = "Battle for Azeroth", zone = "Kul Tiras", source = "drop"}-- Small H.O.M.E. Cog
-DVD.ActiveItems[245294] = { decorID = 764, model3D = 5647269, bossevent = "Theater Troupe", mapID = 2248, expansion = "The War Within", source = "drop"}-- Councilward's Jeweled Goblet
-DVD.ActiveItems[245320] = { decorID = 1261, model3D = 5689822, bossevent = "Undermine", mapID = 2346, expansion = "The War Within", zone = "Khaz Algar", source = "drop"}-- Very Reliable Undermine Lamppost	
-DVD.ActiveItems[257724] = { decorID = 11754, model3D = 1313472, bossevent = "Highmountain Paragon Chest", mapID = 750, expansion = "Legion", zone = "Broken Isles", source = "drop"}-- Bloodtotem Banner
-DVD.ActiveItems[257928] = { decorID = 11814, model3D = 2929684, bossevent = "Mechagon", mapID = 1462, expansion = "Battle for Azeroth", zone = "Kul Tiras", source = "drop", noxp = true } -- Gnomeregan Recyli-Kiln
-DVD.ActiveItems[262608] = { decorID = 14633, model3D = 6701001, bossevent = "Stormarion Assault", mapID = 2405, source = "drop" } -- "Void Elf Stool"
-DVD.ActiveItems[264483] = { decorID = 15747, model3D = 6701007, bossevent = "Stormarion Assault", mapID = 2405, source = "drop"} -- "Cosmic Void Campfire"
-DVD.ActiveItems[264343] = { decorID = 15583, model3D = 7136761, bossevent = "Stormarion Assault", mapID = 2405, source = "drop"} -- Cosmic Void Gravitational Orb
-
-end
-
-do --Boss Raids
-DVD.ActiveItems[247235] = { decorID = 2606, model3D = 6225707,  bossencounter = 2711, mapID = 2427, expansion = "Midnight", zone = "Sporefall", source = "boss"}-- Luminous Rotshroom	
-DVD.ActiveItems[253242] = { decorID = 9263, model3D = 6905426, bossencounter = 869, mapID = 567, expansion = "Mists of Pandaria", zone = "Siege of Orgrimmar", source = "boss"}-- Horde Warlord's Throne
-DVD.ActiveItems[256682] = { decorID = 11283, model3D = 1405830, bossencounter = 1751, mapID = 766, expansion = "Legion", zone = "Nighthold", source = "boss"}-- Magistrix's Garden Fountain
-DVD.ActiveItems[262957] = { decorID = 14806, model3D = 7115753, bossencounter = 2737, mapID = 2529, expansion = "Midnight", zone = "The VoidSpire", source = "boss"}-- Tattered Vanguard Banner
-DVD.ActiveItems[264187] = { decorID = 15467, model3D = 7317243, bossencounter = 2739, mapID = 2533, expansion = "Midnight", zone = "March on Quel'Danas", source = "boss"}-- Blessed Phoenix Egg
-DVD.ActiveItems[264246] = { decorID = 15481, model3D = 5746809, bossencounter = 2795, mapID = 2532, expansion = "Midnight", zone = "The Dreamrift", source = "boss"}-- Eerie Iridescent Riftshroom
-DVD.ActiveItems[264491] = { decorID = 15755, model3D = 6210896, bossencounter = 2735, mapID = 2529, expansion = "Midnight", zone = "The VoidSpire", source = "boss"}-- Voidbound Holding Cell
-DVD.ActiveItems[264492] = { decorID = 15756, model3D = 7960828, bossencounter = 2740, mapID = 2534, expansion = "Midnight", zone = "March on Quel'Danas", source = "boss"}-- Chaotic Void Maw
-DVD.ActiveItems[264494] = { decorID = 15758, model3D = 6391990, bossencounter = 2736, mapID = 2529, expansion = "Midnight", zone = "The VoidSpire", source = "boss"}-- Banded Domanaar Storage Crate
-DVD.ActiveItems[264497] = { decorID = 15761, model3D = 7136760, bossencounter = 2733, mapID = 2529, expansion = "Midnight", zone = "The VoidSpire", source = "boss"}-- Imperator's Torment Crystal
-DVD.ActiveItems[264498] = { decorID = 15762, model3D = 7302402, bossencounter = 2734, mapID = 2529, expansion = "Midnight", zone = "The VoidSpire", source = "boss"}-- Voltaic Trigore Egg
-DVD.ActiveItems[265949] = { decorID = 17628, model3D = 7550710, bossencounter = 2740, mapID = 2534, expansion = "Midnight", zone = "March on Quel'Danas", source = "boss"}-- March on Quel'Danas Vanquisher's Aureate Trophy
-DVD.ActiveItems[265950] = { decorID = 17629, model3D = 7550712, bossencounter = 2795, mapID = 2532, expansion = "Midnight", zone = "The Dreamrift", source = "boss"}-- Dreamrift Vanquisher's Aureate Trophy
-DVD.ActiveItems[265951] = { decorID = 17630, model3D = 7550713, bossencounter = 2738, mapID = 2530, expansion = "Midnight", zone = "The VoidSpire", source = "boss"}-- Voidspire Vanquisher's Aureate Trophy
-DVD.ActiveItems[266885] = { decorID = 18396, model3D = 7556292, bossencounter = 2740, mapID = 2534, expansion = "Midnight", zone = "March on Quel'Danas", source = "boss"}-- March on Quel'Danas Vanquisher's Gleaming Trophy
-DVD.ActiveItems[266886] = { decorID = 18397, model3D = 7556293, bossencounter = 2795, mapID = 2532, expansion = "Midnight", zone = "The Dreamrift", source = "boss"}-- Dreamrift Vanquisher's Gleaming Trophy
-DVD.ActiveItems[266887] = { decorID = 18398, model3D = 7556294, bossencounter = 2738, mapID = 2530, expansion = "Midnight", zone = "The VoidSpire", source = "boss"}-- Voidspire Vanquisher's Gleaming Trophy
-DVD.ActiveItems[267645] = { decorID = 19197, model3D = 7633281, bossencounter = 2795, mapID = 2532, expansion = "Midnight", zone = "The Dreamrift", source = "boss"}-- Dreamrift Vanquisher's Argent Trophy
-DVD.ActiveItems[267646] = { decorID = 19198, model3D = 7633282, bossencounter = 2740, mapID = 2534, expansion = "Midnight", zone = "March on Quel'Danas", source = "boss"}-- March on Quel'Danas Vanquisher's Argent Trophy
-DVD.ActiveItems[268049] = { decorID = 19252, model3D = 7633283, bossencounter = 2738, mapID = 2530, expansion = "Midnight", zone = "The VoidSpire", source = "boss"}-- Voidspire Vanquisher's Argent Trophy	
-DVD.ActiveItems[267008] = { decorID = 18484, model3D = 1959305, bossencounter = 2328, mapID = 1345, expansion = "Battle for Azeroth", zone = "Crucible of Storms", source = "boss"}-- Crucible Votive Rack
-end
-
-do --Dungeon Bosses
-DVD.ActiveItems[264336] = { decorID = 15574, model3D = 6210883, bossencounter = 2793, mapID = 2573, expansion = "Midnight", zone = "Voidscar Arena", source = "boss"}-- Voidlight Brazier
-DVD.ActiveItems[238857] = { decorID = 673, model3D = 1096755, bossencounter = 1657, mapID = 733, expansion = "Legion", zone = "Darkheart Thicket", source = "boss"}-- Moon-Blessed Storage Crate
-DVD.ActiveItems[241044] = { decorID = 926, model3D = 877007, bossencounter = 1982, mapID = 903, expansion = "Legion", zone = "Seat of Triumvirate, Argus", source = "boss"}-- Argussian Crate
-DVD.ActiveItems[244655] = { decorID = 1445, model3D = 1379266, bossencounter = 100, mapID = 315, expansion = "Classic", zone = "Shadowfang Keep", source = "boss"}-- Gilnean Circular Rug
-DVD.ActiveItems[245434] = { decorID = 1323, model3D = 1005503, bossencounter = 1238, mapID = 595, expansion = "Warlords of Draenor", zone = "Iron Docks", source = "boss"}-- Orgrimmar Sconce
-DVD.ActiveItems[245435] = { decorID = 1324, model3D = 1005505, bossencounter = 1234, mapID = 618, expansion = "Classic", zone = "Upper Blackrock Spire", source = "boss"}-- Horde Battle Emblem
-DVD.ActiveItems[245451] = { decorID = 1232, model3D = 1313217, bossencounter = 1687, mapID = 731, expansion = "Legion", zone = "Neltharions Lair", source = "boss"}-- Thunder Totem Brazier
-DVD.ActiveItems[245560] = { decorID = 1749, model3D = 6924252, bossencounter = 2589, mapID = 2335, expansion = "The War Within", zone = "Cinderbrew Meadery", source = "boss"}-- Meadery Ochre Window
-DVD.ActiveItems[245681] = { decorID = 1880, model3D = 6980179, bossencounter = 2156, mapID = 1040, expansion = "Battle for Azeroth", zone = "Shrine of the Storm", source = "boss"}-- Tidesage's Fireplace
-DVD.ActiveItems[245938] = { decorID = 1893, model3D = 5360239, bossencounter = 2573, mapID = 2309, expansion = "The War Within", zone = "Priory of the Sacred Flame", source = "boss"}-- Overgrown Arathi Trellis
-DVD.ActiveItems[246421] = { decorID = 2238, model3D = 197304,  bossencounter = 2095, mapID = 936, expansion = "Battle for Azeroth", zone = "Freehold", source = "boss"}-- Stolen Ironforge Seat
-DVD.ActiveItems[246429] = { decorID = 2246, model3D = 197168, bossencounter = 387, mapID = 243, expansion = "Classic", zone = "Blackrock Depths", source = "boss"}-- Dark Iron Chandelier
-DVD.ActiveItems[246846] = { decorID = 2512, model3D = 534950, bossencounter = 335, mapID = 429, expansion = "Mists of Pandaria", zone = "Temple of the Jade Serpant", source = "boss"}-- Tome of Pandaren Wisdom   
-DVD.ActiveItems[246865] = { decorID = 2531, model3D = 4335906, bossencounter = 1838, mapID = 822, expansion = "Classic", zone = "Karazhan (Legion Version)", source = "boss"}-- Tome of Reliquary Insights
-DVD.ActiveItems[247913] = { decorID = 4027, model3D = 1361708, bossencounter = 1720, mapID = 763, expansion = "Legion", zone = "Court of Stars", source = "boss"}-- Ornate Suramar Table
-DVD.ActiveItems[248332] = { decorID = 4401, model3D = 936398, bossencounter = 95, mapID = 292, expansion = "Classic", zone = "The Deadmines", source = "boss"}-- Stormwind Footlocker
-DVD.ActiveItems[251331] = { decorID = 8178, model3D = 1025872, bossencounter = 1225, mapID = 593, expansion = "Warlords of Draenor", zone = "Auchindoun", source = "boss"}-- Draenic Ottoman
-DVD.ActiveItems[253451] = { decorID = 1137, model3D = 6839738, bossencounter = 2772, mapID = 2500, expansion = "Midnight", zone = "The Blinding  Vale", source = "boss"}-- Veilroot Fountain
-DVD.ActiveItems[255672] = { decorID = 10887, model3D = 2745099, bossencounter = 2331, mapID = 1497, expansion = "Battle for Azeroth", zone = "Mechagon", source = "boss"}-- Gnomish Tesla Tower
-DVD.ActiveItems[256354] = { decorID = 11137, model3D = 4420033, bossencounter = 2501, mapID = 2080, expansion = "Dragonflight", zone = "Neltharus", source = "boss"}-- Qalashi Goulash
-DVD.ActiveItems[256428] = { decorID = 11163, model3D = 3883458,  bossencounter = 2503, mapID = 2094, expansion = "Dragonflight", zone = "Ruby Life Pools", source = "boss"}-- Valdrakken Hanging Lamp
-DVD.ActiveItems[256683] = { decorID = 11284, model3D = 6190527, bossencounter = 2658, mapID = 2499, expansion = "Midnight", zone = "Windrunner Spire", source = "boss"}-- Silvermoon Training Dummy
-DVD.ActiveItems[258268] = { decorID = 11934, model3D = 5503818, bossencounter = 2561, mapID = 2303, expansion = "The War Within", zone = "DarkFlame Cleft", source = "boss"}-- Waxmaster's Candle Rack
-DVD.ActiveItems[258744] = { decorID = 12204, model3D = 971695, bossencounter = 968, mapID = 602, expansion = "Warlords of Draenor", zone = "Skyreach", source = "boss"}-- Skyreach Circular Table
-DVD.ActiveItems[260359] = { decorID = 14330, model3D = 6431406, bossencounter = 2514, mapID = 2099, expansion = "Dragonflight", zone = "Algeth'ar Academy", source = "boss"}-- Valdrakken Bookcase
-DVD.ActiveItems[263230] = { decorID = 15061, model3D = 6050875, bossencounter = 2662, mapID = 2520, expansion = "Midnight", zone = "Magisters Terrace", source = "boss"}-- Magister's Bookshelf
-DVD.ActiveItems[263238] = { decorID = 15069, model3D = 7296096, bossencounter = 2682, mapID = 2434, expansion = "Midnight", zone = "Murder Row", source = "boss"}-- Illicit Long Table
-DVD.ActiveItems[264332] = { decorID = 15570, model3D = 6153808, bossencounter = 2778, mapID = 2513, expansion = "Midnight", zone = "Den of Nalorakk", source = "boss"}-- Amani Ritual Altar
-DVD.ActiveItems[264338] = { decorID = 15576, model3D = 6210900, bossencounter = 2815, mapID = 2556, expansion = "Midnight", zone = "Nexus-Point Xenas", source = "boss"}-- Domanaar Control Console
-DVD.ActiveItems[264717] = { decorID = 16094, model3D = 6195760, bossencounter = 2812, mapID = 2501, expansion = "Midnight", zone = "Maisara Caverns", source = "boss"}-- Amani Warding Hex
-DVD.ActiveItems[267007] = { decorID = 18483, model3D = 328250,  bossencounter = 610, mapID = 184, expansion = "Wrath of the Lich King", zone = "Pit of Saron", source = "boss"}-- Eye of Acherus
-end
-
-do --Professions
-DVD.ActiveItems[246596] = { decorID = 2428, model3D = 1841734, source = "profession" } -- Gnomish Fence
-DVD.ActiveItems[246595] = { decorID = 2427, model3D = 1841733, source = "profession" } -- Gnomish Fencepost
-DVD.ActiveItems[246485] = { decorID = 2328, model3D = 2851774, source = "profession" } -- Mechagnome Sustenance Distributor
-DVD.ActiveItems[246606] = { decorID = 2438, model3D = 2967733, source = "profession" } -- Mechagon Armory Rack
-DVD.ActiveItems[246482] = { decorID = 2325, model3D = 1841735, source = "profession" } -- Mechanical Gnomish Lamppost
-DVD.ActiveItems[246597] = { decorID = 2429, model3D = 1842225, source = "profession" } -- Perpetual Motion Crate
-DVD.ActiveItems[257100] = { decorID = 11438, model3D = 7658442, source = "profession" } -- Apothecary's Worktable
-DVD.ActiveItems[257041] = { decorID = 11376, model3D = 243479, source = "profession" } -- Stoppered Black Potion
-DVD.ActiveItems[264709] = { decorID = 16086, model3D = 198443, source = "profession" } -- Stranglekelp Sack
-DVD.ActiveItems[264706] = { decorID = 16083, model3D = 192707, source = "profession" } -- Shadow Council Torch
-DVD.ActiveItems[239214] = { decorID = 829, model3D = 5929346, source = "profession" } -- Well-Lit Incontinental Couch
-DVD.ActiveItems[239170] = { decorID = 759, model3D = 5203802, source = "profession" } -- Dornic Mine and Cheese Platter
-DVD.ActiveItems[242948] = { decorID = 1119, model3D = 4871092, source = "profession" } -- Loch Modan Bearskin Rug
-DVD.ActiveItems[243090] = { decorID = 1157, model3D = 6854359, source = "profession" } -- Sturdy Haranir Chair
-DVD.ActiveItems[243101] = { decorID = 1168, model3D = 1590845, source = "profession" } -- Red Dazar'alor Rug
-DVD.ActiveItems[243327] = { decorID = 1273, model3D = 5793046, source = "profession" } -- Zhevra-Stripe Rug
-DVD.ActiveItems[243336] = { decorID = 1282, model3D = 6711675, source = "profession" } -- Elder Rise Rug
-DVD.ActiveItems[244313] = { decorID = 1405, model3D = 969529, source = "profession" } -- Orcish Fence
-DVD.ActiveItems[244314] = { decorID = 1406, model3D = 979341, source = "profession" } -- Frostwall Architect's Table
-DVD.ActiveItems[244317] = { decorID = 1409, model3D = 986851, source = "profession" } -- Orcish Banded Barrel
-DVD.ActiveItems[244318] = { decorID = 1410, model3D = 987248, source = "profession" } -- Wine Barrel
-DVD.ActiveItems[244319] = { decorID = 1411, model3D = 987255, source = "profession" } -- Wooden Shipping Crate
-DVD.ActiveItems[244323] = { decorID = 1415, model3D = 1013304, source = "profession" } -- Orcish Sleeping Cot
-DVD.ActiveItems[245305] = { decorID = 1275, model3D = 5793097, source = "profession"} -- Undermine Bean Bag Chair
-DVD.ActiveItems[245312] = { decorID = 1260, model3D = 5689818, source = "profession" } -- Rusting Bolted Bench
-DVD.ActiveItems[245323] = { decorID = 1270, model3D = 5788112, source = "profession" } -- Shredderwheel Storage Chest
-DVD.ActiveItems[245326] = { decorID = 765, model3D = 5650143, source = "profession" } -- Kaheti Predator's Assortment
-DVD.ActiveItems[245396] = { decorID = 1219, model3D = 6749303, source = "profession" } -- Suramar Dresser
-DVD.ActiveItems[245406] = { decorID = 1242, model3D = 6711672, source = "profession" } -- Tauren Leather Fence
-DVD.ActiveItems[245407] = { decorID = 1243, model3D = 6711673, source = "profession" } -- Tauren Fencepost
-DVD.ActiveItems[245408] = { decorID = 1314, model3D = 6877807, source = "profession" } -- Tauren Soup Pot
-DVD.ActiveItems[245412] = { decorID = 1241, model3D = 6653373, source = "profession" } -- Zandalari Ritual Drum
-DVD.ActiveItems[245414] = { decorID = 1200, model3D = 6653375, source = "profession" } -- Zandalari Skullfire Lamp
-DVD.ActiveItems[245415] = { decorID = 1313, model3D = 6877806, source = "profession" } -- Zuldazar Fence
-DVD.ActiveItems[245416] = { decorID = 1312, model3D = 6877805, source = "profession" } -- Zuldazar Fencepost
-DVD.ActiveItems[245418] = { decorID = 1311, model3D = 6877804, source = "profession" } -- Zanchuli Tapestry
-DVD.ActiveItems[245421] = { decorID = 929, model3D = 979920, source = "profession" } -- Karabor Bed
-DVD.ActiveItems[245428] = { decorID = 749, model3D = 960868, source = "profession" } -- Hungry Human's Platter
-DVD.ActiveItems[245432] = { decorID = 1321, model3D = 1005469, source = "profession" } -- Blackrock Bunkbed
-DVD.ActiveItems[245436] = { decorID = 1325, model3D = 1005512, source = "profession" } -- Blackrock Weapon Rack
-DVD.ActiveItems[245441] = { decorID = 1351, model3D = 969535, source = "profession" } -- Orcish Fencepost
-DVD.ActiveItems[245459] = { decorID = 1308, model3D = 1402225, source = "profession" } -- Tauren Storage Chest
-DVD.ActiveItems[245484] = { decorID = 755, model3D = 1852909, source = "profession" } -- Boralus-Style Lobster Platter
-DVD.ActiveItems[245496] = { decorID = 1161, model3D = 1929218, source = "profession" } -- Small Mask of Bwonsamdi, Loa of Graves
-DVD.ActiveItems[245499] = { decorID = 1217, model3D = 1597475, source = "profession" } -- Gilded Zandalari Table
-DVD.ActiveItems[245502] = { decorID = 854, model3D = 189415, source = "profession" } -- Brill Coffin
-DVD.ActiveItems[245503] = { decorID = 922, model3D = 189416, source = "profession" } -- Brill Coffin Lid
-DVD.ActiveItems[245509] = { decorID = 1194, model3D = 518523, source = "profession" } -- Pandaren Stone Wall
-DVD.ActiveItems[245513] = { decorID = 1169, model3D = 538547, source = "profession" } -- Square Pandaren Table
-DVD.ActiveItems[245514] = { decorID = 1187, model3D = 538827, source = "profession" } -- Pandaren Wooden Table
-DVD.ActiveItems[245517] = { decorID = 855, model3D = 304249, source = "profession" } -- Gilnean Cauldron
-DVD.ActiveItems[245534] = { decorID = 1725, model3D = 6711645, source = "profession" } -- Frostwall Elevated Brazier
-DVD.ActiveItems[245557] = { decorID = 1746, model3D = 6924249, source = "profession" } -- Shaded Suramar Window
-DVD.ActiveItems[245559] = { decorID = 1748, model3D = 6924251, source = "profession" } -- Octagonal Ochre Window
-DVD.ActiveItems[245600] = { decorID = 1791, model3D = 6905311, source = "profession" } -- Frostwall Forge
-DVD.ActiveItems[245601] = { decorID = 1792, model3D = 6905328, source = "profession" } -- Ancestral Signal Brazier
-DVD.ActiveItems[245602] = { decorID = 1793, model3D = 6930893, source = "profession" } -- Gilnean Problem Solver
-DVD.ActiveItems[245618] = { decorID = 1827, model3D = 305226, source = "profession" } -- Surwich Expedition Tent
-DVD.ActiveItems[245621] = { decorID = 1830, model3D = 322293, source = "profession" } -- Gilnean Wooden Table
-DVD.ActiveItems[245622] = { decorID = 1831, model3D = 322355, source = "profession" } -- Gilnean Wall Shelf
-DVD.ActiveItems[245623] = { decorID = 1832, model3D = 322635, source = "profession" } -- Gilnean Rocking Chair
-DVD.ActiveItems[246066] = { decorID = 1984, model3D = 6914980, source = "profession" } -- Schmancy Goblin String Lights
-DVD.ActiveItems[246111] = { decorID = 2001, model3D = 6995868, source = "profession" } -- Shadowforge Sconce
-DVD.ActiveItems[246410] = { decorID = 2227, model3D = 197212, source = "profession" } -- Dark Iron Table Saw
-DVD.ActiveItems[246413] = { decorID = 2230, model3D = 379433, source = "profession" } -- Blackrock Lamppost
-DVD.ActiveItems[246420] = { decorID = 2237, model3D = 197288, source = "profession" } -- Kharanos Bookcase
-DVD.ActiveItems[246423] = { decorID = 2240, model3D = 197555, source = "profession" } -- Wooden Ironforge Table
-DVD.ActiveItems[246460] = { decorID = 2301, model3D = 6427295, source = "profession" } -- Ambient Aethercharged Crystal
-DVD.ActiveItems[246486] = { decorID = 2329, model3D = 6699744, source = "profession" } -- Gnomish Tesla Mega-Coil
-DVD.ActiveItems[246488] = { decorID = 2331, model3D = 7014376, source = "profession" } -- Ironforge Chandelier
-DVD.ActiveItems[246489] = { decorID = 2332, model3D = 7014377, source = "profession" } -- Steel Ironforge Emblem
-DVD.ActiveItems[246500] = { decorID = 2340, model3D = 2765483, source = "profession" } -- Mechagon Miniature Artificial Sun
-DVD.ActiveItems[246604] = { decorID = 2436, model3D = 2816738, source = "profession" } -- Deactivated Atomic Recalibrator
-DVD.ActiveItems[246685] = { decorID = 2452, model3D = 197968, source = "profession" } -- Dwarven District Banner
-DVD.ActiveItems[246700] = { decorID = 2465, model3D = 197653, source = "profession" } -- Gnomish Steam-Powered Bed
-DVD.ActiveItems[246705] = { decorID = 2468, model3D = 3870812, source = "profession" } -- Caramel Mint Noodle Dish
-DVD.ActiveItems[246708] = { decorID = 2471, model3D = 5203791, source = "profession" } -- Dornic Sliced Mineloaf
-DVD.ActiveItems[246709] = { decorID = 2472, model3D = 5203794, source = "profession" } -- Earthen Hospitality Cheese-Like Brick
-DVD.ActiveItems[247220] = { decorID = 2591, model3D = 643880, source = "profession" } -- Mushan Dumpling Stack
-DVD.ActiveItems[247222] = { decorID = 2593, model3D = 7109343, source = "profession" } -- Drake Kebab Platter
-DVD.ActiveItems[247224] = { decorID = 2595, model3D = 7109345, source = "profession" } -- Valdrakken Blossomfruit Platter
-DVD.ActiveItems[247225] = { decorID = 2596, model3D = 7109346, source = "profession" } -- Bruffalon Rib Platter
-DVD.ActiveItems[247661] = { decorID = 3831, model3D = 520142, source = "profession" } -- Pandaren Signal Brazier
-DVD.ActiveItems[247669] = { decorID = 3839, model3D = 6854354, source = "profession" } -- Lorewalker's Bookcase
-DVD.ActiveItems[247728] = { decorID = 3868, model3D = 519133, source = "profession" } -- Pandaren Stone Post
-DVD.ActiveItems[247731] = { decorID = 3871, model3D = 525038, source = "profession" } -- Hanging Paper Lanterns
-DVD.ActiveItems[247733] = { decorID = 3873, model3D = 526861, source = "profession" } -- Halfhill Cookpot
-DVD.ActiveItems[247735] = { decorID = 3875, model3D = 7508792, source = "profession" } -- Lucky Traveler's Bench
-DVD.ActiveItems[247736] = { decorID = 3876, model3D = 530128, source = "profession" } -- Jade Temple Dragon Fountain
-DVD.ActiveItems[247738] = { decorID = 3878, model3D = 575033, source = "profession" } -- Pandaren Meander Rug
-DVD.ActiveItems[247752] = { decorID = 3892, model3D = 6431405, source = "profession" } -- Pandaren Fireplace
-DVD.ActiveItems[247767] = { decorID = 3904, model3D = 579248, source = "profession" } -- Wise Pandaren's Bed
-DVD.ActiveItems[247856] = { decorID = 3994, model3D = 531405, source = "profession" } -- Serenity Peak Tent
-DVD.ActiveItems[247909] = { decorID = 4023, model3D = 1360361, source = "profession" } -- Suramar Fencepost
-DVD.ActiveItems[247916] = { decorID = 4030, model3D = 1361711, source = "profession" } -- Covered Square Suramar Table
-DVD.ActiveItems[247918] = { decorID = 4032, model3D = 1368700, source = "profession" } -- Nightborne Jeweler's Table
-DVD.ActiveItems[247920] = { decorID = 4034, model3D = 1378307, source = "profession" } -- Circular Shal'dorei Rug
-DVD.ActiveItems[247922] = { decorID = 4036, model3D = 1408526, source = "profession" } -- Suramar Fence
-DVD.ActiveItems[247923] = { decorID = 4037, model3D = 1408528, source = "profession" } -- Suramar Containment Cell
-DVD.ActiveItems[247925] = { decorID = 4039, model3D = 1445014, source = "profession" } -- Suramar Storage Crate
-DVD.ActiveItems[248010] = { decorID = 4041, model3D = 1373509, source = "profession" } -- Shal'dorei Open-Air Tent
-DVD.ActiveItems[248106] = { decorID = 4162, model3D = 3917374, source = "profession" } -- Valdrakken Banded Barrel
-DVD.ActiveItems[248107] = { decorID = 4163, model3D = 3917382, source = "profession" } -- Valdrakken Storage Crate
-DVD.ActiveItems[248108] = { decorID = 4164, model3D = 3917383, source = "profession" } -- Long Valdrakken Storage Crate
-DVD.ActiveItems[248109] = { decorID = 4165, model3D = 3952852, source = "profession" } -- Valdrakken Fence
-DVD.ActiveItems[248110] = { decorID = 4166, model3D = 3952853, source = "profession" } -- Valdrakken Fencepost
-DVD.ActiveItems[248111] = { decorID = 4167, model3D = 4204641, source = "profession" } -- Verdant Valdrakken Vase
-DVD.ActiveItems[248113] = { decorID = 4169, model3D = 4222966, source = "profession" } -- Thaldraszus Telescope
-DVD.ActiveItems[248114] = { decorID = 4170, model3D = 4237314, source = "profession" } -- Draconic Nesting Bed
-DVD.ActiveItems[248118] = { decorID = 4174, model3D = 4317323, source = "profession" } -- Literature of the Blue Dragonflight
-DVD.ActiveItems[248119] = { decorID = 4175, model3D = 4317324, source = "profession" } -- Literature of the Green Dragonflight
-DVD.ActiveItems[248120] = { decorID = 4176, model3D = 4317325, source = "profession" } -- Literature of the Red Dragonflight
-DVD.ActiveItems[248121] = { decorID = 4177, model3D = 4497614, source = "profession" } -- Draconic Circular Rug
-DVD.ActiveItems[248654] = { decorID = 4480, model3D = 7141934, source = "profession" } -- Valdrakken Gilded Throne
-DVD.ActiveItems[248657] = { decorID = 4483, model3D = 7141938, source = "profession" } -- Valdrakken Market Tent
-DVD.ActiveItems[248965] = { decorID = 5133, model3D = 7152563, source = "profession" } -- Resplendent Highborne Statue
-DVD.ActiveItems[249143] = { decorID = 5342, model3D = 7130714, source = "profession" } -- Smoke Sconce
-DVD.ActiveItems[251482] = { decorID = 8191, model3D = 928023, source = "profession" } -- Draenei Stargazer's Telescope
-DVD.ActiveItems[251495] = { decorID = 8196, model3D = 7273285, source = "profession" } -- Draenic Basin
-DVD.ActiveItems[251546] = { decorID = 8237, model3D = 902328, source = "profession" } -- Argussian Circular Rug
-DVD.ActiveItems[251550] = { decorID = 8241, model3D = 6436480, source = "profession" } -- Draenethyst Sconce
-DVD.ActiveItems[251655] = { decorID = 8787, model3D = 7280505, source = "profession" } -- Draenethyst String Lights
-DVD.ActiveItems[252035] = { decorID = 8983, model3D = 1602488, source = "profession" } -- Boralus Barrel
-DVD.ActiveItems[252389] = { decorID = 9038, model3D = 1602479, source = "profession" } -- Proudmoore Shipping Crate
-DVD.ActiveItems[252397] = { decorID = 9046, model3D = 1733921, source = "profession" } -- Brennadam Grinder
-DVD.ActiveItems[252399] = { decorID = 9048, model3D = 1852119, source = "profession"} -- Stormsong Stove
-DVD.ActiveItems[252401] = { decorID = 9050, model3D = 1852949, source = "profession" } -- Boralus Bookshelf
-DVD.ActiveItems[252755] = { decorID = 9167, model3D = 4902728, source = "profession" } -- Dornogal Framed Rug
-DVD.ActiveItems[252758] = { decorID = 9170, model3D = 5389585, source = "profession" } -- Boulder Springs Hot Tub
-DVD.ActiveItems[253022] = { decorID = 9180, model3D = 4902723, source = "profession" } -- Dornogal Bookcase
-DVD.ActiveItems[253036] = { decorID = 9184, model3D = 4896176, source = "profession" } -- Freywold Table
-DVD.ActiveItems[253039] = { decorID = 9187, model3D = 5149702, source = "profession" } -- Dornogal Hanging Sconce
-DVD.ActiveItems[253164] = { decorID = 9238, model3D = 4896178, source = "profession" } -- Algari Fence
-DVD.ActiveItems[253165] = { decorID = 9239, model3D = 4896180, source = "profession" } -- Algari Fencepost
-DVD.ActiveItems[253167] = { decorID = 9241, model3D = 4906204, source = "profession" } -- Forgeground Market Bins
-DVD.ActiveItems[253169] = { decorID = 9243, model3D = 5128194, source = "profession" } -- Meadery Storage Chest
-DVD.ActiveItems[253171] = { decorID = 9245, model3D = 7262810, source = "profession" } -- Replica Awakening Machine Stasis Pod
-DVD.ActiveItems[253250] = { decorID = 9266, model3D = 195048, source = "profession"} -- Tirisfal Hollow Campfire
-DVD.ActiveItems[253252] = { decorID = 9268, model3D = 5464693, source = "profession" } -- Replica Rumbling Wastes Drill Pod
-DVD.ActiveItems[253253] = { decorID = 9269, model3D = 5636650, source = "profession" } -- Gundargaz Candelabra
-DVD.ActiveItems[253457] = { decorID = 1142, model3D = 6856605, source = "profession" } -- Leather-Bound Haranir Wall Shelf
-DVD.ActiveItems[253506] = { decorID = 1247, model3D = 6865595, source = "profession" } -- Rootbound Vat
-DVD.ActiveItems[253508] = { decorID = 1328, model3D = 6330347, source = "profession" } -- Harandar Signpost
-DVD.ActiveItems[256170] = { decorID = 10964, model3D = 4216958, source = "profession" } -- Draconic Scribe's Basin
-DVD.ActiveItems[256171] = { decorID = 10965, model3D = 4326554, source = "profession" } -- Five Flights' Grimoire
-DVD.ActiveItems[256356] = { decorID = 11138, model3D = 6024532, source = "profession" } -- Sunsmoke Censer
-DVD.ActiveItems[256427] = { decorID = 11162, model3D = 3883456, source = "profession" } -- Wingrest Signal Brazier
-DVD.ActiveItems[256430] = { decorID = 11165, model3D = 4695276, source = "profession" } -- Valdrakken Hanging Cauldron
-DVD.ActiveItems[256680] = { decorID = 11281, model3D = 1363069, source = "profession" } -- Arcan'dor Cutting Fountain
-DVD.ActiveItems[256681] = { decorID = 11282, model3D = 1363079, source = "profession" } -- Nightspire Fountain
-DVD.ActiveItems[257035] = { decorID = 11370, model3D = 192356, source = "profession" } -- Bronze Banner of the Exiled
-DVD.ActiveItems[257036] = { decorID = 11371, model3D = 192362, source = "profession" } -- Draenei Smith's Anvil
-DVD.ActiveItems[257037] = { decorID = 11372, model3D = 192427, source = "profession" } -- Draenei Holo-Dais
-DVD.ActiveItems[257038] = { decorID = 11373, model3D = 192433, source = "profession" } -- Draenei Holo-Path
-DVD.ActiveItems[257039] = { decorID = 11374, model3D = 538413, source = "profession" } -- Draenei Crystal Forge
-DVD.ActiveItems[257040] = { decorID = 11375, model3D = 242964, source = "profession" } -- Dalaran Runic Anvil
-DVD.ActiveItems[257042] = { decorID = 11377, model3D = 304141, source = "profession" } -- Gilnean Pitchfork
-DVD.ActiveItems[257043] = { decorID = 11378, model3D = 528627, source = "profession" } -- Pandaren Alchemist's Retort
-DVD.ActiveItems[257044] = { decorID = 11379, model3D = 984595, source = "profession" } -- Orcish Felblood Cauldron
-DVD.ActiveItems[257045] = { decorID = 11380, model3D = 1309272, source = "profession" } -- Starry Scrying Pool
-DVD.ActiveItems[257046] = { decorID = 11381, model3D = 2026782, source = "profession" } -- Boralus Bottle Lamp
-DVD.ActiveItems[257047] = { decorID = 11382, model3D = 2026876, source = "profession"} -- Zandalari Bottle Shipment
-DVD.ActiveItems[257048] = { decorID = 11383, model3D = 3022762, source = "profession" } -- Aspirant's Meditation Pool
-DVD.ActiveItems[257049] = { decorID = 11384, model3D = 3153975, source = "profession"} -- Bejeweled Venthyr Chalice
-DVD.ActiveItems[257050] = { decorID = 11385, model3D = 3158888, source = "profession" } -- Veil-Secured Animacone
-DVD.ActiveItems[257051] = { decorID = 11386, model3D = 3184576, source = "profession" } -- Sintallow Candles
-DVD.ActiveItems[257052] = { decorID = 11387, model3D = 4240488, source = "profession" } -- Dragon's Elixir Bottle
-DVD.ActiveItems[257053] = { decorID = 11388, model3D = 4495939, source = "profession" } -- Tapestry of the Five Flights
-DVD.ActiveItems[257093] = { decorID = 11431, model3D = 538417, source = "profession" } -- Aldor Stellar Console
-DVD.ActiveItems[257094] = { decorID = 11432, model3D = 243044, source = "profession" } -- Mark of the Mages' Eye
-DVD.ActiveItems[257095] = { decorID = 11433, model3D = 317822, source = "profession" } -- Twilight Fire Canister
-DVD.ActiveItems[257096] = { decorID = 11434, model3D = 522294, source = "profession" } -- Pandaren Table Lamp
-DVD.ActiveItems[257097] = { decorID = 11435, model3D = 591464, source = "profession" } -- Intense Mogu Brazier
-DVD.ActiveItems[257098] = { decorID = 11436, model3D = 3641039, source = "profession" } -- Venthyr Anima Bottle
-DVD.ActiveItems[257101] = { decorID = 11439, model3D = 242720, source = "profession" } -- Stampwhistle's Postal Portal
-DVD.ActiveItems[257102] = { decorID = 11440, model3D = 5201694, source = "profession" } -- Nerubian Alchemist's Retort
-DVD.ActiveItems[257400] = { decorID = 11490, model3D = 1253405, source = "profession" } -- Highmountain Tanner's Frame
-DVD.ActiveItems[257402] = { decorID = 11492, model3D = 314545, source = "profession" } -- "Unity of Thorns" Tapestry
-DVD.ActiveItems[257404] = { decorID = 11494, model3D = 304698, source = "profession" } -- Pyrewood Glass Bottle
-DVD.ActiveItems[257406] = { decorID = 11496, model3D = 311599, source = "profession" } -- Smoke Lamp
-DVD.ActiveItems[257409] = { decorID = 11497, model3D = 311627, source = "profession" } -- Standing Smoke Lamp
-DVD.ActiveItems[257420] = { decorID = 11501, model3D = 6023421, source = "profession" } -- Silvermoon Spire Fountain
-DVD.ActiveItems[257689] = { decorID = 11718, model3D = 305999, source = "profession" } -- Small Gilnean Windmill
-DVD.ActiveItems[257693] = { decorID = 11722, model3D = 195749, source = "profession" } -- Snowfall Tribe Scare-Totem
-DVD.ActiveItems[257694] = { decorID = 11723, model3D = 304700, source = "profession" } -- Gilnean Green Potion
-DVD.ActiveItems[257695] = { decorID = 11724, model3D = 305385, source = "profession" } -- Gilnean Postbox
-DVD.ActiveItems[257696] = { decorID = 11725, model3D = 305396, source = "profession"} -- Gilnean Map
-DVD.ActiveItems[257725] = { decorID = 11755, model3D = 6711676, source = "profession" } -- Camp Narache Rug
-DVD.ActiveItems[257806] = { decorID = 11779, model3D = 360034, source = "profession" } -- Scaled Twilight Mosaic
-DVD.ActiveItems[258190] = { decorID = 11878, model3D = 191781, source = "profession" } -- Outland Mag'har Banner
-DVD.ActiveItems[258191] = { decorID = 11879, model3D = 191839, source = "profession" } -- Arakkoa Decoy Scarecrow
-DVD.ActiveItems[258192] = { decorID = 11880, model3D = 191859, source = "profession" } -- Talon King's Totem
-DVD.ActiveItems[258193] = { decorID = 11881, model3D = 192441, source = "profession" } -- Draenei Holo-Projector Pedestal
-DVD.ActiveItems[258194] = { decorID = 11882, model3D = 192446, source = "profession" } -- Tempest Keep Cryo-Pod
-DVD.ActiveItems[258195] = { decorID = 11883, model3D = 192460, source = "profession" } -- Draenei Weaver's Loom
-DVD.ActiveItems[258196] = { decorID = 11884, model3D = 192461, source = "profession" } -- Draenei Transmitter
-DVD.ActiveItems[258197] = { decorID = 11885, model3D = 192468, source = "profession" } -- Crystal Signpost
-DVD.ActiveItems[258198] = { decorID = 11886, model3D = 192515, source = "profession" } -- Gilded Draenei Round Table
-DVD.ActiveItems[258199] = { decorID = 11887, model3D = 193332, source = "profession" } -- Aldor Bookcase
-DVD.ActiveItems[258200] = { decorID = 11888, model3D = 193369, source = "profession" } -- Shattrath Sconce
-DVD.ActiveItems[258201] = { decorID = 11889, model3D = 193371, source = "profession" } -- Shattrath Lamppost
-DVD.ActiveItems[258202] = { decorID = 11890, model3D = 193745, source = "profession" } -- Grand Drape of the Exiles
-DVD.ActiveItems[258203] = { decorID = 11891, model3D = 194464, source = "profession" } -- Silver Dalaran Bench
-DVD.ActiveItems[258204] = { decorID = 11892, model3D = 194471, source = "profession" } -- Dalaran Post
-DVD.ActiveItems[258205] = { decorID = 11893, model3D = 200015, source = "profession" } -- Wolvar Postbag
-DVD.ActiveItems[258206] = { decorID = 11894, model3D = 242983, source = "profession" } -- Gilded Dalaran Banner
-DVD.ActiveItems[258207] = { decorID = 11895, model3D = 242995, source = "profession" } -- Dalaran Scholar's Bookcase
-DVD.ActiveItems[258208] = { decorID = 11896, model3D = 243016, source = "profession" } -- Kirin Tor Sun Chandelier
-DVD.ActiveItems[258209] = { decorID = 11897, model3D = 243030, source = "profession" } -- Kirin Tor Crate
-DVD.ActiveItems[258210] = { decorID = 11898, model3D = 243054, source = "profession" } -- Dalaran Street Sign
-DVD.ActiveItems[258211] = { decorID = 11899, model3D = 243189, source = "profession" } -- Kirin Tor Glass Table
-DVD.ActiveItems[258212] = { decorID = 11900, model3D = 243528, source = "profession" } -- San'layn Blood Orb
-DVD.ActiveItems[258213] = { decorID = 11901, model3D = 243545, source = "profession" } -- Icecrown Plague Canister
-DVD.ActiveItems[258214] = { decorID = 11902, model3D = 528655, source = "profession" } -- Pandaren Alchemist's Kit
-DVD.ActiveItems[258215] = { decorID = 11903, model3D = 538411, source = "profession" } -- Halaa Bench
-DVD.ActiveItems[258216] = { decorID = 11904, model3D = 666489, source = "profession" } -- Reconstructed Mogu Lightning Drill
-DVD.ActiveItems[258224] = { decorID = 11910, model3D = 1319120, source = "profession" } -- Dalaran Display Shelves
-DVD.ActiveItems[258225] = { decorID = 11911, model3D = 1355533, source = "profession" } -- Failed Failure Detection Pylon
-DVD.ActiveItems[258226] = { decorID = 11912, model3D = 1355598, source = "profession" } -- Dalaran Auto-Hammer
-DVD.ActiveItems[258227] = { decorID = 11913, model3D = 1396746, source = "profession" } -- Suramar Jeweler's Assortment
-DVD.ActiveItems[258235] = { decorID = 11917, model3D = 3033118, source = "profession" } -- Aspiring Soul's Chair
-DVD.ActiveItems[258237] = { decorID = 11918, model3D = 3036110, source = "profession" } -- Ardenweald Lamppost
-DVD.ActiveItems[258238] = { decorID = 11919, model3D = 3036549, source = "profession" } -- Maldraxxian Crate
-DVD.ActiveItems[258239] = { decorID = 11920, model3D = 3036651, source = "profession" } -- Tome of Maldraxxian Rituals
-DVD.ActiveItems[258240] = { decorID = 11921, model3D = 3154869, source = "profession" } -- Kyrian Anima Barrel
-DVD.ActiveItems[258242] = { decorID = 11922, model3D = 3158874, source = "profession" } -- Hollow Night Fae Shrine
-DVD.ActiveItems[258244] = { decorID = 11923, model3D = 3246827, source = "profession" } -- Broker's Hex Table
-DVD.ActiveItems[258245] = { decorID = 11924, model3D = 3507170, source = "profession" } -- Ardenweald Hanging Baskets
-DVD.ActiveItems[258247] = { decorID = 11925, model3D = 3607336, source = "profession" } -- Large Revendreth Storage Crate
-DVD.ActiveItems[258248] = { decorID = 11926, model3D = 3619351, source = "profession" } -- Margrave's Stitched Leather Rug
-DVD.ActiveItems[258250] = { decorID = 11927, model3D = 3836261, source = "profession" } -- Cartel Ta Bookcase
-DVD.ActiveItems[258252] = { decorID = 11928, model3D = 4005944, source = "profession" } -- Cartel Xy Capture Crate
-DVD.ActiveItems[258253] = { decorID = 11929, model3D = 4420607, source = "profession" } -- Titanic Tyrhold Fountain
-DVD.ActiveItems[258289] = { decorID = 11935, model3D = 200451, source = "profession" } -- Thunder Bluff Totem
-DVD.ActiveItems[258298] = { decorID = 11941, model3D = 242974, source = "profession" } -- Kirin Tor Skyline Banner
-DVD.ActiveItems[258302] = { decorID = 11945, model3D = 577662, source = "profession" } -- Pandaren Fishing Net
-DVD.ActiveItems[258303] = { decorID = 11946, model3D = 903883, source = "profession"} -- Beloved Elekk Plushie
-DVD.ActiveItems[258557] = { decorID = 12161, model3D = 1282676, source = "profession"} -- Beloved Raptor Plushie
-DVD.ActiveItems[258558] = { decorID = 12162, model3D = 1830320, source = "profession" } -- Sandfury Diplomat's Banner
-DVD.ActiveItems[258559] = { decorID = 12163, model3D = 2057302, source = "profession" } -- Tidesage's Totem
-DVD.ActiveItems[258560] = { decorID = 12164, model3D = 2438950, source = "profession" } -- Drust Enchanter's Rod
-DVD.ActiveItems[258561] = { decorID = 12165, model3D = 3051055, source = "profession" } -- Kyrian Aspirant's Rolled Cushion
-DVD.ActiveItems[260699] = { decorID = 14380, model3D = 3038200, source = "profession" } -- Maldraxxian Runic Tablet
-DVD.ActiveItems[262347] = { decorID = 14553, model3D = 538415, source = "profession" } -- Draenei Crystal Chandelier
-DVD.ActiveItems[262352] = { decorID = 14555, model3D = 6700983, source = "profession" } -- Lush Telogrus Carpet
-DVD.ActiveItems[262354] = { decorID = 14557, model3D = 6700987, source = "profession" } -- Riftstone
-DVD.ActiveItems[262355] = { decorID = 14558, model3D = 6701005, source = "profession" } -- Entropic Illuminant
-DVD.ActiveItems[262356] = { decorID = 14559, model3D = 6796712, source = "profession" } -- Haranir Preserving Agents
-DVD.ActiveItems[262449] = { decorID = 14579, model3D = 6005302, source = "profession" } -- Embossed Sin'dorei Fur Rug
-DVD.ActiveItems[262450] = { decorID = 14580, model3D = 6024551, source = "profession" } -- Ensorcelled Broom
-DVD.ActiveItems[262451] = { decorID = 14581, model3D = 6033614, source = "profession" } -- Gilded Silvermoon Anvil
-DVD.ActiveItems[262452] = { decorID = 14582, model3D = 6033619, source = "profession" } -- Masterwork Crafting Hammer
-DVD.ActiveItems[262454] = { decorID = 14584, model3D = 6033623, source = "profession" } -- Shining Sin'dorei Hourglass
-DVD.ActiveItems[262455] = { decorID = 14585, model3D = 6033624, source = "profession" } -- Font of Gleaming Water
-DVD.ActiveItems[262456] = { decorID = 14586, model3D = 6209622, source = "profession" } -- Ornamental Silvermoon Hanger
-DVD.ActiveItems[262457] = { decorID = 14587, model3D = 6209623, source = "profession" } -- Gilded Silvermoon Hanger
-DVD.ActiveItems[262460] = { decorID = 14590, model3D = 6700980, source = "profession" } -- Ren'dorei Anvil
-DVD.ActiveItems[262461] = { decorID = 14591, model3D = 6700985, source = "profession" } -- Tenebrous Ren'dorei Armillary
-DVD.ActiveItems[262464] = { decorID = 14594, model3D = 6700989, source = "profession" } -- Floating Void-Touched Tome
-DVD.ActiveItems[262465] = { decorID = 14595, model3D = 6700990, source = "profession" } -- Ren'dorei Stargazer
-DVD.ActiveItems[262468] = { decorID = 14598, model3D = 6861008, source = "profession" } -- Ren'dorei Postal Repository
-DVD.ActiveItems[262469] = { decorID = 14599, model3D = 6929052, source = "profession" } -- Brilliant Phoenix Harp
-DVD.ActiveItems[262471] = { decorID = 14601, model3D = 7050760, source = "profession" } -- Bejeweled Sin'dorei Lyre
-DVD.ActiveItems[262589] = { decorID = 14615, model3D = 5163362, source = "profession" } -- Simple Haranir Table
-DVD.ActiveItems[262590] = { decorID = 14616, model3D = 4928309, source = "profession" } -- Rootflame Campfire
-DVD.ActiveItems[262591] = { decorID = 14617, model3D = 6050843, source = "profession" } -- Luxurious Silvermoon Lounge Cushion
-DVD.ActiveItems[262592] = { decorID = 14618, model3D = 6050852, source = "profession" } -- Plush Silvermoon Bed
-DVD.ActiveItems[262593] = { decorID = 14619, model3D = 6050855, source = "profession" } -- Chic Silvermoon Pillow
-DVD.ActiveItems[262594] = { decorID = 14620, model3D = 6050872, source = "profession" } -- Homely Sin'dorei Shelf
-DVD.ActiveItems[262595] = { decorID = 14621, model3D = 6050877, source = "profession" } -- Homely Wall Shelves
-DVD.ActiveItems[262597] = { decorID = 14622, model3D = 6074149, source = "profession" } -- Gilded Eversong Book
-DVD.ActiveItems[262598] = { decorID = 14623, model3D = 6103388, source = "profession" } -- Opened Sin'dorei Scroll
-DVD.ActiveItems[262599] = { decorID = 14624, model3D = 6209625, source = "profession" } -- Silvermoon Curtains
-DVD.ActiveItems[262600] = { decorID = 14625, model3D = 6310375, source = "profession" } -- Stitched Haranir Rug
-DVD.ActiveItems[262601] = { decorID = 14626, model3D = 6326918, source = "profession" } -- Wild Hanging Scroll
-DVD.ActiveItems[262602] = { decorID = 14627, model3D = 6404236, source = "profession" } -- Ren'dorei Warp Orb
-DVD.ActiveItems[262611] = { decorID = 14636, model3D = 6701013, source = "profession" } -- Voidstrider Saddlebag
-DVD.ActiveItems[262612] = { decorID = 14637, model3D = 6701016, source = "profession" } -- Sturdy Ren'dorei Cask
-DVD.ActiveItems[262613] = { decorID = 14638, model3D = 6715097, source = "profession" } -- Replica Haranir Mural
-DVD.ActiveItems[262615] = { decorID = 14640, model3D = 6935637, source = "profession" } -- Sin'dorei Phoenix Quill
-DVD.ActiveItems[262616] = { decorID = 14641, model3D = 6935640, source = "profession"} -- Lively Songwriter's Quill
-DVD.ActiveItems[262617] = { decorID = 14642, model3D = 6980931, source = "profession" } -- Ren'dorei Crafting Framework
-DVD.ActiveItems[262618] = { decorID = 14643, model3D = 7119312, source = "profession" } -- Ren'dorei Void Projector
-DVD.ActiveItems[262663] = { decorID = 14676, model3D = 2991599, source = "profession" } -- Kyrian Floating Lamp
-DVD.ActiveItems[262789] = { decorID = 14730, model3D = 5661242, source = "profession" } -- Small Telogrus Lamp
-DVD.ActiveItems[262790] = { decorID = 14731, model3D = 5915398, source = "profession" } -- Restful Bronze Bench
-DVD.ActiveItems[263027] = { decorID = 14816, model3D = 203845, source = "profession" } -- Darkmaster's Mystical Brazier
-DVD.ActiveItems[263034] = { decorID = 14820, model3D = 7476200, source = "profession" } -- Magnificent Towering Bookcase
-DVD.ActiveItems[263049] = { decorID = 14835, model3D = 6210884, source = "profession" } -- Ren'dorei Lightpost
-DVD.ActiveItems[264244] = { decorID = 15479, model3D = 5161738, source = "profession" } -- Plush Haranir Leather Pillow
-DVD.ActiveItems[264676] = { decorID = 16012, model3D = 243143, source = "profession" } -- Dalaran Sewer Gate
-DVD.ActiveItems[264677] = { decorID = 16013, model3D = 424389, source = "profession" } -- Rolled Scarab Rug
-DVD.ActiveItems[264678] = { decorID = 16014, model3D = 2992361, source = "profession" } -- Aspirant's Ringed Banner
-DVD.ActiveItems[264679] = { decorID = 16015, model3D = 4286997, source = "profession" } -- Valdrakken Wall Shelf
-DVD.ActiveItems[264707] = { decorID = 16084, model3D = 197671, source = "profession" } -- Resizable All-Purpose Gear
-DVD.ActiveItems[264708] = { decorID = 16085, model3D = 197708, source = "profession" } -- Home Defense Gadget
-DVD.ActiveItems[264710] = { decorID = 16087, model3D = 243135, source = "profession" } -- Dalaran Sun Sconce
-DVD.ActiveItems[264711] = { decorID = 16088, model3D = 244205, source = "profession" } -- Joybuzz's Joyful Wall of Trains
-DVD.ActiveItems[264712] = { decorID = 16089, model3D = 306120, source = "profession" } -- Gilnean Spare Saddle
-DVD.ActiveItems[264713] = { decorID = 16090, model3D = 3564033, source = "profession" } -- Heart of the Forest Banner
-DVD.ActiveItems[264899] = { decorID = 16219, model3D = 191825, source = "profession" } -- Arakkoan Alchemist's Concoction
-DVD.ActiveItems[264900] = { decorID = 16220, model3D = 191826, source = "profession" } -- Arakkoan Alchemist's Bottle
-DVD.ActiveItems[265791] = { decorID = 17515, model3D = 4899958, source = "profession" } -- Haranir Canopy Bed
-DVD.ActiveItems[246693] = { decorID = 2460, model3D = 7033362, source = "profession" } -- Self-Pouring Thalassian Sunwine
-DVD.ActiveItems[262458] = { decorID = 14588, model3D = 6427291, source = "profession" } -- Animated Sin'dorei Pick
-DVD.ActiveItems[262459] = { decorID = 14589, model3D = 6427292, source = "profession" } -- Animated Sin'dorei Hammer
-DVD.ActiveItems[262470] = { decorID = 14600, model3D = 7009238, source = "profession" } -- Spellbound Tome of Thalassian Magics
-DVD.ActiveItems[264705] = { decorID = 16082, model3D = 191966, source = "profession" } -- Glazed Sin'dorei Vial
-DVD.ActiveItems[268038] = { decorID = 19229, model3D = 7009238, source = "profession" } -- Endless Codex of Blooming Light
-DVD.ActiveItems[268039] = { decorID = 19231, model3D = 7009238, source = "profession" } -- Endless Codex of Nature's Grace
-DVD.ActiveItems[268041] = { decorID = 19234, model3D = 7009238, source = "profession" } -- Endless Codex of the Voidtouched
+do -- 📦 Cursed Keepsake Quests
+DVD.ActiveItems[244347] = { decorID = 1430, model3D = 6904849, source = "quest" } -- Purified Troll Urn
+DVD.ActiveItems[245991] = { decorID = 1907, model3D = 6985812, source = "quest" } -- Purified Sin'dorei Candle
+DVD.ActiveItems[245993] = { decorID = 1909, model3D = 6985814, source = "quest" } -- Purified Floating Lantern
+DVD.ActiveItems[252042] = { decorID = 8990, model3D = 6212457, source = "quest" } -- Purified Troll Pitcher
+DVD.ActiveItems[253396] = { decorID = 9289, model3D = 6654738, source = "quest" } -- Purified Crude Axe
+DVD.ActiveItems[253703] = { decorID = 9627, model3D = 6654736, source = "quest" } -- Purified Crude Hammer
+DVD.ActiveItems[255652] = { decorID = 10862, model3D = 6654716, source = "quest" } -- Purified Troll Loop
+DVD.ActiveItems[255712] = { decorID = 10896, model3D = 6654760, source = "quest" } -- Purified Ancient Urn
+DVD.ActiveItems[256361] = { decorID = 11140, model3D = 6654720, source = "quest" } -- Purified Troll Pendant
+DVD.ActiveItems[263876] = { decorID = 15286, model3D = 7338169, source = "quest" } -- Purified Folk Mirror
+DVD.ActiveItems[256684] = { decorID = 11285, model3D = 6654719, source = "quest" } -- Purified Troll Amulet
+DVD.ActiveItems[267205] = { decorID = 18796, model3D = 7345175, source = "quest" } -- Purified Folk Candle
+DVD.ActiveItems[267355] = { decorID = 18880, model3D = 7554177, source = "quest" } -- Purified Elven Mirror
+DVD.ActiveItems[267435] = { decorID = 18960, model3D = 7554186, source = "quest" } -- Purified Kaldorei Candle
+DVD.ActiveItems[268943] = { decorID = 20332, model3D = 7554195, source = "quest" } -- Purified Elven Glowlamp
+DVD.ActiveItems[272129] = { decorID = 21873, model3D = 1324327, source = "quest" } -- Purified Tauren Pot
+DVD.ActiveItems[272142] = { decorID = 21886, model3D = 5203782, source = "quest" } -- Purified Earthen Pot
+DVD.ActiveItems[278696] = { decorID = 26492, model3D = 4495230, source = "quest" } -- Purified Dracthyr Stein
+DVD.ActiveItems[278701] = { decorID = 26494, model3D = 5793093, source = "quest" } -- Purified Goblin Cup
+DVD.ActiveItems[258540] = { decorID = 12145, model3D = 6654715, source = "quest" } -- Purified Troll Ring
 end
 
 
 
+
+
+
+
+-- DVD.ActiveItems[246960] = { decorID = 2589, model3D = 6225717, cam = {x=0.00, z=0.36, y=2.00, zf=2.4}, soldBy = {240407}, source = "vendor"} possibly removed
 
 
 

@@ -1,10 +1,10 @@
-## Interface: 120007, 120100
-## Version: 2.06
+## Interface: 120100, 120105
+## Version: 2.14
 ## Title: |cff00ccffDecor Vendor|r
 ## Author: MidniteDestiny
 ## Notes: Tracks vendors that sell housing decor!
 ## IconTexture: Interface\AddOns\DecorVendor\Assets\decorvendoricon.tga
-## SavedVariables: vendorSettings, dbDV
+## SavedVariables: vendorSettings, dbDV, DecorVendorNeighborhoodDB
 ## OptionalDeps: TomTom, WaypointUI
 ## AddonCompartmentFunc: DecorVendor_OnAddonCompartmentClick
 ## AddonCompartmentFuncOnEnter: DecorVendor_OnAddonCompartmentEnter
@@ -21,27 +21,30 @@ Libs\CallbackHandler-1.0.lua
 Libs\LibDataBroker-1.1.lua
 Libs\LibDBIcon-1.0.lua
 
-constants.lua
+Shared\Fonts.lua
+Shared\constants.lua
+Shared\SourceActions.lua
+Shared\Constants_Colors.lua
+Shared\Constants_Filters.lua
 
 # ============================================================
 # 2. CORE DATABASE REGISTRIES
 # ============================================================
-ActiveDatabase.lua
+Data\ActiveDatabase.lua
 Catalog\CatalogRecords.lua
 
 Data\ActiveItems.lua
-Data\ActiveItems_12_1.lua
-Data\ActiveItems_Shop.lua
+Data\ActiveItems_ClassHalls.lua
+Data\ActiveItems_Drops.lua
+Data\ActiveItems_Professions.lua
+Data\ActiveItems_Promo.lua
+Data\ActiveItems_Reputations.lua
+Data\ActiveItems_PTR.lua
 
-ListSources\vendors.lua
-ListSources\quests.lua
-ListSources\professions.lua
-ListSources\achievements.lua
-ListSources\bossdrops.lua
-
-GallerySources\GalleryItemDetails.lua
-GallerySources\GalleryItemDetails_12_1.lua
-GallerySources\GalleryVendorDetails.lua
+Sources\MainSources.lua
+Sources\GalleryItemDetails.lua
+Sources\GalleryVendorDetails.lua
+Sources\PTRNpcs.lua
 
 Debug.lua
 
@@ -49,79 +52,51 @@ Debug.lua
 # 3. ADDON UTILITIES, FILTERS & HOOKS
 # ============================================================
 filters.lua
-Helpers.lua
-
-Core\ActiveItemLookups.lua
-Core\EscBehavior.lua
-Core\RuntimeHelpers.lua
+Helpers\Helpers.lua
 Core\Utilities.lua
-Core\VendorTracking.lua
-Core\GalleryLoader.lua
 
 # ============================================================
 # 4. MAIN UI SHELL
 # ============================================================
-UI\MainHomePanel.lua
-UI\MainFrame.lua
+Frames\MainHomePanel.lua
+Frames\MainFrame.lua
 UI\PreviewPanel.lua
 UI\ListFrame.lua
-UI\BottomTabs.lua
-
-# ============================================================
-# 5. MAIN UI SUPPORT PANELS
-# ============================================================
-UI\VendorPopup.lua
-UI\ReagentsPopup.lua
-UI\NotesPanels.lua
-UI\StatsPanel.lua
 
 # ============================================================
 # 6. MAIN UI ROW RENDERERS
 # ============================================================
-UI\VendorRows.lua
-UI\ProfessionRows.lua
-UI\QuestRows.lua
-UI\AchievementRows.lua
-UI\BossDropRows.lua
+Rows\RowWidgets.lua
+Rows\VendorRows.lua
+Rows\ProfessionRows.lua
+Rows\QuestRows.lua
+Rows\AchievementRows.lua
+Rows\BossDropRows.lua
+Rows\ShopRows.lua
 
 # ============================================================
 # 7. MAIN UI BUILDERS / MERCHANT / OPTIONS / COMMANDS
 # ============================================================
 UI\ListBuilders.lua
-UI\MerchantFrame.lua
 UI\OptionsPanel.lua
-UI\Commands.lua
 
 # ============================================================
 # 8. MAIN ADDON CORE
 # ============================================================
-DecorVendor.lua
+Core.lua
 
 # ============================================================
 # 9. GALLERY CORE
 # ============================================================
-Gallery.lua
 GalleryCore\GalleryUtils.lua
-
-GalleryCore\ItemHelpers.lua
-GalleryCore\SourceHelpers.lua
+Helpers\GalleryHelpers.lua
 GalleryCore\FilterHelpers.lua
-GalleryCore\AchievementHelpers.lua
-GalleryCore\PriceHelpers.lua
 GalleryCore\GalleryDetailsBridge.lua
 
 # ============================================================
 # 10. GALLERY UI
 # ============================================================
-GalleryUI\Sidebar.lua
-GalleryUI\Grid.lua
-GalleryUI\Preview.lua
-GalleryUI.lua
-
-# ============================================================
-# 11. STARTUP / LIFECYCLE LAST
-# ============================================================
-Core\Startup.lua
+Frames\GalleryUI.lua
 
 # ============================================================
 # 12. DEVELOPER UTILITY TOOLS

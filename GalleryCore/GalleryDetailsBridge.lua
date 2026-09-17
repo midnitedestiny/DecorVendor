@@ -13,20 +13,28 @@
 -- 5. Never pull extra vendors from sourceIndex/vendorGoodies here.
 -- ============================================================
 
--- 🌟 NATIVE UNIFIED NAMESPACE SCHEMA LINK
 local addonName, DVD = ...
 
-local Gallery = DVD.Gallery or {}
-DVD.Gallery = Gallery
+local Gallery = DVD.Gallery
 
-Gallery.C = Gallery.C or DVD.C or {}
-local C = Gallery.C
+if not Gallery then
+    print("|cffff4040DecorVendor Gallery DetailsBridge:|r DVD.Gallery is missing.")
+    return
+end
 
--- Keep old functions as fallbacks where they are safe.
-local OldGetPriceText = Gallery.GetPriceText
-local OldBuildPreviewSourceText = Gallery.BuildPreviewSourceText
-local OldCleanPriceText = Gallery.CleanPriceText
-local OldGetAchievementForItem = Gallery.GetAchievementForItem
+local C = DVD.CONSTANTS or DVD.C
+
+if not C then
+    print("|cffff4040DecorVendor Gallery DetailsBridge:|r constants are missing.")
+    return
+end
+
+local SOURCE_ACTIONS = C.SOURCE_ACTIONS or {}
+local RARE_EVENTS = C.RARE_EVENTS or {}
+local SOURCE_LABELS = C.SOURCE_LABELS or {}
+
+-- GalleryAchievements.lua owns the base achievement lookup.
+local BaseGetAchievementForItem = Gallery.GetAchievementForItem
 
 -- ============================================================
 -- Basic item/detail helpers
@@ -37,15 +45,19 @@ local function GetItemData(item)
     return item.data or item or {}
 end
 
-local RawItemIDCache = {}
+local RawItemIDCache =
+    setmetatable(
+        {},
+        {
+            __mode = "k",
+        }
+    )
 
 local function LookupActiveItemsTable()
-    if DVD and type(DVD.ActiveItems) == "table" then
+    if type(DVD.ActiveItems) == "table" then
         return DVD.ActiveItems
     end
-    if Gallery and type(Gallery.ActiveItems) == "table" then
-        return Gallery.ActiveItems
-    end
+
     return nil
 end
 
@@ -67,8 +79,6 @@ local function FindItemIDByRawDataTable(data)
     for itemID, itemData in pairs(activeItems) do
         if itemData == data then
             RawItemIDCache[data] = itemID
-            data.itemID = data.itemID or itemID
-            data.id = data.id or itemID
             return itemID
         end
     end
@@ -98,12 +108,79 @@ local function FindItemIDByRawDataTable(data)
 
     if foundItemID then
         RawItemIDCache[data] = foundItemID
-        data.itemID = data.itemID or foundItemID
-        data.id = data.id or foundItemID
         return foundItemID
     end
 
     return nil
+end
+
+local function GetVendorIDFromSoldByEntry(entry)
+    if type(entry) == "number"
+    or type(entry) == "string" then
+        return tonumber(entry)
+    end
+
+    if type(entry) ~= "table" then
+        return nil
+    end
+
+    return tonumber(
+        entry.vendorID
+        or entry.vendorId
+        or entry.npcID
+        or entry.npcId
+        or entry.id
+        or entry[1]
+    )
+end
+
+local function ForEachSoldByVendor(soldBy, callback)
+    if type(callback) ~= "function" then
+        return
+    end
+
+    if type(soldBy) == "number"
+    or type(soldBy) == "string" then
+        local vendorID =
+            tonumber(soldBy)
+
+        if vendorID then
+            callback(
+                vendorID,
+                soldBy
+            )
+        end
+
+        return
+    end
+
+    if type(soldBy) ~= "table" then
+        return
+    end
+
+    local seen = {}
+
+    for key, entry in pairs(soldBy) do
+        local vendorID
+
+        if entry == true then
+            vendorID =
+                tonumber(key)
+        else
+            vendorID =
+                GetVendorIDFromSoldByEntry(entry)
+        end
+
+        if vendorID
+        and not seen[vendorID] then
+            seen[vendorID] = true
+
+            callback(
+                vendorID,
+                entry
+            )
+        end
+    end
 end
 
 local function GetItemID(item)
@@ -161,56 +238,42 @@ local function GetActiveItemDataByID(itemID)
     return LookupDetailsByID(activeItems, itemID)
 end
 
-local function GetVendorIDFromAnySoldByEntry(entry)
-    if type(entry) == "number" then
-        return entry
-    end
-
-    if type(entry) == "table" then
-        return entry.vendorID
-            or entry.vendorId
-            or entry.npcID
-            or entry.npcId
-            or entry.id
-            or entry[1]
-    end
-
-    return nil
-end
-
 local function BuildAllowedVendorIDs(item, itemID)
     local allowed = {}
     local hasAllowed = false
 
-    local data = GetItemData(item)
-    local activeData = GetActiveItemDataByID(itemID)
+    local data =
+        GetItemData(item)
+
+    local activeData =
+        GetActiveItemDataByID(itemID)
 
     local soldBy =
-        (type(data) == "table" and (data.soldBy or (data.vendorID and { data.vendorID })))
-        or (type(activeData) == "table" and (activeData.soldBy or (activeData.vendorID and { activeData.vendorID })))
+        type(data) == "table"
+        and (
+            data.soldBy
+            or data.vendorID
+        )
+        or nil
 
-    if type(soldBy) == "number" then
-        soldBy = { soldBy }
+    if soldBy == nil
+    and type(activeData) == "table" then
+        soldBy =
+            activeData.soldBy
+            or activeData.vendorID
     end
 
-    if type(soldBy) ~= "table" then
-        return nil
-    end
-
-    for _, soldByEntry in ipairs(soldBy) do
-        local vendorID = tonumber(GetVendorIDFromAnySoldByEntry(soldByEntry))
-
-        if vendorID then
+    ForEachSoldByVendor(
+        soldBy,
+        function(vendorID)
             allowed[vendorID] = true
             hasAllowed = true
         end
-    end
+    )
 
-    if not hasAllowed then
-        return nil
-    end
-
-    return allowed
+    return hasAllowed
+        and allowed
+        or nil
 end
 
 local function FilterVendorDetailsBySoldBy(details, item, itemID)
@@ -342,304 +405,133 @@ end
 -- ============================================================
 -- Achievement bridge
 -- ============================================================
-
 function Gallery.GetAchievementForItem(item)
-    if not item then return nil end
+    if type(item) ~= "table" then
+        return nil
+    end
 
-    local itemDetails = Gallery.GetItemDetailsForItem and Gallery.GetItemDetailsForItem(item) or {}
-    local data = GetItemData(item)
+    local base =
+        BaseGetAchievementForItem
+        and BaseGetAchievementForItem(item)
+        or nil
 
-    -- GalleryItemDetails.lua wins first.
-    local achievementID = itemDetails.achievementID or data.achievementID
+    local itemDetails =
+        Gallery.GetItemDetailsForItem(item)
+        or {}
 
-    local achievementName =
+    local data =
+        GetItemData(item)
+
+    local achievementID =
+        tonumber(
+            itemDetails.achievementID
+            or itemDetails.achieveID
+            or data.achievementID
+            or data.achieveID
+            or (
+                base
+                and (
+                    base.id
+                    or base.achievementID
+                )
+            )
+        )
+
+    local explicitName =
         itemDetails.achievementName
         or data.achievementName
-        or GetCatalogLineValue(item, "Achievement")
+        or GetCatalogLineValue(
+            item,
+            "Achievement"
+        )
 
-    if achievementID or achievementName then
-        return {
-            id = achievementID,
-            achievementID = achievementID,
-            name = achievementName or ("Achievement " .. tostring(achievementID)),
-            achievementName = achievementName or ("Achievement " .. tostring(achievementID)),
-            category =
+    if not achievementID
+    and not explicitName then
+        return base
+    end
+
+    local apiName
+    local completed = false
+    local earnedBy
+
+    if achievementID
+    and Gallery.GetAchievementNameByID then
+        apiName,
+        completed,
+        earnedBy =
+            Gallery.GetAchievementNameByID(
+                achievementID
+            )
+    end
+
+    local achievementName =
+        explicitName
+        or (
+            base
+            and (
+                base.name
+                or base.title
+                or base.achievementName
+            )
+        )
+        or apiName
+        or (
+            "Achievement "
+            .. tostring(
+                achievementID
+                or "?"
+            )
+        )
+
+    return {
+        id = achievementID,
+        achievementID = achievementID,
+
+        name = achievementName,
+        achievementName = achievementName,
+
+        title =
+            itemDetails.title
+            or data.title
+            or (
+                base
+                and base.title
+            ),
+
+        category =
             itemDetails.achievementCategory
             or data.achievementCategory
             or itemDetails.category
-            or data.category,
-            faction = itemDetails.faction or data.faction or "neutral",
-        }
-    end
+            or data.category
+            or (
+                base
+                and base.category
+            ),
 
-    -- Safe fallback to old helper only when our detail files do not have anything.
-    if OldGetAchievementForItem then
-        return OldGetAchievementForItem(item)
-    end
+        faction =
+            itemDetails.faction
+            or data.faction
+            or (
+                base
+                and base.faction
+            )
+            or "neutral",
 
-    return nil
-end
+        completed =
+            (
+                base
+                and base.completed
+            )
+            or completed
+            or false,
 
--- ============================================================
--- Currency / price helpers
--- ============================================================
-local function GetItemIconMarkup(itemID, size)
-    itemID = tonumber(itemID)
-    size = tonumber(size) or 14
-
-    if not itemID then
-        return nil
-    end
-
-    local icon
-
-    if C_Item and C_Item.GetItemIconByID then
-        icon = C_Item.GetItemIconByID(itemID)
-    end
-
-    if not icon and GetItemInfo then
-        local _, _, _, _, _, _, _, _, _, itemIcon = GetItemInfo(itemID)
-        icon = itemIcon
-    end
-
-    if icon then
-        return "|T" .. tostring(icon) .. ":" .. size .. ":" .. size .. ":0:-1|t"
-    end
-
-    return nil
-end
-
-local function GetGoldIconMarkup(size)
-    size = size or 14
-    local goldIcon = Gallery.C and Gallery.C.GOLD_ICON or "Interface\\MoneyFrame\\UI-GoldIcon"
-    return "|T" .. goldIcon .. ":" .. tostring(size) .. ":" .. tostring(size) .. ":0:-1|t"
-end
-
-local function GetHearthsteelIconMarkup(size)
-    size = size or 14
-
-    local atlas = Gallery.C and Gallery.C.HEARTHSTEEL_ATLAS
-    if atlas then
-        return "|A:" .. tostring(atlas) .. ":" .. tostring(size) .. ":" .. tostring(size) .. ":0:-1|a"
-    end
-
-    local icon = Gallery.C and Gallery.C.HEARTHSTEEL_ICON
-    if icon then
-        return "|T" .. tostring(icon) .. ":" .. tostring(size) .. ":" .. tostring(size) .. ":0:-1|t"
-    end
-
-    return nil
-end
-
-local function GetCurrencyIconMarkup(currencyID, size)
-    size = size or 14
-    currencyID = tonumber(currencyID)
-
-    if not currencyID then
-        return nil
-    end
-
-    local icon
-
-    if C_CurrencyInfo and C_CurrencyInfo.GetCurrencyInfo then
-        local info = C_CurrencyInfo.GetCurrencyInfo(currencyID)
-        if info and info.iconFileID then
-            icon = tostring(info.iconFileID)
-        end
-    end
-
-    if not icon and Gallery.C and Gallery.C.CURRENCY_ICONS then
-        icon = Gallery.C.CURRENCY_ICONS[currencyID]
-    end
-
-    if not icon then
-        return nil
-    end
-
-    return "|T" .. icon .. ":" .. tostring(size) .. ":" .. tostring(size) .. ":0:-1|t"
-end
-
-local function ResizeTextureTag(textureTag)
-    if type(textureTag) ~= "string" or textureTag == "" then
-        return nil
-    end
-
-    textureTag = textureTag:gsub("(|T[^|]-):0:0:0:0(|t)", "%1:14:14:0:-1%2")
-    textureTag = textureTag:gsub("(|T[^|]-):0:0(|t)", "%1:14:14:0:-1%2")
-    textureTag = textureTag:gsub("(|T[^|]-):0(|t)", "%1:14:14:0:-1%2")
-    textureTag = textureTag:gsub("^|T([^|:]+)|t$", "|T%1:14:14:0:-1|t")
-
-    return textureTag
-end
-
-local function NormalizePriceTextForDisplay(priceText)
-    if type(priceText) ~= "string" or priceText == "" then
-        return nil
-    end
-
-    priceText = priceText:gsub("|c%x%x%x%x%x%x%x%x", "")
-    priceText = priceText:gsub("|r", "")
-
-    priceText = priceText:gsub("(%d+)%s*|Hcurrency:(%d+)|h(|T[^|]-|t)|h", function(amount, currencyID, textureTag)
-        local icon = GetCurrencyIconMarkup(currencyID, 14)
-        if icon then return tostring(amount) .. " " .. icon end
-        
-        textureTag = ResizeTextureTag(textureTag)
-        if textureTag then return tostring(amount) .. " " .. textureTag end
-
-        return tostring(amount) .. " currency " .. tostring(currencyID)
-    end)
-
-    priceText = priceText:gsub("(%d+)%s*|Hcurrency:(%d+)|h", function(amount, currencyID)
-        local icon = GetCurrencyIconMarkup(currencyID, 14)
-        if icon then return tostring(amount) .. " " .. icon end
-        return tostring(amount) .. " currency " .. tostring(currencyID)
-    end)
-
-    priceText = priceText:gsub("(%d+)%s*|Hitem:(%d+)[^|]*|h(|T[^|]-|t)|h", function(amount, itemID, textureTag)
-        local icon = GetItemIconMarkup(itemID, 14)
-        if icon then return tostring(amount) .. " " .. icon end
-
-        textureTag = ResizeTextureTag(textureTag)
-        if textureTag then return tostring(amount) .. " " .. textureTag end
-
-        return tostring(amount) .. " item " .. tostring(itemID)
-    end)
-
-    priceText = priceText:gsub("(%d+)%s*|Hitem:(%d+)[^|]*|h([^|]-)|h", function(amount, itemID, itemName)
-        local icon = GetItemIconMarkup(itemID, 14)
-        if icon then return tostring(amount) .. " " .. icon end
-
-        itemName = tostring(itemName or ""):gsub("^%[", ""):gsub("%]$", "")
-        if itemName ~= "" then return tostring(amount) .. " " .. itemName end
-
-        return tostring(amount) .. " item " .. tostring(itemID)
-    end)
-
-    priceText = priceText:gsub("(%d+)%s*|Hitem:(%d+)[^%s|]*", function(amount, itemID)
-        local icon = GetItemIconMarkup(itemID, 14)
-        if icon then return tostring(amount) .. " " .. icon end
-        return tostring(amount) .. " item " .. tostring(itemID)
-    end)
-    
-    priceText = priceText:gsub("|h", "")
-    priceText = ResizeTextureTag(priceText) or priceText
-    priceText = priceText:gsub("(%d+)(|T)", "%1 %2")
-    priceText = priceText:gsub("^%s+", ""):gsub("%s+$", "")
-
-    local hearthsteelIcon = GetHearthsteelIconMarkup(14)
-    if hearthsteelIcon then
-        priceText = priceText:gsub("(%d+)%s*[Hh]earthsteel", function(amount) return tostring(amount) .. " " .. hearthsteelIcon end)
-        priceText = priceText:gsub("(%d+)%s*HEARTHSTEEL", function(amount) return tostring(amount) .. " " .. hearthsteelIcon end)
-    end
-    
-    local plainAmount = priceText:match("^%s*(%d+)%s*$")
-    if plainAmount then
-        priceText = plainAmount .. " " .. GetGoldIconMarkup(14)
-    end
-
-    if priceText == "" then return nil end
-    return priceText
-end
-
-function Gallery.CleanPriceText(text)
-    if OldCleanPriceText then
-        text = OldCleanPriceText(text)
-    end
-    return NormalizePriceTextForDisplay(text)
-end
-
-local function FormatPriceTable(price)
-    if type(price) ~= "table" then
-        return nil
-    end
-
-    if type(price[1]) == "table" then
-        local parts = {}
-        for _, pricePart in ipairs(price) do
-            local text = FormatPriceTable(pricePart)
-            if text then table.insert(parts, text) end
-        end
-        if #parts > 0 then return table.concat(parts, " + ") end
-    end
-
-    if price.text then
-        return NormalizePriceTextForDisplay(price.text)
-    end
-
-    if price.amount and price.currencyIcon then
-        return NormalizePriceTextForDisplay(
-            tostring(price.amount) .. " |T" .. tostring(price.currencyIcon) .. ":14:14:0:-1|t"
-        )
-    end
-
-    if price.amount and price.currencyID then
-        local icon = GetCurrencyIconMarkup(price.currencyID, 12)
-        if icon then return tostring(price.amount) .. " " .. icon end
-        return tostring(price.amount) .. " currency " .. tostring(price.currencyID)
-    end
-
-    if price.amount and (price.itemID or price.itemId or price.item) then
-        local itemID = price.itemID or price.itemId or price.item
-        local icon = GetItemIconMarkup(itemID, 12)
-        if icon then return tostring(price.amount) .. " " .. icon end
-
-        local itemName
-        if C_Item and C_Item.GetItemNameByID then itemName = C_Item.GetItemNameByID(itemID) end
-        if not itemName and GetItemInfo then itemName = GetItemInfo(itemID) end
-
-        if itemName then return tostring(price.amount) .. " " .. tostring(itemName) end
-        return tostring(price.amount) .. " item " .. tostring(itemID)
-    end
-    
-    if price.amount and price.currencyName then
-        return NormalizePriceTextForDisplay(tostring(price.amount) .. " " .. tostring(price.currencyName))
-    end
-
-    return nil
-end
-
-local function GetFirstVendorPrice(item)
-    local vendorDetails = Gallery.GetVendorDetailsForItem(item)
-    if type(vendorDetails) ~= "table" then return nil end
-
-    local vendorIDs = {}
-    for vendorID in pairs(vendorDetails) do table.insert(vendorIDs, vendorID) end
-    table.sort(vendorIDs, function(a, b) return tostring(a) < tostring(b) end)
-
-    for _, vendorID in ipairs(vendorIDs) do
-        local detail = vendorDetails[vendorID]
-        if type(detail) == "table" then
-            local priceText = NormalizePriceTextForDisplay(detail.priceText) or FormatPriceTable(detail.price)
-            if priceText then return priceText end
-        end
-    end
-    return nil
-end
-
-function Gallery.GetPriceText(item)
-    local itemDetails = Gallery.GetItemDetailsForItem(item)
-    local data = GetItemData(item)
-
-    if itemDetails then
-        local itemPrice = NormalizePriceTextForDisplay(itemDetails.priceText) or FormatPriceTable(itemDetails.price)
-        if itemPrice then return itemPrice end
-    end
-
-    local vendorPrice = GetFirstVendorPrice(item)
-    if vendorPrice then return vendorPrice end
-
-    local dataPrice = NormalizePriceTextForDisplay(data.priceText) or FormatPriceTable(data.price)
-    if dataPrice then return dataPrice end
-
-    local catalogCost = GetCatalogLineValue(item, "Cost")
-    if catalogCost then return NormalizePriceTextForDisplay(catalogCost) end
-
-    if OldGetPriceText then
-        return NormalizePriceTextForDisplay(OldGetPriceText(item))
-    end
-
-    return nil
+        earnedBy =
+            (
+                base
+                and base.earnedBy
+            )
+            or earnedBy,
+    }
 end
 
 -- ============================================================
@@ -662,14 +554,6 @@ local function IsVendorHiddenInGallery(itemID, vendorID)
     if type(detail) ~= "table" then return false end
 
     return detail.hideInGallery or detail.hiddenInGallery or detail.galleryHidden or detail.displayInGallery == false
-end
-
-local function GetVendorIDFromSoldByEntry(entry)
-    if type(entry) == "number" then return entry end
-    if type(entry) == "table" then
-        return entry.vendorID or entry.vendorId or entry.npcID or entry.npcId or entry.id or entry[1]
-    end
-    return nil
 end
 
 local function FindVendorInTableByExactID(vendorTable, vendorID)
@@ -841,13 +725,20 @@ function Gallery.GetSoldByEntries(item)
 
         for _, group in pairs(combinedGroups) do AddCombinedVendorGroup(group) end
     else
-        local soldBy = data.soldBy or (data.vendorID and { data.vendorID })
-        if type(soldBy) == "number" then soldBy = { soldBy } end
-        if type(soldBy) == "table" then
-            for _, soldByEntry in ipairs(soldBy) do
-                AddVendor(GetVendorIDFromSoldByEntry(soldByEntry), nil, soldByEntry)
-            end
-        end
+local soldBy =
+    data.soldBy
+    or data.vendorID
+
+ForEachSoldByVendor(
+    soldBy,
+    function(vendorID, soldByEntry)
+        AddVendor(
+            vendorID,
+            nil,
+            soldByEntry
+        )
+    end
+)
     end
 
     table.sort(entries, function(a, b)
@@ -927,12 +818,34 @@ function Gallery.SetWaypointToVendor(vendor, itemName)
         local x = tonumber(vendor.x)
         local y = tonumber(vendor.y)
         if x and y then
-            TomTom:AddWaypoint(tonumber(vendor.mapID), x / 100, y / 100, {
-                title = title,
-                persistent = false,
-                minimap = true,
-                world = true,
-            })
+            local mapID =
+    tonumber(vendor.mapID)
+
+local nx =
+    x > 1
+    and x / 100
+    or x
+
+local ny =
+    y > 1
+    and y / 100
+    or y
+
+if mapID then
+    TomTom:AddWaypoint(
+        mapID,
+        nx,
+        ny,
+        {
+            title = title,
+            persistent = false,
+            minimap = true,
+            world = true,
+        }
+    )
+
+    return true
+end
             return true
         end
     end
@@ -1023,25 +936,6 @@ function Gallery.GetBestFactionVendorForItem(item)
     return nil
 end
 
---[[function Gallery.TrySetVendorWaypoint(item)
-    if not item then return false end
-    local bestVendor = Gallery.GetBestFactionVendorForItem(item)
-
-    if bestVendor then
-        return Gallery.SetWaypointToVendor(bestVendor, Gallery.GetItemName and Gallery.GetItemName(item.itemID, item.data) or nil)
-    end
-
-    local vendors = Gallery.GetVendorsForItem(item)
-    if #vendors > 0 then
-        print("|cffffd100Decor Vendor Gallery:|r This vendor has no fixed waypoint location.")
-        return false
-    end
-
-    print("|cffffd100Decor Vendor Gallery:|r No vendor location found for this item.")
-    return false
-end]]
-
-
 function Gallery.TrySetVendorWaypoint(item)
     if not item then
         return false
@@ -1052,29 +946,21 @@ function Gallery.TrySetVendorWaypoint(item)
     -- This handles rotating vendors like Celestine / Dreamsurge.
     -------------------------------------------------
 
-    local function GetActionByKey(key)
-        if not key or key == "" then
-            return nil
-        end
-
-        local action =
-            Gallery.C
-            and Gallery.C.SOURCE_ACTIONS
-            and Gallery.C.SOURCE_ACTIONS[key]
-
-        action =
-            action
-            or (Gallery.C and Gallery.C.SourceActions and Gallery.C.SourceActions[key])
-            or (DVD and DVD.SOURCE_ACTIONS and DVD.SOURCE_ACTIONS[key])
-            or (DVD and DVD.SourceActions and DVD.SourceActions[key])
-            or (DVD and DVD.Shared and DVD.Shared.SourceActions and DVD.Shared.SourceActions[key])
-
-        if type(action) ~= "table" then
-            return nil
-        end
-
-        return action
+local function GetActionByKey(key)
+    if not key
+    or key == "" then
+        return nil
     end
+
+    local action =
+        SOURCE_ACTIONS[key]
+
+    if type(action) ~= "table" then
+        return nil
+    end
+
+    return action
+end
 
     local function RunActionKey(key)
         local action = GetActionByKey(key)
@@ -1110,6 +996,14 @@ function Gallery.TrySetVendorWaypoint(item)
         or {}
 
     local data = item.data or item or {}
+-------------------------------------------------
+-- 1. Boss, drop, treasure, event, and map actions
+-------------------------------------------------
+
+if Gallery.RunSpecialItemAction
+and Gallery.RunSpecialItemAction(item) then
+    return true
+end
 
     -- Item / ActiveItems / ItemDetails source actions.
     local directActionKey =
@@ -1242,21 +1136,20 @@ function Gallery.GetVendorNamesFromItem(itemOrData)
 
     if #names == 0 then
         local data = item.data or {}
-        local soldBy = data.soldBy or (data.vendorID and { data.vendorID })
-        if type(soldBy) == "number" then soldBy = { soldBy } end
-        if type(soldBy) == "table" then
-            for _, entry in ipairs(soldBy) do
-                local vendorID = type(entry) == "number" and entry or (type(entry) == "table" and (entry.vendorID or entry.vendorId or entry.npcID or entry.npcId or entry.id or entry[1]))
-                vendorID = tonumber(vendorID)
-                if vendorID then
-                    local name = "Vendor " .. tostring(vendorID)
-                    if not seen[name] then
-                        seen[name] = true
-                        table.insert(names, name)
-                    end
-                end
-            end
-        end
+local soldBy =
+    data.soldBy
+    or data.vendorID
+
+ForEachSoldByVendor(
+    soldBy,
+    function(vendorID, soldByEntry)
+        AddVendor(
+            vendorID,
+            nil,
+            soldByEntry
+        )
+    end
+)
     end
 
     if #names == 0 then return nil end
@@ -1317,12 +1210,62 @@ local function CleanVendorZone(zone)
     return zone == "" and nil or zone
 end
 
+local function GetDetailPriceText(detail)
+    if type(detail) ~= "table" then
+        return nil
+    end
+
+    local rawText =
+        detail.priceText
+        or detail.costText
+
+    if rawText then
+        if Gallery.NormalizePriceTextForDisplay then
+            local text =
+                Gallery.NormalizePriceTextForDisplay(
+                    rawText
+                )
+
+            if text then
+                return text
+            end
+        end
+
+        if Gallery.CleanPriceText then
+            local text =
+                Gallery.CleanPriceText(
+                    rawText
+                )
+
+            if text then
+                return text
+            end
+        end
+    end
+
+    local structuredCost =
+        detail.price
+        or detail.cost
+        or detail.currencyCost
+        or detail.vendorCost
+
+    if structuredCost ~= nil
+    and Gallery.FormatCostText then
+        return Gallery.FormatCostText(
+            structuredCost
+        )
+    end
+
+    return nil
+end
+
 local function CountUniqueVendorPrices(entries)
     local unique = {}
     local count = 0
     for _, entry in ipairs(entries or {}) do
         local detail = entry.detail or entry.details
-        local priceText = detail and (NormalizePriceTextForDisplay(detail.priceText) or FormatPriceTable(detail.price))
+        local priceText =
+    GetDetailPriceText(detail)
         if priceText and not unique[priceText] then
             unique[priceText] = true
             count = count + 1
@@ -1378,7 +1321,8 @@ function Gallery.BuildVendorPurchaseText(item)
         local vendorNote = detail.note or detail.vendorNote or detail.locationNote
         if vendorNote and vendorNote ~= "" then table.insert(lines, "   |cffaaaaaaNote: " .. tostring(vendorNote) .. "|r") end
 
-        local priceText = NormalizePriceTextForDisplay(detail.priceText) or FormatPriceTable(detail.price)
+        local priceText =
+    GetDetailPriceText(detail)
         if uniquePriceCount > 1 and priceText then table.insert(lines, "   |cffffd100Cost: " .. tostring(priceText) .. "|r") end
 
         if mixedRequirements then
@@ -1556,10 +1500,10 @@ local vendorSourceAction = GetVendorSourceAction()
         or data.eventName
         or data.dropName
 
-        local rares =
-            eventKey
-            and DVD.rareEvents
-            and DVD.rareEvents[eventKey]
+local rares =
+    eventKey
+    and RARE_EVENTS
+    and RARE_EVENTS[eventKey]
 
         if type(rares) == "table" then
             actionTitle =
@@ -1601,7 +1545,7 @@ local vendorSourceAction = GetVendorSourceAction()
 
     if #allLocations > 0 then
         local parentActionKey = itemDetails.sourceAction or data.sourceAction or vendorSourceAction or itemDetails.bossevent or data.bossevent or itemDetails.rareEvent or data.rareEvent or itemDetails.eventName or data.eventName or itemDetails.dropName or data.dropName
-        local parentAction = parentActionKey and Gallery.C and Gallery.C.SOURCE_ACTIONS and Gallery.C.SOURCE_ACTIONS[parentActionKey]
+        local parentAction = parentActionKey and Gallery.C and SOURCE_ACTIONS and SOURCE_ACTIONS[parentActionKey]
         local openMapID = parentAction and (parentAction.openMapID or parentAction.parentMapID or parentAction.mapID)
 
         return {
@@ -1644,7 +1588,7 @@ local vendorSourceAction = GetVendorSourceAction()
     
     local possibleKeys = { itemDetails.sourceAction, data.sourceAction, vendorSourceAction, itemDetails.bossevent, data.bossevent, itemDetails.rareEvent, data.rareEvent, itemDetails.eventName, data.eventName, itemDetails.dropName, data.dropName, itemDetails.delveName, data.delveName, itemDetails.treasureName, data.treasureName }
     for _, key in ipairs(possibleKeys) do
-        local action = key and Gallery.C and Gallery.C.SOURCE_ACTIONS and Gallery.C.SOURCE_ACTIONS[key]
+        local action = key and Gallery.C and SOURCE_ACTIONS and SOURCE_ACTIONS[key]
         if type(action) == "table" then
             if action.type == "map" then
                 local locations = {}
@@ -1696,106 +1640,6 @@ local vendorSourceAction = GetVendorSourceAction()
 
     return nil
 end
-
-function Gallery.SetGalleryMapWaypoints(action)
-    if not action or type(action.locations) ~= "table" or #action.locations == 0 then
-        print("|cffff4040Decor Vendor Gallery:|r No locations found for this source.")
-        return false
-    end
-
-    local firstLocation = action.locations[1]
-    local openMapID = tonumber(action.openMapID or action.parentMapID or action.mapID)
-    local hasTomTom = TomTom and TomTom.AddWaypoint
-
-    for _, location in ipairs(action.locations) do
-        local mapID, x, y = tonumber(location.mapID), tonumber(location.x), tonumber(location.y)
-        if mapID and x and y then
-            local nx = x > 1 and x / 100 or x
-            local ny = y > 1 and y / 100 or y
-            local title = location.title or location.name or action.title or "Decor Location"
-            if location.zone then title = tostring(title) .. " - " .. tostring(location.zone) end
-
-            if hasTomTom then
-                TomTom:AddWaypoint(mapID, nx, ny, { title = title, persistent = false, minimap = true, world = true })
-            end
-        end
-    end
-
-    if not hasTomTom then
-        if openMapID then
-            print("|cffffd100Decor Vendor Gallery:|r TomTom is needed to pin all delve entrances. Opening the overview map instead.")
-        elseif firstLocation then
-            local mapID, x, y = tonumber(firstLocation.mapID), tonumber(firstLocation.x), tonumber(firstLocation.y)
-            if mapID and x and y and C_Map and C_Map.SetUserWaypoint and UiMapPoint then
-                local nx, ny = x > 1 and x / 100 or x, y > 1 and y / 100 or y
-                local point
-                if UiMapPoint.CreateFromCoordinates then point = UiMapPoint.CreateFromCoordinates(mapID, nx, ny)
-                elseif UiMapPoint.CreateFromVector2D and CreateVector2D then point = UiMapPoint.CreateFromVector2D(mapID, CreateVector2D(nx, ny)) end
-                if point then
-                    C_Map.SetUserWaypoint(point)
-                    if C_SuperTrack and C_SuperTrack.SetSuperTrackedUserWaypoint then C_SuperTrack.SetSuperTrackedUserWaypoint(true) end
-                end
-            end
-        end
-    end
-
-    local mapToOpen = tonumber(openMapID or (firstLocation and firstLocation.mapID))
-    if mapToOpen then
-        C_Timer.After(0.05, function()
-            if C_Map and C_Map.OpenWorldMap then C_Map.OpenWorldMap(mapToOpen) return end
-            if WorldMapFrame then ShowUIPanel(WorldMapFrame) if WorldMapFrame.SetMapID then WorldMapFrame:SetMapID(mapToOpen) end
-            elseif OpenWorldMap then OpenWorldMap(mapToOpen) end
-        end)
-    end
-
-    print("|cff00ccffDecor Vendor Gallery:|r Location pins added for " .. tostring(action.title or "decor source") .. ".")
-    return true
-end
-
-function Gallery.OpenJournalForItemAction(action)
-    if not action then return false end
-    local instanceID, encounterID, difficultyID = tonumber(action.instanceID), tonumber(action.encounterID), tonumber(action.difficultyID) or 1
-    if not instanceID or not encounterID then print("|cffff4040Decor Vendor Gallery:|r Missing instanceID or encounterID for Encounter Journal action.") return false end
-
-    if EncounterJournal_LoadUI then EncounterJournal_LoadUI() end
-    if EncounterJournal then ShowUIPanel(EncounterJournal) end
-    if EJ_SetDifficulty then pcall(EJ_SetDifficulty, difficultyID) end
-    if EJ_SelectInstance then pcall(EJ_SelectInstance, instanceID) end
-
-    if EJ_SelectEncounter then
-        if C_Timer and C_Timer.After then
-            C_Timer.After(0.10, function()
-                if EncounterJournal then ShowUIPanel(EncounterJournal) end
-                pcall(EJ_SelectEncounter, encounterID)
-            end)
-        else pcall(EJ_SelectEncounter, encounterID) end
-        return true
-    end
-
-    if EncounterJournal_OpenJournal then EncounterJournal_OpenJournal(difficultyID, instanceID, encounterID) return true end
-    print("|cffff4040Decor Vendor Gallery:|r Could not open Encounter Journal.")
-    return false
-end
-
-function Gallery.RunSpecialItemAction(item)
-    local action = Gallery.GetSpecialActionForItem and Gallery.GetSpecialActionForItem(item)
-    if not action then return false end
-    if action.type == "journal" then return Gallery.OpenJournalForItemAction(action) end
-    if action.type == "map" then return Gallery.SetGalleryMapWaypoints(action) end
-    if action.type == "worldmap" then return Gallery.OpenWorldMapForAction(action) end
-    return false
-end
-
-function Gallery.OpenWorldMapForAction(action)
-    if not action or not action.mapID then return false end
-    local mapID = tonumber(action.mapID)
-    if not mapID then return false end
-
-    if C_Map and C_Map.OpenWorldMap then C_Map.OpenWorldMap(mapID) return true end
-    if WorldMapFrame then ShowUIPanel(WorldMapFrame) if WorldMapFrame.SetMapID then WorldMapFrame:SetMapID(mapID) end return true end
-    return false
-end
-
 -- ============================================================
 -- Preview source/details text
 -- ============================================================
@@ -1820,7 +1664,7 @@ local function GetSourceHeader(item)
     end
 
     local source = Gallery.GetDetailField(item, "source") or Gallery.GetDetailField(item, "sourceType") or "Unknown"
-    local labels = Gallery.C and Gallery.C.SOURCE_LABELS
+    local labels = Gallery.C and SOURCE_LABELS
     if labels and labels[source] then return labels[source] end
     return tostring(source)
 end
@@ -1858,9 +1702,9 @@ function Gallery.BuildEventDropSourceText(item)
     eventKey = CleanDisplayText(eventKey)
     if not eventKey then return nil end
 
-    local action = Gallery.C and Gallery.C.SOURCE_ACTIONS and Gallery.C.SOURCE_ACTIONS[eventKey]
+    local action = Gallery.C and SOURCE_ACTIONS and SOURCE_ACTIONS[eventKey]
     local row = FindBestMainSourceRowForEvent(item, eventKey)
-    local rareEvents = DVD and DVD.rareEvents and DVD.rareEvents[eventKey]
+    local rareEvents = C and RARE_EVENTS and RARE_EVENTS[eventKey]
 
     if type(action) ~= "table" and type(rareEvents) ~= "table" then return nil end
 
@@ -1919,7 +1763,16 @@ function Gallery.BuildEventDropSourceText(item)
         return table.concat(lines, "\n")
     end
 
-    AddLine(lines, "|cff00ffffLocation:|r Multiple delve entrances")
+    local multiLocationText =
+    action
+    and action.multiLocationLabel
+    or "Multiple locations"
+
+AddLine(
+    lines,
+    "|cff00ffffLocation:|r "
+    .. tostring(multiLocationText)
+)
     local hasEntranceNames = false
     for _, zone in ipairs(zoneOrder) do if #(zones[zone] or {}) > 0 then hasEntranceNames = true break end end
 
@@ -1962,7 +1815,7 @@ function Gallery.BuildPreviewSourceText(item)
         }
 
         for _, key in ipairs(possibleKeys) do
-            local action = key and Gallery.C and Gallery.C.SOURCE_ACTIONS and Gallery.C.SOURCE_ACTIONS[key]
+            local action = key and Gallery.C and SOURCE_ACTIONS and SOURCE_ACTIONS[key]
             if type(action) == "table" and action.note then
                 return action.note
             end
@@ -2027,47 +1880,50 @@ function Gallery.BuildPreviewSourceText(item)
         return eventDropText
     end
 
-    local function HasSource(sourceKey)
-        sourceKey = Gallery.NormalizeSource and Gallery.NormalizeSource(sourceKey) or sourceKey
+local function HasSource(sourceKey)
+    sourceKey =
+        Gallery.NormalizeSource
+        and Gallery.NormalizeSource(sourceKey)
+        or sourceKey
 
-        local rawSource = Gallery.GetDetailField(item, "source") or Gallery.GetDetailField(item, "sourceType")
-        rawSource = Gallery.NormalizeSource and Gallery.NormalizeSource(rawSource) or rawSource
-
-        if rawSource == sourceKey then
-            return true
-        end
-
-        local dataSources = data.sources
-
-        if type(dataSources) == "table" then
-            for _, source in ipairs(dataSources) do
-                if (Gallery.NormalizeSource and Gallery.NormalizeSource(source) or source) == sourceKey then
-                    return true
-                end
-            end
-        end
-
-        return type(item.sources) == "table" and item.sources[sourceKey] or false
+    if not sourceKey then
+        return false
     end
 
-    local function GetAtlasMarkupForSource(sourceKey, size)
-        size = size or 16
-        local atlas = Gallery.C and Gallery.C.SOURCE_ATLAS_ICONS and Gallery.C.SOURCE_ATLAS_ICONS[sourceKey]
-        return (atlas and CreateAtlasMarkup) and CreateAtlasMarkup(atlas, size, size) or nil
-    end
+    local itemID =
+        GetItemID(item)
 
-    if HasSource("shop") or itemDetails.shopName then
-        local icon = GetAtlasMarkupForSource("shop", 16)
-        local shopText = itemDetails.shopName or data.shopName or "In-Game Shop"
+    local sources =
+        Gallery.GetItemSources
+        and Gallery.GetItemSources(
+            itemID,
+            data
+        )
+        or item.sources
+        or {}
 
-        AddLine(lines, "|cffffd100In-Game Shop:|r")
+    return sources[sourceKey] == true
+end
 
-        if icon then
-            AddLine(lines, icon .. " |cff80ff80" .. tostring(shopText) .. "|r")
-        else
-            AddLine(lines, "|cff80ff80" .. tostring(shopText) .. "|r")
-        end
-    end
+if HasSource("shop")
+or itemDetails.shopName then
+    local shopText =
+        itemDetails.shopName
+        or data.shopName
+        or "In-Game Shop"
+
+    AddLine(
+        lines,
+        "|cffffd100In-Game Shop:|r"
+    )
+
+    AddLine(
+        lines,
+        "|cff80ff80"
+        .. tostring(shopText)
+        .. "|r"
+    )
+end
 
     -- Quest.
     local questName = itemDetails.questName or data.questName or GetCatalogLineValue(item, "Quest")
@@ -2192,33 +2048,78 @@ function Gallery.BuildPreviewSourceText(item)
         end
     end
 
-    -- === PERFECT PROMOTION LOGIC HOOK ===
-    local promotionType = itemDetails.promotionType or data.promotionType
-    local promotionStatus = itemDetails.promotionStatus or data.promotionStatus
-    local promotionName = itemDetails.promotionName or data.promotionName
+local promotionType =
+    itemDetails.promotionType
+    or data.promotionType
 
-    if promotionType and promotionType ~= "" then
-        AddBlank(lines)
-        AddLine(lines, "|cffffd100Promotion Event:|r")
-        
-        local isBeforeEvent = true
-        if C_DateAndTime and C_DateAndTime.GetCurrentCalendarTime then
-            local serverTime = C_DateAndTime.GetCurrentCalendarTime()
-            if serverTime and serverTime.year >= 2026 and serverTime.month >= 6 and serverTime.monthDay >= 16 then
-                isBeforeEvent = false
-            end
-        end
+local promotionStatus =
+    itemDetails.promotionStatus
+    or data.promotionStatus
 
-        if isBeforeEvent and promotionStatus ~= "PAST" and promotionStatus ~= "PREVIOUS" then
-            AddLine(lines, "|cffb0b0b0" .. tostring(promotionName or promotionType) .. " (Coming Soon on June 16th)|r")
-        elseif promotionStatus == "PAST" or promotionStatus == "PREVIOUS" then
-            local clockTexture = "|TInterface\\Icons\\Spell_Nature_TimeStop:14:14:0:0|t "
-            AddLine(lines, clockTexture .. "|cffde9b6b" .. tostring(promotionName or promotionType) .. " (Ended - Obtainable below)|r")
-        else
-            local checkTexture = "|TInterface\\RaidFrame\\ReadyCheck-Ready:14:14:0:0|t "
-            AddLine(lines, checkTexture .. "|cff19ff19" .. tostring(promotionName or promotionType) .. " (Active Now via Twitch!)|r")
-        end
+local promotionName =
+    itemDetails.promotionName
+    or data.promotionName
+
+if promotionType
+and promotionType ~= "" then
+    AddBlank(lines)
+
+    AddLine(
+        lines,
+        "|cffffd100Promotion Event:|r"
+    )
+
+    local status =
+        string.upper(
+            tostring(
+                promotionStatus
+                or "CURRENT"
+            )
+        )
+
+    local displayName =
+        tostring(
+            promotionName
+            or promotionType
+        )
+
+    if status == "PAST"
+    or status == "PREVIOUS"
+    or status == "EXPIRED" then
+        local clockTexture =
+            "|TInterface\\Icons\\Spell_Nature_TimeStop:14:14:0:0|t "
+
+        AddLine(
+            lines,
+            clockTexture
+            .. "|cffde9b6b"
+            .. displayName
+            .. " (Ended - Obtainable below)|r"
+        )
+
+    elseif status == "UPCOMING"
+    or status == "FUTURE"
+    or status == "SOON" then
+        AddLine(
+            lines,
+            "|cffb0b0b0"
+            .. displayName
+            .. " (Coming Soon)|r"
+        )
+
+    else
+        local checkTexture =
+            "|TInterface\\RaidFrame\\ReadyCheck-Ready:14:14:0:0|t "
+
+        AddLine(
+            lines,
+            checkTexture
+            .. "|cff19ff19"
+            .. displayName
+            .. " (Active Now)|r"
+        )
     end
+end
 
     if #lines == 0 then
         local sourceHeader = GetSourceHeader(item)
@@ -2429,3 +2330,60 @@ function Gallery.OpenWorldMapForAction(action)
 
     return false
 end
+
+
+--[[function Gallery.OpenJournalForItemAction(action)
+    if not action then
+        return false
+    end
+
+    local instanceID = tonumber(action.instanceID)
+    local encounterID = tonumber(action.encounterID)
+    local difficultyID = tonumber(action.difficultyID) or 1
+
+    if not instanceID or not encounterID then
+        print("|cffff4040Decor Vendor Gallery:|r Missing instanceID or encounterID for Encounter Journal action.")
+        return false
+    end
+
+    if EncounterJournal_LoadUI then
+        EncounterJournal_LoadUI()
+    end
+
+    if EncounterJournal then
+        ShowUIPanel(EncounterJournal)
+    end
+
+    if EJ_SetDifficulty then
+        pcall(EJ_SetDifficulty, difficultyID)
+    end
+
+    if EJ_SelectInstance then
+        pcall(EJ_SelectInstance, instanceID)
+    end
+
+    if EJ_SelectEncounter then
+        if C_Timer and C_Timer.After then
+            C_Timer.After(0.10, function()
+                if EncounterJournal then
+                    ShowUIPanel(EncounterJournal)
+                end
+
+                pcall(EJ_SelectEncounter, encounterID)
+            end)
+        else
+            pcall(EJ_SelectEncounter, encounterID)
+        end
+
+        return true
+    end
+
+    if EncounterJournal_OpenJournal then
+        EncounterJournal_OpenJournal(difficultyID, instanceID, encounterID)
+        return true
+    end
+
+    print("|cffff4040Decor Vendor Gallery:|r Could not open Encounter Journal.")
+    return false
+end]]
+

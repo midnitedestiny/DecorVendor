@@ -3,45 +3,113 @@
 -- FilterHelpers.lua
 -- Main grid filter rules, client interface versions validation, and visibility pipelines
 -- ============================================================
-
--- 🌟 NATIVE UNIFIED NAMESPACE: Natively maps everything onto DVD
 local addonName, DVD = ...
 
-local Gallery = DVD.Gallery or {}
-DVD.Gallery = Gallery
+local Gallery = DVD.Gallery
 
-Gallery.C = Gallery.C or DVD.C or {}
-local C = Gallery.C
+if not Gallery then
+    print("|cffff4040DecorVendor Gallery FilterHelpers:|r DVD.Gallery is missing.")
+    return
+end
 
-Gallery.ActiveItems = DVD.ActiveItems or {}
+Gallery.categoryInfoCache = Gallery.categoryInfoCache or {}
+
+Gallery.categoryList = Gallery.categoryList or {}
 
 -------------------------------------------------
 -- Client / Patch Availability Helpers
 -------------------------------------------------
 
 local function GetActiveItemDataForGalleryItem(item)
-    if not item then
+    if type(item) ~= "table" then
         return nil, nil
     end
 
-    local data = item.data or {}
-    local itemID = item.itemID or data.itemID
+    local data =
+        type(item.data) == "table"
+        and item.data
+        or item
 
-    if itemID and DVD.ActiveItems and DVD.ActiveItems[itemID] then
-        return DVD.ActiveItems[itemID], itemID
+    local activeItems =
+        DVD.ActiveItems
+        or {}
+
+    -------------------------------------------------
+    -- Direct itemID lookup
+    -------------------------------------------------
+
+    local rawItemID =
+        item.itemID
+        or data.itemID
+
+    local itemID =
+        tonumber(rawItemID)
+
+    if rawItemID ~= nil then
+        local activeData =
+            activeItems[itemID]
+            or activeItems[rawItemID]
+            or (
+                itemID
+                and activeItems[tostring(itemID)]
+            )
+
+        if type(activeData) == "table" then
+            return activeData, itemID or rawItemID
+        end
     end
 
-    local decorID = item.decorID or data.decorID
+    -------------------------------------------------
+    -- decorID lookup
+    -------------------------------------------------
 
-    if decorID and DVD.ActiveItems then
-        for activeItemID, activeData in pairs(DVD.ActiveItems) do
-            if type(activeData) == "table" and activeData.decorID == decorID then
-                return activeData, activeItemID
+    local decorID =
+        tonumber(
+            item.decorID
+            or data.decorID
+            or item.decorIDValue
+            or data.decorIDValue
+        )
+
+    if decorID then
+        local mappedItemID =
+            (
+                DVD.decorToItem
+                and DVD.decorToItem[decorID]
+            )
+            or (
+                DVD.decorIdToItemId
+                and DVD.decorIdToItemId[decorID]
+            )
+
+        if mappedItemID then
+            mappedItemID =
+                tonumber(mappedItemID)
+                or mappedItemID
+
+            local activeData =
+                activeItems[mappedItemID]
+                or activeItems[tostring(mappedItemID)]
+
+            if type(activeData) == "table" then
+                return activeData, mappedItemID
+            end
+        end
+
+        -- Compatibility fallback while the lookup
+        -- tables are not available.
+        for activeItemID, activeData in pairs(activeItems) do
+            if type(activeData) == "table"
+            and tonumber(activeData.decorID) == decorID then
+                return
+                    activeData,
+                    tonumber(activeItemID)
+                    or activeItemID
             end
         end
     end
 
-    return data, itemID
+    return data, itemID or rawItemID
 end
 
 local function IsDataAvailableForClient(data)
@@ -67,13 +135,30 @@ local function IsDataAvailableForClient(data)
         return false
     end
 
-    if data.unreleased == true
-        or data.hiddenOnLive == true
-        or data.source == "unreleased"
-        or data.sourceType == "unreleased"
-    then
-        return false
-    end
+local sourceType
+
+if Gallery.NormalizeSource then
+    sourceType =
+        Gallery.NormalizeSource(
+            data.source
+            or data.sourceType
+        )
+else
+    sourceType =
+        string.lower(
+            tostring(
+                data.source
+                or data.sourceType
+                or ""
+            )
+        )
+end
+
+if data.unreleased == true
+or data.hiddenOnLive == true
+or sourceType == "unreleased" then
+    return false
+end
 
     return true
 end
@@ -121,46 +206,156 @@ function Gallery.ItemMatchesSelectedCategories(item)
 end
 
 function Gallery.GetItemCategoryIDs(item)
-    if not item then
+    if type(item) ~= "table" then
         return {}
     end
 
-    local data = item.data or item or {}
+    local data =
+        type(item.data) == "table"
+        and item.data
+        or item
 
-    -- 1. Direct item/category data
-    if type(data.categoryIDs) == "table" and #data.categoryIDs > 0 then
-        return data.categoryIDs
+    local function NormalizeCategoryIDs(value)
+        local result = {}
+        local seen = {}
+
+        local function Add(categoryID)
+            categoryID =
+                tonumber(categoryID)
+
+            if categoryID
+            and not seen[categoryID] then
+                seen[categoryID] = true
+
+                table.insert(
+                    result,
+                    categoryID
+                )
+            end
+        end
+
+        if type(value) == "table" then
+            for key, entry in pairs(value) do
+                if type(entry) == "number"
+                or type(entry) == "string" then
+                    Add(entry)
+
+                elseif entry == true then
+                    Add(key)
+                end
+            end
+        else
+            Add(value)
+        end
+
+        return result
     end
 
-    if type(item.categoryIDs) == "table" and #item.categoryIDs > 0 then
-        return item.categoryIDs
+    -------------------------------------------------
+    -- Direct item/category data
+    -------------------------------------------------
+
+    local directCategories =
+        NormalizeCategoryIDs(
+            data.categoryIDs
+            or data.categoryID
+        )
+
+    if #directCategories > 0 then
+        return directCategories
     end
 
-    -- 2. Shared catalog lookup by decorID
-    local decorID = item.decorID or data.decorID or item.decorIDValue or data.decorIDValue
+    local itemCategories =
+        NormalizeCategoryIDs(
+            item.categoryIDs
+            or item.categoryID
+        )
 
-    local catalogRecord = decorID and (
-        (Gallery.catalogByDecorID and Gallery.catalogByDecorID[decorID])
-        or (DVD.catalogByDecorID and DVD.catalogByDecorID[decorID])
+    if #itemCategories > 0 then
+        return itemCategories
+    end
+
+    -------------------------------------------------
+    -- Catalog lookup by decorID
+    -------------------------------------------------
+
+    local decorID =
+        tonumber(
+            item.decorID
+            or data.decorID
+            or item.decorIDValue
+            or data.decorIDValue
+        )
+
+    local catalogRecord
+
+    if decorID then
+        catalogRecord =
+            (
+                Gallery.catalogByDecorID
+                and (
+                    Gallery.catalogByDecorID[decorID]
+                    or Gallery.catalogByDecorID[tostring(decorID)]
+                )
+            )
+            or (
+                DVD.catalogByDecorID
+                and (
+                    DVD.catalogByDecorID[decorID]
+                    or DVD.catalogByDecorID[tostring(decorID)]
+                )
+            )
+    end
+
+    local catalogCategories =
+        NormalizeCategoryIDs(
+            catalogRecord
+            and (
+                catalogRecord.categoryIDs
+                or catalogRecord.categoryID
+            )
+        )
+
+    if #catalogCategories > 0 then
+        return catalogCategories
+    end
+
+    -------------------------------------------------
+    -- Catalog lookup by itemID
+    -------------------------------------------------
+
+    local itemID =
+        tonumber(
+            item.itemID
+            or data.itemID
+            or data.id
+        )
+
+    if itemID then
+        catalogRecord =
+            (
+                Gallery.catalogByItemID
+                and (
+                    Gallery.catalogByItemID[itemID]
+                    or Gallery.catalogByItemID[tostring(itemID)]
+                )
+            )
+            or (
+                DVD.catalogByItemID
+                and (
+                    DVD.catalogByItemID[itemID]
+                    or DVD.catalogByItemID[tostring(itemID)]
+                )
+            )
+    end
+
+    return NormalizeCategoryIDs(
+        catalogRecord
+        and (
+            catalogRecord.categoryIDs
+            or catalogRecord.categoryID
+        )
     )
-
-    if catalogRecord and type(catalogRecord.categoryIDs) == "table" then
-        return catalogRecord.categoryIDs
-    end
-
-    -- 3. Shared catalog lookup by itemID
-    local itemID = item.itemID or data.itemID or data.id
-
-    catalogRecord = itemID and (
-        (Gallery.catalogByItemID and Gallery.catalogByItemID[itemID])
-        or (DVD.catalogByItemID and DVD.catalogByItemID[itemID])
-    )
-
-    if catalogRecord and type(catalogRecord.categoryIDs) == "table" then
-        return catalogRecord.categoryIDs
-    end
-
-    return {}
 end
 
 function Gallery.ItemMatchesCategory(item, categoryKey)
@@ -214,41 +409,136 @@ function Gallery.ItemPassesFilters(item)
     end
 
     -- source checkbox filtering
-    local selectedSourceCount = 0
-    local matchedSelectedSource = false
+local selectedSourceCount = 0
+local matchedSelectedSource = false
 
-    if filters.sources then
-        for sourceKey, enabled in pairs(filters.sources) do
-            if enabled then
-                selectedSourceCount = selectedSourceCount + 1
+local itemSources =
+    item.sources
 
-                if item.sources and item.sources[sourceKey] then
-                    matchedSelectedSource = true
-                end
+if type(itemSources) ~= "table"
+and Gallery.GetItemSources then
+    itemSources =
+        Gallery.GetItemSources(
+            item.itemID,
+            itemData
+        )
+end
+
+itemSources =
+    type(itemSources) == "table"
+    and itemSources
+    or {}
+
+if type(filters.sources) == "table" then
+    for sourceKey, enabled in pairs(filters.sources) do
+        if enabled then
+            selectedSourceCount =
+                selectedSourceCount
+                + 1
+
+            local normalizedKey =
+                Gallery.NormalizeSource
+                and Gallery.NormalizeSource(sourceKey)
+                or sourceKey
+
+            if normalizedKey
+            and itemSources[normalizedKey] then
+                matchedSelectedSource = true
             end
         end
     end
+end
 
     -- if user checked at least one source, item must match one of them
     if selectedSourceCount > 0 and not matchedSelectedSource then
         return false
     end
 
-    -- search
-    if filters.search and filters.search ~= "" then
-        local q = string.lower(filters.search)
+-------------------------------------------------
+-- Search
+-------------------------------------------------
 
-        local itemName = string.lower((Gallery.GetItemName and Gallery.GetItemName(item.itemID, itemData)) or "")
-        local vendorNames = string.lower((Gallery.GetVendorNamesFromItem and Gallery.GetVendorNamesFromItem(itemData)) or "")
-        local sourceText = string.lower((Gallery.GetSourceTextForItem and Gallery.GetSourceTextForItem(item)) or "")
+local searchQuery =
+    tostring(
+        filters.search
+        or ""
+    )
 
-        if not string.find(itemName, q, 1, true)
-            and not string.find(vendorNames, q, 1, true)
-            and not string.find(sourceText, q, 1, true)
-        then
-            return false
-        end
+searchQuery =
+    searchQuery:gsub(
+        "^%s+",
+        ""
+    ):gsub(
+        "%s+$",
+        ""
+    )
+
+if searchQuery ~= "" then
+    local query =
+        string.lower(searchQuery)
+
+    local itemName =
+        Gallery.GetItemName
+        and Gallery.GetItemName(
+            item.itemID,
+            itemData
+        )
+        or ""
+
+    local vendorNames =
+        Gallery.GetVendorNamesFromItem
+        and Gallery.GetVendorNamesFromItem(
+            itemData
+        )
+        or ""
+
+    local sourceText =
+        Gallery.GetSourceTextForItem
+        and Gallery.GetSourceTextForItem(
+            item
+        )
+        or ""
+
+    local extraText =
+        table.concat(
+            {
+                tostring(item.name or ""),
+                tostring(itemData.name or ""),
+                tostring(itemData.zone or ""),
+                tostring(itemData.displayZone or ""),
+                tostring(itemData.location or ""),
+                tostring(itemData.note or ""),
+                tostring(itemData.notes or ""),
+                tostring(itemData.keyword or ""),
+                tostring(itemData.searchText or ""),
+                tostring(itemData.source or ""),
+                tostring(itemData.sourceType or ""),
+            },
+            " "
+        )
+
+    local searchableText =
+        string.lower(
+            table.concat(
+                {
+                    tostring(itemName),
+                    tostring(vendorNames),
+                    tostring(sourceText),
+                    extraText,
+                },
+                " "
+            )
+        )
+
+    if not string.find(
+        searchableText,
+        query,
+        1,
+        true
+    ) then
+        return false
     end
+end
 
     return true
 end
@@ -271,53 +561,119 @@ function Gallery.GetVisibleItems()
 end
 
 function Gallery.GetCatalogCategoryInfo(categoryID)
-    if not categoryID then return nil end
+    categoryID =
+        tonumber(categoryID)
 
-    if Gallery.categoryInfoCache and Gallery.categoryInfoCache[categoryID] then
-        return Gallery.categoryInfoCache[categoryID]
+    if not categoryID then
+        return nil
     end
 
-    Gallery.categoryInfoCache = Gallery.categoryInfoCache or {}
+    Gallery.categoryInfoCache =
+        Gallery.categoryInfoCache
+        or {}
 
-    if C_HousingCatalog and C_HousingCatalog.GetCatalogCategoryInfo then
-        local info = C_HousingCatalog.GetCatalogCategoryInfo(categoryID)
+    local cached =
+        Gallery.categoryInfoCache[categoryID]
 
-        if info then
-            Gallery.categoryInfoCache[categoryID] = info
-            return info
-        end
+    if cached then
+        return cached
     end
 
-    return nil
+    if not C_HousingCatalog
+    or not C_HousingCatalog.GetCatalogCategoryInfo then
+        return nil
+    end
+
+    local ok, info =
+        pcall(
+            C_HousingCatalog.GetCatalogCategoryInfo,
+            categoryID
+        )
+
+    if not ok
+    or type(info) ~= "table" then
+        return nil
+    end
+
+    Gallery.categoryInfoCache[categoryID] =
+        info
+
+    return info
 end
 
 function Gallery.BuildCategoryList()
+    Gallery.categoryList =
+        Gallery.categoryList
+        or {}
+
     wipe(Gallery.categoryList)
 
-    table.insert(Gallery.categoryList, {
-        key = "all",
-        name = "All",
-        icon = "communities-icon-chat",
-        iconType = "atlas",
-    })
+    table.insert(
+        Gallery.categoryList,
+        {
+            key = "all",
+            name = "All",
+            icon = "communities-icon-chat",
+            iconType = "atlas",
+        }
+    )
 
     local seen = {}
 
-    -- Keep category order based on Blizzard catalog order.
-    for _, record in ipairs(Gallery.catalogRecords or {}) do
-        for _, categoryID in ipairs(record.categoryIDs or {}) do
-            if categoryID and not seen[categoryID] then
-                seen[categoryID] = true
+    -- Preserve Blizzard/catalog category order.
+    for _, record in ipairs(
+        Gallery.catalogRecords
+        or {}
+    ) do
+        if type(record) == "table" then
+            local categoryIDs =
+                record.categoryIDs
+                or {}
 
-                local info = Gallery.GetCatalogCategoryInfo(categoryID)
+            for _, rawCategoryID in ipairs(categoryIDs) do
+                local categoryID =
+                    tonumber(rawCategoryID)
 
-                table.insert(Gallery.categoryList, {
-                    key = tostring(categoryID),
-                    id = categoryID,
-                    name = (info and info.name) or ("Category " .. tostring(categoryID)),
-                    icon = info and info.icon,
-                    iconType = info and info.icon and "atlas" or "texture",
-                })
+                if categoryID
+                and not seen[categoryID] then
+                    seen[categoryID] = true
+
+                    local info =
+                        Gallery.GetCatalogCategoryInfo(
+                            categoryID
+                        )
+
+                    table.insert(
+                        Gallery.categoryList,
+                        {
+                            key =
+                                tostring(categoryID),
+
+                            id =
+                                categoryID,
+
+                            name =
+                                (
+                                    info
+                                    and info.name
+                                )
+                                or (
+                                    "Category "
+                                    .. tostring(categoryID)
+                                ),
+
+                            icon =
+                                info
+                                and info.icon,
+
+                            iconType =
+                                info
+                                and info.icon
+                                and "atlas"
+                                or "texture",
+                        }
+                    )
+                end
             end
         end
     end

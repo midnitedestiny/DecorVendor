@@ -24,13 +24,22 @@ This addon is distributed for personal use only.
 local addonName, DVD = ...
 
 local C = DVD.CONSTANTS or DVD.C
-local scrollChild = DVD.scrollChild
-local HasAnySelection = DVD.HasAnySelection
+local Gallery = DVD.Gallery
 
 if not C then
     print("|cffff4040DecorVendor ListBuilders:|r constants are missing.")
     return
 end
+
+local Sizing = C.ListBuildersSizing
+
+if not Sizing then
+    print("|cffff4040DecorVendor ListBuilders:|r ListBuildersSizing is missing.")
+    return
+end
+
+local scrollChild = DVD.scrollChild
+local HasAnySelection = DVD.HasAnySelection
 
 if not scrollChild then
     print("|cffff4040DecorVendor ListBuilders:|r DVD.scrollChild is missing. Make sure UI\\ListFrame.lua loads first.")
@@ -86,6 +95,52 @@ local function IsLinkedItemAvailable(data)
     end
 
     return IsDataAvailable(data)
+end
+
+-------------------------------------------------
+-- List Layout Helpers
+-------------------------------------------------
+local function CreateEmptyListMessage(text)
+    local msg =
+        scrollChild:CreateFontString(
+            nil,
+            "OVERLAY"
+        )
+
+    msg:SetFont(
+        STANDARD_TEXT_FONT,
+        Sizing.EmptyMessageFontSize
+    )
+
+    msg:SetPoint(
+        "TOP",
+        scrollChild,
+        "TOP",
+        0,
+        -Sizing.EmptyMessageTopOffset
+    )
+
+    msg:SetText(text)
+    msg:SetTextColor(0.7, 0.7, 0.7, 1)
+
+    table.insert(DVD.activeWidgets, msg)
+
+    return msg
+end
+
+local function SetListContentHeight(y, padding, minimumHeight)
+    local height =
+        math.abs(y)
+        + padding
+
+    if minimumHeight then
+        height = math.max(
+            minimumHeight,
+            height
+        )
+    end
+
+    scrollChild:SetHeight(height)
 end
 -------------------------------------------------
 -- Search Helpers
@@ -301,7 +356,6 @@ end
 -------------------------------------------------
 -- Professions
 -------------------------------------------------
-
 function BuildProfessionList()
     DVD.ClearWidgets()
 
@@ -313,7 +367,7 @@ function BuildProfessionList()
     local expSel = DVD.filters.professions.expansions
     local hasExpFilter = HasAnySelection(expSel)
 
-    local y = -6
+    local y = Sizing.DefaultStartY
     local hasContent = false
 
     local professions = DVD.professions or {}
@@ -321,6 +375,11 @@ function BuildProfessionList()
     table.sort(professions, function(a, b)
         return (a.name or "") < (b.name or "")
     end)
+
+    -------------------------------------------------
+    -- Process structured professions with headers & items
+    -------------------------------------------------
+    local processedProfessions = {}
 
     for _, profession in ipairs(professions) do
         if IsDataAvailable(profession) then
@@ -331,48 +390,39 @@ function BuildProfessionList()
             for _, item in ipairs(profession.items or {}) do
                 local include = true
 
-                -- Hide unreleased/future profession rows.
                 if include and not IsDataAvailable(item) then
                     include = false
                 end
 
-                -- Hide rows whose linked ActiveItems entry is unreleased/future.
                 if include and item.id and not IsItemAvailable(item.id) then
                     include = false
                 end
 
-                -- Expansion filter
                 if include and hasExpFilter then
                     if not item.expansion or not expSel[item.expansion] then
                         include = false
                     end
                 end
 
-                -- Profession/category filter
                 if include and hasCategoryFilter then
                     local cat = item.category or profession.name
-
                     if not catSel[cat] then
                         include = false
                     end
                 end
 
-                -- Search filter
                 if include and query and not ProfessionMatchesSearch(profession, item, query) then
                     include = false
                 end
 
                 if include then
                     totalCount = totalCount + 1
-
                     local learned = false
-
                     if item.spell then
                         learned = IsSpellKnown(item.spell) or IsPlayerSpell(item.spell)
                     end
 
                     local collected = false
-
                     if item.id and DVD.IsItemCollected then
                         collected = DVD.IsItemCollected(item.id)
                     end
@@ -388,44 +438,69 @@ function BuildProfessionList()
                 end
             end
 
+            -- Only include the profession if it has visible items after filtering
             if #visible > 0 then
                 hasContent = true
+                
+                -- Attach counts and filtered items for the section header grid renderer
+                local profCopy = {}
+                for k, v in pairs(profession) do profCopy[k] = v end
+                profCopy.items = visible
+                profCopy.__completedCount = completedCount
+                profCopy.__totalCount = totalCount
 
-                local collapsed, newY =
-                    DVD.CreateProfessionHeader(scrollChild, profession, y, completedCount, totalCount)
+                table.insert(processedProfessions, profCopy)
+            end
+        end
+    end
 
-                y = newY
-
-                if not collapsed then
-                    for _, item in ipairs(visible) do
-                        y = DVD.CreateProfessionLine(scrollChild, item, y)
-                    end
-
-                    y = y - 10
+    -------------------------------------------------
+    -- 🚀 Pre-load items into cache to prevent ID pop-in
+    -------------------------------------------------
+    for _, profession in ipairs(processedProfessions) do
+        for _, item in ipairs(profession.items or {}) do
+            if item.id and C_Item and C_Item.RequestLoadItemDataByID then
+                C_Item.RequestLoadItemDataByID(item.id)
+            elseif item.id and Item and Item.CreateFromItemID then
+                local itemObj = Item:CreateFromItemID(item.id)
+                if itemObj and itemObj.ContinueOnItemLoad then
+                    itemObj:ContinueOnItemLoad(function() end)
                 end
             end
         end
     end
 
-    if not hasContent then
-        local msg = scrollChild:CreateFontString(nil, "OVERLAY")
-        msg:SetFont(STANDARD_TEXT_FONT, 14)
-        msg:SetPoint("TOP", 0, -50)
-        msg:SetText(query and "No profession items match your search." or "No profession data available.")
-        msg:SetTextColor(0.7, 0.7, 0.7)
-
-        table.insert(DVD.activeWidgets, msg)
+    if hasContent then
+        if DVD.BuildProfessionGridUI then
+            local totalGridHeight = DVD.BuildProfessionGridUI(scrollChild, processedProfessions)
+            if totalGridHeight then
+                y = Sizing.DefaultStartY - totalGridHeight
+            end
+        end
     end
 
-    scrollChild:SetHeight(math.abs(y) + 40)
-end
+    if not hasContent then
+        CreateEmptyListMessage(
+            query
+            and "No profession items match your search."
+            or "No profession data available."
+        )
+    end
 
+    SetListContentHeight(
+        y,
+        Sizing.ExtendedBottomPadding
+    )
+end
 -------------------------------------------------
 -- Quests
 -------------------------------------------------
-
 function BuildQuestList()
     DVD.ClearWidgets()
+
+    if DVD.ResetQuestGridCards then
+        DVD.ResetQuestGridCards()
+    end
 
     local query = GetSearchQuery()
 
@@ -439,7 +514,7 @@ function BuildQuestList()
     local hasFactionFilter = HasAnySelection(facSel)
     local hasExpansionFilter = HasAnySelection(expSel)
 
-    local y = -6
+    local y = Sizing.DefaultStartY
     local hasContent = false
 
     local questGroups = {}
@@ -544,34 +619,37 @@ function BuildQuestList()
             y = newY
 
             if not collapsed then
-                for _, quest in ipairs(visible) do
-                    y = DVD.CreateQuestLine(scrollChild, quest, y)
+                if DVD.BuildQuestGridSection then
+                    y = DVD.BuildQuestGridSection(scrollChild, visible, y)
                 end
 
-                y = y - 10
+                y = y - Sizing.GroupBottomGap
             end
         end
     end
 
-    if not hasContent then
-        local msg = scrollChild:CreateFontString(nil, "OVERLAY")
-        msg:SetFont(STANDARD_TEXT_FONT, 14)
-        msg:SetPoint("TOP", 0, -50)
-        msg:SetText(query and "No quests match your search." or "No quest data available.")
-        msg:SetTextColor(0.7, 0.7, 0.7)
-
-        table.insert(DVD.activeWidgets, msg)
-    end
-
-    scrollChild:SetHeight(math.abs(y) + 20)
+if not hasContent then
+    CreateEmptyListMessage(
+        query
+        and "No quests match your search."
+        or "No quest data available."
+    )
 end
 
+SetListContentHeight(
+    y,
+    Sizing.StandardBottomPadding
+)
+end
 -------------------------------------------------
 -- Achievements
 -------------------------------------------------
-
 function BuildAchievementList()
     DVD.ClearWidgets()
+
+    if DVD.ResetAchievementGridCards then
+        DVD.ResetAchievementGridCards()
+    end
 
     local query = GetSearchQuery()
 
@@ -581,7 +659,7 @@ function BuildAchievementList()
     local hasGroupFilter = HasAnySelection(groupSel)
     local hasFactionFilter = HasAnySelection(facSel)
 
-    local y = -6
+    local y = Sizing.DefaultStartY
     local hasContent = false
 
     local achieveGroups = {}
@@ -682,354 +760,143 @@ function BuildAchievementList()
                 y = newY
 
                 if not collapsed then
-                    for _, achieve in ipairs(visible) do
-                        y = DVD.CreateAchievementLine(scrollChild, achieve, y)
+                    if DVD.BuildAchievementGridSection then
+                        y = DVD.BuildAchievementGridSection(scrollChild, visible, y)
                     end
 
-                    y = y - 10
+                    y = y - Sizing.GroupBottomGap
                 end
             end
         end
     end
 
-    if not hasContent then
-        local msg = scrollChild:CreateFontString(nil, "OVERLAY")
-        msg:SetFont(STANDARD_TEXT_FONT, 14)
-        msg:SetPoint("TOP", 0, -50)
-        msg:SetText(query and "No achievements match your search." or "No achievement data available.")
-        msg:SetTextColor(0.7, 0.7, 0.7)
-
-        table.insert(DVD.activeWidgets, msg)
-    end
-
-    scrollChild:SetHeight(math.abs(y) + 20)
+if not hasContent then
+    CreateEmptyListMessage(
+        query
+        and "No achievements match your search."
+        or "No achievement data available."
+    )
 end
 
+    SetListContentHeight(
+    y,
+    Sizing.StandardBottomPadding
+)
+end
 -------------------------------------------------
 -- Boss Drops
 -------------------------------------------------
-
 function BuildBossDropList()
     DVD.ClearWidgets()
 
+    if DVD.ResetBossDropGridCards then
+        DVD.ResetBossDropGridCards()
+    end
+
     local query = GetSearchQuery()
-
-    local y = -6
+    local y = Sizing.DefaultStartY
     local hasContent = false
-
     local expSel = DVD.filters.bossdrops.expansions
     local catSel = DVD.filters.bossdrops.categories
-
     local hasExpansionFilter = HasAnySelection(expSel)
     local hasCategoryFilter = HasAnySelection(catSel)
-
     local groups = {}
-
     for _, g in ipairs(DVD.bossdrops or {}) do
         if IsDataAvailable(g) then
             groups[#groups + 1] = g
         end
     end
-
     table.sort(groups, function(a, b)
         return (a.name or "") < (b.name or "")
     end)
-
     for _, group in ipairs(groups) do
         local passesExpansion =
             not hasExpansionFilter
             or DVD.filters.bossdrops.expansions[group.expansion]
-
         if passesExpansion then
             local visible = {}
             local total = 0
             local collected = 0
-
             for _, boss in ipairs(group.items or {}) do
                 local include = true
-
                 -- Hide unreleased/future boss drop rows.
                 if include and not IsDataAvailable(boss) then
                     include = false
                 end
-
                 -- Boss drop boss.id is usually the itemID in your data.
                 if include and boss.id and not IsItemAvailable(boss.id) then
                     include = false
                 end
-
                 if include and boss.itemID and not IsItemAvailable(boss.itemID) then
                     include = false
                 end
-
                 local isCollected = false
-
                 if include and DVD.IsItemCollected then
                     isCollected = DVD.IsItemCollected(boss.id)
                 end
-
                 -- Category filter
                 if include and hasCategoryFilter then
                     local cat = boss.category or group.name
-
                     if not catSel[cat] then
                         include = false
                     end
                 end
-
                 -- Hide collected
                 if include and vendorSettings.hideCollectedBossDrops and isCollected then
                     include = false
                 end
-
                 -- Search filter
                 if include and query and not BossDropMatchesSearch(group, boss, query) then
                     include = false
                 end
-
                 if include then
                     total = total + 1
-
                     if isCollected then
                         collected = collected + 1
                     end
-
                     table.insert(visible, boss)
                 end
             end
-
             if #visible > 0 then
                 hasContent = true
-
                 local collapsed, newY =
                     DVD.CreateBossDropHeader(scrollChild, group, collected, total, y)
-
                 y = newY
-
                 if not collapsed then
-                    for _, boss in ipairs(visible) do
-                        y = DVD.CreateBossDropLine(scrollChild, boss, y)
+                    if DVD.BuildBossDropGridSection then
+                        y = DVD.BuildBossDropGridSection(scrollChild, visible, y)
                     end
-
-                    y = y - 10
+                    y = y - Sizing.GroupBottomGap
                 end
             end
         end
     end
-
-    if not hasContent then
-        local msg = scrollChild:CreateFontString(nil, "OVERLAY")
-        msg:SetFont(STANDARD_TEXT_FONT, 14)
-        msg:SetPoint("TOP", 0, -50)
-        msg:SetText(query and "No boss drops match your search." or "No boss drop data available.")
-        msg:SetTextColor(0.7, 0.7, 0.7)
-
-        table.insert(DVD.activeWidgets, msg)
-    end
-
-    scrollChild:SetHeight(math.max(800, math.abs(y) + 40))
+if not hasContent then
+    CreateEmptyListMessage(
+        query
+        and "No boss drops match your search."
+        or "No boss drop data available."
+    )
 end
-
+    SetListContentHeight(
+    y,
+    Sizing.ExtendedBottomPadding,
+    Sizing.BossMinimumHeight
+)
+end
 -------------------------------------------------
 -- Vendors
 -------------------------------------------------
-
---[[function BuildVendorList()
-    DVD.ClearWidgets()
-
-    local query = GetSearchQuery()
-
-    local y = 0
-    local hasContent = false
-
-    local expSel = DVD.filters.vendors.expansions
-    local facSel = DVD.filters.vendors.factions
-    local catSel = DVD.filters.vendors.categories
-
-    local hasExpansionFilter = HasAnySelection(expSel)
-    local hasFactionFilter = HasAnySelection(facSel)
-    local hasCategoryFilter = HasAnySelection(catSel)
-
-    local groups = {}
-
-    for _, group in ipairs(DVD.npcs or {}) do
-        if IsDataAvailable(group) then
-            groups[#groups + 1] = group
-        end
-    end
-
-    table.sort(groups, function(a, b)
-        return (a.name or ""):lower() < (b.name or ""):lower()
-    end)
-
-    for _, group in ipairs(groups) do
-        local passesExpansion =
-            not hasExpansionFilter
-            or expSel[group.expansion]
-
-        if passesExpansion then
-            local visibleVendors = {}
-
-            for _, vendor in ipairs(group.vendors or {}) do
-                local includeVendor = true
-
-                -- Hide unreleased/future vendor rows.
-                if includeVendor and not IsDataAvailable(vendor) then
-                    includeVendor = false
-                end
-
-                -- Faction filter
-                local passesFaction =
-                    not hasFactionFilter
-                    or facSel[vendor.faction]
-
-                if includeVendor and not passesFaction then
-                    includeVendor = false
-                end
-
-                -- Category / requirement filter
-                if includeVendor and hasCategoryFilter then
-                    local cat = vendor.category
-
-                    if cat and cat ~= "" then
-                        cat = string.lower(cat)
-                    else
-                        cat = "none"
-                    end
-
-                    local matches = false
-
-                    for selectedCategory, enabled in pairs(catSel) do
-                        if enabled then
-                            selectedCategory = string.lower(selectedCategory)
-
-                            if selectedCategory == cat then
-                                matches = true
-                                break
-                            end
-                        end
-                    end
-
-                    if not matches then
-                        includeVendor = false
-                    end
-                end
-
--- Search filter
-                if includeVendor and query and not VendorMatchesSearch(group, vendor, query) then
-                    includeVendor = false
-                end
-
-                -- 🚀 THE DYNAMIC PROFESSION FILTER TRICK:
-                -- If a vendor is hard-linked to a specific profession, we scan the player's 
-                -- current profile. If they don't match, we drop them from the visible listing!
-                if includeVendor and vendor.profession then
-                    local playerHasProfession = false
-                    
-                    -- Query the WoW API for the character's active professions
-                    local prof1, prof2, archaeology, fishing, cooking, firstAid = GetProfessions()
-                    local activeProfIndices = { prof1, prof2 } -- We check primary professions only
-
-                    for _, index in pairs(activeProfIndices) do
-                        if index then
-                            local name, _, _, _, _, _, _, _, _, _ = GetProfessionInfo(index)
-                            if name and string.lower(name) == string.lower(vendor.profession) then
-                                playerHasProfession = true
-                                break
-                            end
-                        end
-                    end
-
-                    -- If the player doesn't know this craft right now, hide the merchant card!
-                    if not playerHasProfession then
-                        includeVendor = false
-                    end
-                end
-
-                -- Found status
-                if includeVendor then
-                    local isFound = false
-
-                    if vendorSettings.visited and vendorSettings.visited[vendor.id] then
-                        local playerFaction = UnitFactionGroup("player")
-                        playerFaction = playerFaction and playerFaction:lower()
-
-                        if vendor.faction == playerFaction or vendor.faction == "neutral" then
-                            isFound = true
-                        end
-                    end
-
-                    vendor.__isFound = isFound
-
-                    -- 🚀 THE HIDE FOUND FILTER INTEGRATION:
-                    -- If the player checked "Hide Found Vendors" in options, and this vendor is visited,
-                    -- exclude it entirely right here from the active collection pipeline.
-                    if vendorSettings and vendorSettings.hideFoundVendors and isFound then
-                        includeVendor = false
-                    end
-                end
-
-                if includeVendor then
-                    table.insert(visibleVendors, vendor)
-                end
-            end
-
-            if #visibleVendors > 0 then
-                hasContent = true
-
-                table.sort(visibleVendors, function(a, b)
-                    return (a.title or ""):lower() < (b.title or ""):lower()
-                end)
-
-                local total, completed = 0, 0
-
-                -- Count only available vendors so unreleased rows do not affect progress.
-                for _, vendor in ipairs(group.vendors or {}) do
-                    if IsDataAvailable(vendor) then
-                        total = total + 1
-
-                        if vendorSettings.visited and vendorSettings.visited[vendor.id] then
-                            completed = completed + 1
-                        end
-                    end
-                end
-
-                local _, collapsed, newY =
-                    DVD.CreateVendorHeader(scrollChild, group, y, completed, total)
-
-                y = newY
-
-                if not collapsed then
-                    for _, vendor in ipairs(visibleVendors) do
-                        y = DVD.CreateVendorLine(scrollChild, vendor, y)
-                    end
-
-                    y = y - 10
-                end
-            end
-        end
-    end
-
-    if not hasContent then
-        local msg = scrollChild:CreateFontString(nil, "OVERLAY")
-        msg:SetFont(STANDARD_TEXT_FONT, 14)
-        msg:SetPoint("TOP", 0, -50)
-        msg:SetText(query and "No vendors match your search." or "No vendors match these filters.")
-        msg:SetTextColor(0.7, 0.7, 0.7)
-
-        table.insert(DVD.activeWidgets, msg)
-    end
-
-    scrollChild:SetHeight(math.abs(y) + 20)
-end
-]]
-
 function BuildVendorList()
     DVD.ClearWidgets()
 
+    if DVD.ResetVendorGridCards then
+        DVD.ResetVendorGridCards()
+    end
+	
     local query = GetSearchQuery()
 
-    local y = 0
+    local y = Sizing.VendorStartY
     local hasContent = false
 
     local expSel = DVD.filters.vendors.expansions
@@ -1177,7 +1044,7 @@ function BuildVendorList()
                 end
             end
 
-            if #visibleVendors > 0 then
+if #visibleVendors > 0 then
                 hasContent = true
 
                 table.sort(visibleVendors, function(a, b)
@@ -1199,35 +1066,112 @@ function BuildVendorList()
                 y = newY
 
                 if not collapsed then
-                    for _, vendor in ipairs(visibleVendors) do
-                        y = DVD.CreateVendorLine(scrollChild, vendor, y)
+                    if DVD.BuildVendorGridSection then
+                        y = DVD.BuildVendorGridSection(scrollChild, visibleVendors, y, vendorSettings)
                     end
 
-                    y = y - 10
+                    y = y - Sizing.GroupBottomGap
                 end
             end
         end
     end
 
-    if not hasContent then
-        local msg = scrollChild:CreateFontString(nil, "OVERLAY")
-        msg:SetFont(STANDARD_TEXT_FONT, 14)
-        msg:SetPoint("TOP", 0, -50)
-        msg:SetText(query and "No vendors match your search." or "No vendors match these filters.")
-        msg:SetTextColor(0.7, 0.7, 0.7)
-
-        table.insert(DVD.activeWidgets, msg)
-    end
-
-    scrollChild:SetHeight(math.abs(y) + 20)
+if not hasContent then
+    CreateEmptyListMessage(
+        query
+        and "No vendors match your search."
+        or "No vendors match these filters."
+    )
 end
 
+SetListContentHeight(
+    y,
+    Sizing.StandardBottomPadding
+)
+end
+-------------------------------------------------
+-- Shop
+-------------------------------------------------
+function BuildShopList()
+    DVD.ClearWidgets()
 
+    if DVD.ResetShopGridCards then
+        DVD.ResetShopGridCards()
+    end
+
+    local query = GetSearchQuery()
+
+    local catSel = DVD.filters.shop.categories
+    local hasCategoryFilter = HasAnySelection(catSel)
+
+    local y = Sizing.DefaultStartY
+    local hasContent = false
+
+    local entries = {}
+
+    for itemID, details in pairs(Gallery.ItemDetails or {}) do
+        if type(itemID) == "number"
+        and type(details) == "table"
+        and (details.source == "shop" or details.source == "soon" or details.source == "charity")
+        then
+            local include = true
+
+            if not IsItemAvailable(itemID) then
+                include = false
+            end
+
+            if include and hasCategoryFilter then
+                if not catSel[details.source] then
+                    include = false
+                end
+            end
+
+            if include and query and details.shopName then
+                if not string.find(string.lower(details.shopName), string.lower(query), 1, true) then
+                    include = false
+                end
+            end
+
+            if include then
+                local activeData = DVD.ActiveItems and DVD.ActiveItems[itemID]
+                table.insert(entries, {
+                    itemID = itemID,
+                    details = details,
+                    activeData = activeData,
+                })
+            end
+        end
+    end
+
+    table.sort(entries, function(a, b)
+        return (a.details.shopName or ""):lower() < (b.details.shopName or ""):lower()
+    end)
+
+    if #entries > 0 then
+        hasContent = true
+
+        if DVD.BuildShopGridSection then
+            y = DVD.BuildShopGridSection(scrollChild, entries, y)
+        end
+    end
+
+    if not hasContent then
+        CreateEmptyListMessage(
+            query
+            and "No shop decor matches your search."
+            or "No shop decor available."
+        )
+    end
+
+    SetListContentHeight(
+        y,
+        Sizing.StandardBottomPadding
+    )
+end
 
 -------------------------------------------------
 -- Main UI Router
 -------------------------------------------------
-
 function DVD.BuildVendorUI()
     if not DVD.catalogReady then
         return
@@ -1247,6 +1191,9 @@ function DVD.BuildVendorUI()
 
     elseif DVD.currentTab == "bossdrops" then
         BuildBossDropList()
+
+    elseif DVD.currentTab == "shop" then
+        BuildShopList()
     end
 
     DVD.filtersJustChanged = false
