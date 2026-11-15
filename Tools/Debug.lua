@@ -37,6 +37,9 @@
 -- /dvhidden
 --   Opens a copy/paste popout box with all hidden/missing catalog items.
 --
+-- /dvmissingvendors
+--   Scans the PTR client catalog for unmapped vendors missing from DVD.npcs.
+--
 -- ============================================================
 
 local addonName, DVD = ...
@@ -52,6 +55,20 @@ DVD.ScraperSessionNPC = DVD.ScraperSessionNPC or 0
 -- ============================================================
 -- Basic Counts
 -- ============================================================
+function DVD:AuditMissingIDs(targetIDs, dbTable, label)
+    print(string.format("|cff00ccffDVD Audit:|r Checking %s...", label or "Database"))
+    local missingCount = 0
+    
+    for _, id in ipairs(targetIDs) do
+        -- Check both numeric and string keys
+        if not dbTable[id] and not dbTable[tostring(id)] then
+            print(string.format("  -> Missing ID: %s", tostring(id)))
+            missingCount = missingCount + 1
+        end
+    end
+    
+    print(string.format("|cff00ccffDVD Audit Complete:|r Found %d missing entries.", missingCount))
+end
 
 function DVD.DebugCounts()
     local total = 0
@@ -671,6 +688,7 @@ SlashCmdList["DECORVENDORDATA"] = function(msg)
         print("/dvdata hidden groups")
         print("/dvdata target — Scrape/Verify Active Merchant Storefront")
         print("/dvhidden")
+        print("/dvmissingvendors — Audit PTR Catalog for unmapped vendors")
     end
 end
 
@@ -846,9 +864,13 @@ SlashCmdList["DVMISSING"] = function()
                 -- ------------------------------------------------------------
                 -- 📂 FILE TYPE 1: ActiveItems.lua Output Line
                 -- ------------------------------------------------------------
+                -- PATCH 2026-10-30: shop items in the Promo file all carry
+                -- noxp = true and use full DVD.ActiveItems assignments
+                -- (not bare table entries). Restore both here.
+                local noxpText = (determinedType == "shop") and ", noxp = true" or ""
                 table.insert(activeLines, string.format(
-                    "[%d] = { decorID = %d, model3D = %d, source = %q }, -- %s",
-                    itemID, decorID, model3D, determinedType, name
+                    "DVD.ActiveItems[%d] = { decorID = %d, model3D = %d%s, source = %q }, -- %s",
+                    itemID, decorID, model3D, noxpText, determinedType, name
                 ))
 
                 -- ------------------------------------------------------------
@@ -860,7 +882,21 @@ SlashCmdList["DVMISSING"] = function()
                 if achCategory then table.insert(detailFields, string.format("achievementCategory = %q", achCategory)) end
                 if dropName then table.insert(detailFields, string.format("dropName = %q", dropName)) end
                 
-                if #detailFields > 0 then
+                if determinedType == "shop" then
+                    -- PATCH 2026-10-30: shop items have no quest/achievement/drop
+                    -- fields, so the old gate (#detailFields > 0) dropped them
+                    -- entirely. shopName in the manual file is the item name itself.
+                    -- priceText is blank when the catalog text carries no
+                    -- Hearthsteel amount -- fill it in from the in-game shop.
+                    local shopPrice = cleanSource:match("(%d+%s+Hearthsteel)")
+                        or cleanSource:match("Cost:%s*(.-)$")
+                        or ""
+                    shopPrice = CleanCatalogString(shopPrice)
+                    table.insert(itemDetailLines, string.format(
+                        'Gallery.ItemDetails[%d] = { source = "shop", priceText = %q, shopName = %q }',
+                        itemID, shopPrice, name
+                    ))
+                elseif #detailFields > 0 then
                     table.insert(itemDetailLines, string.format(
                         "Gallery.ItemDetails[%d] = { %s }",
                         itemID, table.concat(detailFields, ", ")
@@ -916,7 +952,6 @@ SlashCmdList["DVMISSING"] = function()
         end
     end)
 end
-
 
 SLASH_DVFLATTENVENDORS1 = "/dvflattenvendors"
 
@@ -1161,7 +1196,7 @@ SlashCmdList["DVPROFMISSING"] = function()
             if itemID and sourceText:find("Profession:", 1, true) and not (DVD.ActiveItems and DVD.ActiveItems[itemID]) then
                 count = count + 1
 
-                local profession = sourceText:match("Profession:%s*(.-)%s*%(") or sourceText:gsub("^Profession:%s*", "") or "Profession"
+                local profession = sourceText:match("Profession:%s*(.-)%s*%(" ) or sourceText:gsub("^Profession:%s*", "") or "Profession"
 
                 table.insert(lines, string.format(
                     '[%d] = { decorID = %d, model3D = %d, noxp = true, source = "profession", profession = %q }, -- %s',
@@ -1680,9 +1715,9 @@ DVD.LoadCatalogRecords(function(success)
             end
 
             local category,
-                  expansion,
-                  skill,
-                  skillNeeded =
+                expansion,
+                skill,
+                skillNeeded =
                 GetProfessionMetadata(
                     recipeID,
                     record
@@ -1901,122 +1936,6 @@ SlashCmdList["DVRECIPEINSPECT"] = function(msg)
         end)
     else
         if DVD and DVD.ShowCopyBox then DVD.ShowCopyBox("Recipe Inspector " .. recipeID, table.concat(lines, "\n")) end
-    end
-end
-
--- ============================================================
--- Merchant Recipe Scanner
--- ============================================================
-
-SLASH_DVMERCHANTRECIPES1 = "/dvmerchantrecipes"
-
-SlashCmdList["DVMERCHANTRECIPES"] = function(msg)
-    msg = string.lower(tostring(msg or ""))
-
-    if not MerchantFrame or not MerchantFrame:IsShown() then
-        print("|cffff4040DV Merchant Recipes:|r Open a vendor window first.")
-        return
-    end
-
-    local vendorName = UnitName("target") or "Unknown Vendor"
-    local npcID = 0
-    local guid = UnitGUID("target")
-
-    if guid then
-        local unitType, _, _, _, _, id = strsplit("-", guid)
-        if unitType == "Creature" or unitType == "Vehicle" then npcID = tonumber(id) or 0 end
-    end
-
-    local function StripText(text)
-        text = tostring(text or ""):gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", ""):gsub("%[", ""):gsub("%]", ""):gsub("\r", " "):gsub("\n", " "):gsub("%s+", " ")
-        return text:gsub("^%s+", ""):gsub("%s+$", "")
-    end
-
-    local function GetMerchantCount()
-        if C_MerchantFrame and C_MerchantFrame.GetNumMerchantItems then return C_MerchantFrame.GetNumMerchantItems() or 0
-        elseif _G.GetNumMerchantItems then return _G.GetNumMerchantItems() or 0 end
-        return 0
-    end
-
-    local function GetMerchantLink(index)
-        if C_MerchantFrame and C_MerchantFrame.GetMerchantItemLink then return C_MerchantFrame.GetMerchantItemLink(index)
-        elseif _G.GetMerchantItemLink then return _G.GetMerchantItemLink(index) end
-    end
-
-    local function GetMerchantInfo(index)
-        if C_MerchantFrame and C_MerchantFrame.GetMerchantItemInfo then return C_MerchantFrame.GetMerchantItemInfo(index)
-        elseif _G.GetMerchantItemInfo then
-            local name, texture, price, quantity, numAvailable, isUsable, extendedCost = _G.GetMerchantItemInfo(index)
-            return { name = name, texture = texture, price = price, quantity = quantity, numAvailable = numAvailable, isUsable = isUsable, extendedCost = extendedCost }
-        end
-    end
-
-    local function IsRecipeItem(link)
-        if not link or not C_Item or not C_Item.GetItemInfoInstant then return false end
-        local _, _, _, _, _, classID = C_Item.GetItemInfoInstant(link)
-        return classID == Enum.ItemClass.Recipe
-    end
-
-    local function TooltipHasHousingHint(link)
-        if not link then return false end
-        local tooltipText = ""
-
-        if C_TooltipInfo and C_TooltipInfo.GetHyperlink then
-            local tooltipData = C_TooltipInfo.GetHyperlink(link)
-            if tooltipData and tooltipData.lines then
-                for _, line in ipairs(tooltipData.lines) do
-                    if line.leftText then tooltipText = tooltipText .. " " .. StripText(line.leftText) end
-                    if line.rightText then tooltipText = tooltipText .. " " .. StripText(line.rightText) end
-                end
-            end
-        end
-
-        tooltipText = string.lower(tooltipText)
-        if tooltipText:find("housing", 1, true) or tooltipText:find("decor", 1, true) or tooltipText:find("house chest", 1, true) then return true end
-
-        local housingReagents = { "lumber", "timber", "stone block", "stone blocks", "fabric roll", "fabric rolls" }
-        for _, reagent in ipairs(housingReagents) do
-            if tooltipText:find(reagent, 1, true) then return true end
-        end
-        return false
-    end
-
-    local showAll = msg == "all"
-    local lines = {}
-    local totalRecipes = 0
-    local housingHints = 0
-
-    table.insert(lines, "-- ============================================================\n-- DecorVendorData Merchant Recipe Export\n-- Vendor: " .. tostring(vendorName) .. "\n-- NPC ID: " .. tostring(npcID) .. "\n-- ============================================================\n")
-
-    local total = GetMerchantCount()
-
-    for slot = 1, total do
-        local info = GetMerchantInfo(slot)
-        local link = GetMerchantLink(slot)
-
-        if link and IsRecipeItem(link) then
-            local itemID = tonumber(link:match("item:(%d+)"))
-            local name = StripText((info and info.name) or link:match("%[(.-)%]") or "Unknown Recipe")
-            local hasHousingHint = TooltipHasHousingHint(link)
-
-            if itemID and (showAll or hasHousingHint) then
-                totalRecipes = totalRecipes + 1
-                if hasHousingHint then housingHints = housingHints + 1 end
-
-                local price = info and tonumber(price) or 0
-                local priceText = (price and price > 0) and string.format(", price = %d", price) or ""
-
-                table.insert(lines, string.format('[%d] = { recipeItemID = %d, soldBy = {%d}, source = "profession"%s }, -- %s / %s%s', itemID, itemID, npcID, priceText, name, tostring(vendorName), hasHousingHint and " / HOUSING HINT" or ""))
-            end
-        end
-    end
-
-    table.insert(lines, "\n-- Total exported recipes: " .. tostring(totalRecipes) .. "\n-- Housing/decor tooltip hints: " .. tostring(housingHints))
-
-    if DVD and DVD.ShowCopyBox then
-        DVD.ShowCopyBox("|cffffd100Merchant Recipes|r", table.concat(lines, "\n"))
-    else
-        print(table.concat(lines, "\n"))
     end
 end
 
@@ -2270,4 +2189,224 @@ SlashCmdList["DVMISSINGQUESTS"] = function()
     else
         print(table.concat(lines, "\n"))
     end
+end
+
+-- ============================================================
+-- 🔍 PTR Missing Vendor Auditor (With Copy Box Output)
+-- ============================================================
+SLASH_DVFINDMISSINGVENDORS1 = "/dvmissingvendors"
+
+SlashCmdList["DVFINDMISSINGVENDORS"] = function()
+    if not DVD or not DVD.LoadCatalogRecords then
+        print("|cffff4040DV Missing Vendors:|r Catalog loader missing.")
+        return
+    end
+
+    DVD.LoadCatalogRecords(function(success)
+        if not success then
+            print("|cffff4040DV Missing Vendors:|r Housing catalog failed to load.")
+            return
+        end
+
+        local registeredVendors = {}
+        if DVD.npcs then
+            for _, npcData in pairs(DVD.npcs) do
+                if npcData.title then
+                    registeredVendors[npcData.title:lower()] = true
+                end
+            end
+        end
+
+        local lines = {}
+        table.insert(lines, "-- ============================================================")
+        table.insert(lines, "-- Unmapped Vendors Found in PTR Catalog Missing from DVD.npcs")
+        table.insert(lines, "-- Generated with /dvmissingvendors")
+        table.insert(lines, "-- ============================================================")
+        table.insert(lines, "")
+
+        local unmappedVendors = {}
+        local count = 0
+
+        for _, record in ipairs(DVD.catalogRecords or {}) do
+            local sourceText = tostring(record.sourceText or "")
+            
+            if sourceText:lower():find("vendor", 1, true) then
+                local vendorName = sourceText:match("Vendor:%s*([^:][^Zone:]+)") or sourceText:match("Vendor:%s*([^:]+)")
+                
+                if vendorName then
+                    vendorName = vendorName:gsub("Zone.*", ""):gsub("Cost.*", ""):gsub("^%s+", ""):gsub("%s+$", "")
+                    local lowerName = vendorName:lower()
+
+                    if not registeredVendors[lowerName] and not unmappedVendors[lowerName] then
+                        unmappedVendors[lowerName] = true
+                        count = count + 1
+                        
+                        table.insert(lines, string.format("Unmapped Vendor: %q (Example Item: %s)", vendorName, tostring(record.name or "Unknown")))
+                    end
+                end
+            end
+        end
+
+        table.insert(lines, "")
+        table.insert(lines, "-- Total unmapped vendors found: " .. tostring(count))
+
+        local output = table.concat(lines, "\n")
+
+        if DVD.ShowCopyBox then
+            DVD.ShowCopyBox("|cffffd100Unmapped Vendors Audit|r", output)
+        else
+            print(output)
+        end
+
+        print(string.format("|cff00ff66DV Missing Vendors Audit Complete:|r Found %d unique unmapped vendors.", count))
+    end)
+end
+
+function DVD.DebugBossCounts()
+    local lines = {}
+    table.insert(lines, "--- DECOR VENDOR BOSS COUNT DEBUG ---")
+    
+    local homeItems = {}
+    local homeBlocked = {}
+    
+    -- 1. Simulate Home Panel Counting
+    for itemID, itemData in pairs(DVD.ActiveItems or {}) do
+        if type(itemID) == "number" and type(itemData) == "table" then
+            local matched = (SourceMatches and SourceMatches(itemData, "drop"))
+                or (HasAnyField and HasAnyField(itemData, "bossevent", "bossencounter", "bossName", "encounterID", "rareEvent", "eventName", "dropName", "treasureName"))
+            
+            if matched then
+                local passesGate = true
+                if ShouldCountHomeItem then
+                    passesGate = ShouldCountHomeItem(DVD, itemData)
+                end
+                
+                if passesGate then
+                    homeItems[itemID] = true
+                else
+                    homeBlocked[itemID] = itemData
+                end
+            end
+        end
+    end
+    
+    -- 2. Simulate Boss Tab / Source Counting
+    local tabItems = {}
+    for _, group in ipairs(DVD.bossdrops or {}) do
+        for _, boss in ipairs(group.items or {}) do
+            local id = boss.id or boss.itemID
+            if id then
+                tabItems[id] = true
+            end
+        end
+    end
+    
+    for itemID, itemData in pairs(DVD.ActiveItems or {}) do
+        if type(itemID) == "number" and type(itemData) == "table" then
+            local source = itemData.source and string.lower(tostring(itemData.source))
+            local cat = itemData.category and string.lower(tostring(itemData.category))
+            if source == "drop" or cat == "rare" or cat == "delve" or cat == "dungeon" or cat == "raid" or cat == "treasure" then
+                tabItems[itemID] = true
+            end
+        end
+    end
+    
+    -- 3. Gather Home Gatekeeper Blocked Items
+    table.insert(lines, "\n[Home Gatekeeper Blocked Items]:")
+    local blockedCount = 0
+    for id, data in pairs(homeBlocked) do
+        blockedCount = blockedCount + 1
+        table.insert(lines, string.format(" - ID: %d | Data Source/Cat: %s / %s", id, tostring(data.source), tostring(data.category)))
+    end
+    if blockedCount == 0 then
+        table.insert(lines, " - None (Gatekeeper allowed everything that matched).")
+    end
+    
+    -- 4. Gather Items Missing from Home
+    table.insert(lines, "\n[Items in Tab/Browser but Missing from Home Panel]:")
+    local missingCount = 0
+    for id, _ in pairs(tabItems) do
+        if not homeItems[id] then
+            missingCount = missingCount + 1
+            local data = DVD.ActiveItems[id]
+            table.insert(lines, string.format(" - ID: %d | Name/Event: %s", id, data and (data.name or data.bossevent) or "Unknown"))
+        end
+    end
+    if missingCount == 0 then
+        table.insert(lines, " - None found!")
+    end
+    
+    table.insert(lines, "\n--------------------------------------")
+    local fullText = table.concat(lines, "\n")
+    
+    -- Create or show the popout frame
+    if not DVD.DebugPopupFrame then
+        local f = CreateFrame("Frame", "DVD_DebugPopup", UIParent, "BasicFrameTemplateWithInset")
+        f:SetSize(520, 420)
+        f:SetPoint("CENTER")
+        f:SetMovable(true)
+        f:EnableMouse(true)
+        f:RegisterForDrag("LeftButton")
+        f:SetScript("OnDragStart", f.StartMoving)
+        f:SetScript("OnDragStop", f.StopMovingOrSizing)
+        f:SetFrameStrata("DIALOG")
+        
+        if f.TitleText then
+            f.TitleText:SetText("DecorVendor Boss Count Debug")
+        end
+        
+        -- ScrollFrame and EditBox for clean text viewing/copying
+        local sf = CreateFrame("ScrollFrame", nil, f, "UIPanelScrollFrameTemplate")
+        sf:SetPoint("TOPLEFT", f, "TOPLEFT", 12, -32)
+        sf:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -30, 12)
+        
+        local eb = CreateFrame("EditBox", nil, sf)
+        eb:SetMultiLine(true)
+        eb:SetMaxLetters(99999)
+        eb:SetFontObject(ChatFontNormal)
+        eb:SetWidth(460)
+        eb:SetAutoFocus(false)
+        eb:SetScript("OnEscapePressed", function() f:Hide() end)
+        sf:SetScrollChild(eb)
+        
+        f.editBox = eb
+        DVD.DebugPopupFrame = f
+    end
+    
+    DVD.DebugPopupFrame.editBox:SetText(fullText)
+    DVD.DebugPopupFrame:Show()
+end
+
+
+
+function DVD.DebugInspectTargetNPC()
+    local unit = "target"
+    if not UnitExists(unit) then
+        print("|cffff4040Decor Vendor Debug:|r No target selected. Please target the vendor NPC.")
+        return
+    end
+
+    local name = UnitName(unit)
+    local guid = UnitGUID(unit)
+    local npcID = nil
+    
+    if guid then
+        local unitType, _, _, _, _, id = strsplit("-", guid)
+        if unitType == "Creature" or unitType == "Vehicle" then
+            npcID = tonumber(id)
+        end
+    end
+
+    print("|cffffd100--- Target NPC Info ---|r")
+    print(string.format("  Name: |cffffffff%s|r", tostring(name)))
+    print(string.format("  NPC ID: |cff00ff66%s|r", tostring(npcID or "Unknown")))
+    print(string.format("  GUID: |cffaaaaaa%s|r", tostring(guid)))
+
+    if npcID and DVD.npcs and DVD.npcs[npcID] then
+        local npcData = DVD.npcs[npcID]
+        print(string.format("  [DVD.npcs Match]: Zone: %s | Model3D: %s", tostring(npcData.zone), tostring(npcData.model3D or npcData.asset)))
+    else
+        print("  |cffff4040Not found in current DVD.npcs database table yet.|r")
+    end
+    print("|cffffd100--------------------------|r")
 end

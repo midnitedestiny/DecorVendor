@@ -1,5 +1,92 @@
 # Decor Vendor Changelog
 
+### Version 2.29
+
+* **Tips & Helpful Info Refreshed:** The Tips panel in Settings got a cleanup. The Vendor Decor tip now correctly says clicking an item shows its 3D model in the preview pane, and the Active/Inactive tip now explains that a vendor with no waypoint shows no status at all — it used to wrongly say it shows as Inactive.
+* **Two New Tips:** Preview Decor on Click and Merchant Checkmarks now have their own sections, so the preview toggle and the collected-item checkmarks are explained in one place.
+* **4 New Phrases for Translators:** Four new interface phrases were added for the new tips, bringing the total to 277. They'll appear on the CurseForge Localization page with this upload for anyone who wants to translate them.
+* **Rexxar Wild Pack Moved:** The Zhevraskin Rug is no longer listed under Promos — the Champion of the Wilds promo ended, but the rug can still be bought in the in-game shop for 100 Hearthsteel, so it's now listed under Shop Decor instead.
+
+### Version 2.28.1
+
+* **Fixed: Home Screen Note Colour:** The note at the bottom of the Home screen was showing the raw text "|cffde9b6Note: ..." instead of coloured text, because a colour code was missing a digit. It's fixed — the note shows in its proper colour again.
+* **Fixed: Merchant Window Error:** Talking to a merchant who sells a spell instead of an item (for example, the Silvermoon Court Voucher) could pop a Lua error from the merchant checkmark code. That's fixed — those merchants just show no checkmark now, and the error is gone.
+* **Help Translate:** All of the addon's English phrases are now on the CurseForge Localization page — click Localization under Links on the Decor Vendor project page. Anyone who wants to translate Decor Vendor into another language can start there, right in the browser, no files needed. Russian, Spanish, German, French, Portuguese, and every other language are all welcome.
+
+### Version 2.28
+
+* **Localization — English First, Volunteers Welcome:** The addon is now set up for translation. All 274 interface phrases — every button, tab, tooltip, setting, and Gallery source label — live in one English file, and CurseForge's localization tool is turned on, so anyone who wants to help can translate on the CurseForge website and their translations come back with the next upload. The addon still ships in English for now.
+* **Card Status Translated:** The vendor-card footer ("12 items • Active • Found") now translates too, so it shows in the player's language instead of always English. The green / amber colours for active and inactive vendors are unchanged.
+* **Vol'dun Vendors Fixed:** Vol'dun vendors are now correctly listed under Battle for Azeroth in the expansion filter, instead of the wrong expansion.
+
+### Version 2.27
+
+* **Back to OG Dark Colours:** The whole addon is back to its original dark look — dark navy backgrounds, white text, gold titles, and steel-blue borders — instead of the purple chrome.
+* **Expansion Filter Colours:** Every expansion in the left filter list now has its own distinct colour — Classic gold, Burning Crusade fel green, Wrath ice blue, Cataclysm lava, Mists jade, Warlords bronze, Legion fel purple, Battle for Azeroth orange, Shadowlands shadow purple, Dragonflight sky blue, The War Within amber, and Midnight stays purple — so you can tell them apart at a glance instead of all of them looking pale lavender / blue.
+* **Inactive Status Colour:** Endeavor vendors that aren't active right now now show in warm amber instead of red, so red doesn't shout at you for something that isn't wrong. Active vendors still show in green.
+* **Preview Decor on Click:** New option in Settings — "Preview decor on click" (on by default). Turn it off and clicking a vendor no longer swaps the preview, so the vendor stays put in the preview panel.
+* **Missing Silvermoon Vendors Fixed:** Seven Silvermoon City vendors were hidden because of a profession check that hid any vendor with a profession your character hadn't learned. That check is gone — all vendors now show, whether you've learned their profession or not.
+* **Removed: Shop Tab Code:** The old Shop tab code is gone — it was dead code, the tab itself was already turned off. All your shop items are still in the Gallery Browser, exactly where they were.
+
+### Version 2.26
+
+* **Holiday Decor Filters:** Holiday Decor now has its own section in the Gallery Browser, with separate checkboxes for Brewfest, Hallow's End, and Winter Veil (Currently hidden for now), so you can filter by just one holiday instead of all of them at once.
+* **Holiday Sources Cleaned Up:** Holiday items are now listed under their correct holiday — Brewfest, Hallow's End, or Winter Veil — instead of a generic Holiday Decor source. Winter Veil is ready ahead of the event, even though its items aren't live yet.
+* **Removed: Twitch Drop:** The Twitch Drop promo has been removed from the Options Menu and is now listed as a previous October drop like the others.
+
+
+### Version 2.25
+
+* **New Shop Decor: Grimtide Decor:** The new Grimtide Decor set from the in-game shop is now tracked in Decor Vendor, so it shows up in the Gallery.
+* **Event Vendor Fix:** Fixed Halloween, the ipcoming Winter Veil, and Timewalking vendors getting stuck on "Loading..." when you first log in. They now load right away with working waypoints, and the calendar is checked in the background on login, so you no longer have to open it to unstuck them or update their Active / Inactive status.
+* **Vendor Popup Fix:** Fixed vendor popup icons, names, and click-to-preview for decor-only items that don't have a regular item icon. (they again appear when clicking on them under each vendor)
+* **No Preview Watermark:** Clicking a decor item with no preview asset now shows a clear "No Preview Available" watermark instead of a blank preview. (In the Main Decor Vendor)
+* ** PTR Prep:** Talebound Decor have officially been added to the file and prices shown but mind you currently can only be tracked via live side as addons wont currently work in Talebound
+
+### Version 2.24
+
+* **New Look:** The minimap icon is now the golden spiral door from the Decor Vendor cottage, the gallery header bar has a warm bronzed-metal finish, and the addon list icon matches.
+* **Pepe Fix:** Fixed Scarecrow Pepe showing two "Open Achievement" buttons in the gallery.
+* **Under the Hood:** Reorganized the whole codebase from 40+ loose files into a handful of tidy folders. Nothing changes in how you use the addon — it just runs cleaner and makes future updates easier.
+* **Gallery Action Button Fix:** Fixed the action button not showing for drop decor in the Gallery Browser, so boss and rare drops once again show their map and pins.
+* **PTR Prep:** Patch 12.1.7 decor data now lives in its own PTR folder, ready to go live the moment the patch launches.
+
+### Version 2.23
+
+* **Profession Filter Section:** Added a dedicated Profession section to the gallery sidebar with full sub-category filtering for all crafting professions.
+* **Halloween Decor:** Integrated seasonal Halloween decor items and collection support. Including the two permanent seasonal vendors and the four seasonal vendors for Halloween  one in each neighborhood faction and of course outside Undercity and Stormwind
+* **Patch 12.1.7 Background Prep:** Laid the foundational data structures and groundwork for upcoming Patch 12.1.7 decor items.
+
+### Version 2.20-2.22
+
+* **Patch Day Data:** Officially ready for patch 12.1.5
+* **TOC:** Updated the toc file
+
+### Version 2.19
+
+* **Patch Day Data Prep:** Finalized vendor prices, currency information, and data structures to prep everything for Tuesday's patch rollout.
+* **Vendor Database Flattening:** Refactored `Gallery.VendorDetails` from a nested hierarchy into a clean, item-indexed flat structure for instantaneous lookups and reduced memory usage.
+* **Sidebar UI Bugfix:** Resolved an issue where empty filter sections (such as "Upcoming Patch") left orphan headers visible in the gallery sidebar when containing zero items.
+* **Shop Source Expansion:** Updated shop validation logic to correctly include `lushshop` and `blossomshop` item paths  as in allowing the action button  to allow you to click it to see that you can buy the item via the in game shop.
+* **Added Twitch Drop: Golden Grrgle has been added so its already showing and in the events section of settings to tell you to watch 4 hours of wow content on twitch to earn it.
+
+### 🌟 Version 2.17 — PTR Compatibility & UI Fixes
+
+* **Patch 12.1.5 & PTR Updates:** 
+  * Updated profession reagent icon rendering to use the modern `C_Item.GetItemIconByID` API, ensuring full compatibility with the latest client changes following the removal of deprecated global functions.
+  * Optimized PTR data loading to safely merge items into existing category headers, preventing duplicate UI sections.
+* **Preview & Fallback Improvements:**
+  * Re-integrated the `DressUpItemLink` fallback for items flagged with missing 3D model assets (`skip3DPreview`), ensuring smooth inspection via the dress-up window.
+* **Bug Fixes:**
+  * Resolved Lua concatenation errors involving table-based `quest.id` structures in `QuestRows.lua`.
+  * Various stability improvements and UI layout refinements.
+  
+## Version 2.16
+
+### Holiday Decor Updates
+* **Brewfest 2026 Rewards:**  Updated some of the codes from the Brewfest decor that came out including the third set of vendors that sell holiday decor 
+* **Vendor Filters:**  Added  a Holiday Decor Filter that will display any vendors who sell holiday decor from neighborhoods to the holiday vendors outside major cities like Stormwind Orgrimmar and Ironforge.
+
 ## Version 2.14
 
 ### Blizzcon Updates

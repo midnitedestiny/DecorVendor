@@ -1,104 +1,39 @@
-## Interface: 120100, 120105
-## Version: 2.14
-## Title: |cff00ccffDecor Vendor|r
+## Interface: 120105, 120107
+
+## Title: |cffff0000D|r|cffff7f00e|r|cffffff00c|r|cff00ff00o|r|cff00bfffr|r |cffbf5af2V|r|cffff0000e|r|cffff7f00n|r|cffffff00d|r|cff00ff00o|r|cff00bfffr|r
 ## Author: MidniteDestiny
+## Version: 2.29
+
 ## Notes: Tracks vendors that sell housing decor!
 ## IconTexture: Interface\AddOns\DecorVendor\Assets\decorvendoricon.tga
 ## SavedVariables: vendorSettings, dbDV, DecorVendorNeighborhoodDB
 ## OptionalDeps: TomTom, WaypointUI
+
 ## AddonCompartmentFunc: DecorVendor_OnAddonCompartmentClick
 ## AddonCompartmentFuncOnEnter: DecorVendor_OnAddonCompartmentEnter
 ## AddonCompartmentFuncOnLeave: DecorVendor_OnAddonCompartmentLeave
-## Category-enUS: Housing
+## Category: Housing
 ## X-Curse-Project-ID: 1372414
 ## X-License: All Rights Reserved 2025-2026
 
-# ============================================================
-# 1. CORE EMBEDS & MASTER CONSTANTS
-# ============================================================
+# Core embeds (third-party libraries, unchanged)
 Libs\LibStub.lua
 Libs\CallbackHandler-1.0.lua
 Libs\LibDataBroker-1.1.lua
 Libs\LibDBIcon-1.0.lua
 
-Shared\Fonts.lua
-Shared\constants.lua
-Shared\SourceActions.lua
-Shared\Constants_Colors.lua
-Shared\Constants_Filters.lua
+# Localization
+Shared\Localization.lua
+Shared\Localization\enUS.lua
 
-# ============================================================
-# 2. CORE DATABASE REGISTRIES
-# ============================================================
-Data\ActiveDatabase.lua
-Catalog\CatalogRecords.lua
-
-Data\ActiveItems.lua
-Data\ActiveItems_ClassHalls.lua
-Data\ActiveItems_Drops.lua
-Data\ActiveItems_Professions.lua
-Data\ActiveItems_Promo.lua
-Data\ActiveItems_Reputations.lua
-Data\ActiveItems_PTR.lua
-
-Sources\MainSources.lua
-Sources\GalleryItemDetails.lua
-Sources\GalleryVendorDetails.lua
-Sources\PTRNpcs.lua
-
-Debug.lua
-
-# ============================================================
-# 3. ADDON UTILITIES, FILTERS & HOOKS
-# ============================================================
-filters.lua
-Helpers\Helpers.lua
-Core\Utilities.lua
-
-# ============================================================
-# 4. MAIN UI SHELL
-# ============================================================
-Frames\MainHomePanel.lua
-Frames\MainFrame.lua
-UI\PreviewPanel.lua
-UI\ListFrame.lua
-
-# ============================================================
-# 6. MAIN UI ROW RENDERERS
-# ============================================================
-Rows\RowWidgets.lua
-Rows\VendorRows.lua
-Rows\ProfessionRows.lua
-Rows\QuestRows.lua
-Rows\AchievementRows.lua
-Rows\BossDropRows.lua
-Rows\ShopRows.lua
-
-# ============================================================
-# 7. MAIN UI BUILDERS / MERCHANT / OPTIONS / COMMANDS
-# ============================================================
-UI\ListBuilders.lua
-UI\OptionsPanel.lua
-
-# ============================================================
-# 8. MAIN ADDON CORE
-# ============================================================
+Shared\Constants.lua
+Data\Database.lua
+PTR\ActiveItems_127.lua
+Sources\Sources.lua
+Tools\Debug.lua
+Core\Utils.lua
+UI\MainUI.lua
+UI\Rows.lua
 Core.lua
-
-# ============================================================
-# 9. GALLERY CORE
-# ============================================================
-GalleryCore\GalleryUtils.lua
-Helpers\GalleryHelpers.lua
-GalleryCore\FilterHelpers.lua
-GalleryCore\GalleryDetailsBridge.lua
-
-# ============================================================
-# 10. GALLERY UI
-# ============================================================
-Frames\GalleryUI.lua
-
-# ============================================================
-# 12. DEVELOPER UTILITY TOOLS
-# ============================================================
-Catalog\CatalogDumper.lua
+UI\Gallery.lua
+Tools\CatalogDumper.lua

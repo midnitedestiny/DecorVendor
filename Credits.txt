@@ -1,0 +1,29 @@
+============================================================
+
+Decor Vendor - Credits & Acknowledgments
+
+============================================================
+
+
+
+A special thank you to the following addon authors and the 
+
+World of Warcraft UI development community for their inspiration, 
+
+design patterns, and guidance:
+
+
+
+1. ImpalerV - Hearth and Seek
+
+   - Inspiration for Gallery Browser Layout
+
+
+
+2. Daeveren - Housing Codex
+
+   - Inspiration for the Home Panel Button Layout
+
+
+
+Thank you for paving the way and supporting the addon community!
